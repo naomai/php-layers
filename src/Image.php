@@ -1,11 +1,11 @@
 <?php
 /** GD OOP Wrapper
  * 
- * 2013 namonaki14
+ * 2013 naomai
  * 
- * Dependencies: PHP5.3, GD2, SPL
+ * Dependencies: PHP5.3+, GD2, SPL
  *
- * @version 0.1.1
+ * @version 0.2.0
  * 
  */
 namespace Naomai\GDWrapper{
@@ -19,24 +19,11 @@ namespace Naomai\GDWrapper{
 		/**
 		 *  Creates new Image object.
 		 *  
-		 *  This constructor can be called in 2 ways:
-		 *  - single argument: image resource, which will be added to a layer set of new object,
-		 *  - two arguments: width and height of new image.
-		 *  
 		 *  @param int 	$width 	  or width of a new image
 		 *  @param int 	$height   height of a new image
 		 *  @since 0.1.0
 		 */	
 		public function __construct($width, $height, $createLayer = true){
-			/*$args = func_get_args();
-			if(count($args === 1) && is_resource($args[0]) && get_resource_type ($args[0])==="gd"){ // (resource $img)
-				$this->addLayerTop(new Layer($args[0]));
-				$this->setSize(imagesx($args[0]),imagesy($args[0]));
-			}else if(count($args === 2) && is_numeric($args[0]) && is_numeric($args[1])){ // (int $x, int $y)
-				$this->addLayerTop(new Layer($args[0],$args[1]));
-				$this->setSize($args[0],$args[1]);
-			}*/
-			
 			if( is_numeric($width) && is_numeric($height)){
 				if($createLayer) {
 					$bgLayer = new Layer($width,$height);
@@ -189,7 +176,7 @@ namespace Naomai\GDWrapper{
 		}
 		
 		public static function createFromGD($gdResource){
-			if(is_resource($gdResource) && get_resource_type ($gdResource)==="gd"){
+			if(Image::isValidGDImage($gdResource)){
 				$gdImg = new Image(imagesx($gdResource),imagesy($gdResource),false);
 				$gdImg->addLayerTop(new Layer($gdResource));
 				return $gdImg;
@@ -199,6 +186,21 @@ namespace Naomai\GDWrapper{
 			if(is_string($fileName) && file_exists ($fileName)){
 				$gdResource = imagecreatefromstring(file_get_contents($fileName));
 				return self::createFromGD($gdResource);
+			}
+		}
+
+		/**
+		 * Check if variable contains valid GD2 image handle
+		 * 
+		 *  @param object|resource $layerObj Parameter_Description
+		 *  @return bool TRUE if provided value is a valid GD2 handle
+		 *  @since 0.2.0
+		 */
+		public static function isValidGDImage($image){
+			if(version_compare(PHP_VERSION, '8.0.0', '>=')){
+				return is_object($image) && ($image instanceof \GdImage);
+			}else{
+				return is_resource($image) && get_resource_type($image)=="gd";
 			}
 		}
 	}
@@ -229,7 +231,7 @@ namespace Naomai\GDWrapper{
 		
 		public function __construct(){
 			$args = func_get_args();
-			if(count($args) === 1 && is_resource($args[0]) && get_resource_type ($args[0])==="gd"){ // (resource $img)
+			if(count($args) === 1 && Image::isValidGDImage($args[0])){ // (resource $img)
 				$this->gdImage = $args[0];
 			}else if(count($args) >= 2 && is_numeric($args[0]) && is_numeric($args[1])){ // (int $w, int $h)
 				$this->gdImage = imagecreatetruecolor($args[0],$args[1]);
@@ -248,7 +250,7 @@ namespace Naomai\GDWrapper{
 		}
 		
 		public function __destruct(){
-			if(is_resource($this->gdImage) && get_resource_type( $this->gdImage ) === 'gd'){
+			if(Image::isValidGDImage($this->gdImage)){
 				imagedestroy($this->gdImage);
 			}
 		}
@@ -336,7 +338,7 @@ namespace Naomai\GDWrapper{
 		// CREATE
 		
 		public static function createFromGD($gdResource){
-			if(is_resource($gdResource) && get_resource_type ($gdResource)==="gd"){
+			if(Image::isValidGDImage($gdResource)){
 				$l = new Layer($gdResource);
 				return $l;
 			}
