@@ -13,15 +13,15 @@ $textRenderer = new GDW\Renderers\NonOverlappingText();
 $mainLayer->setRenderer($textRenderer);
 
 $mainLayer->paint->alphaBlend = true;
-$mainLayer->paint->text(101, 9, "clutter", array('color'=>0x000000));
-$mainLayer->paint->text(99, 13, "clutter", array('color'=>0x000000));
-$mainLayer->paint->text(103, 12, "clutter", array('color'=>0x000000));
-$mainLayer->paint->text(100, 9, "clutter", array('color'=>0xFF0000, 'size'=>18));
+$mainLayer->paint->text(101, 9, "clutter", ['color'=>0x000000]);
+$mainLayer->paint->text(99, 13, "clutter", ['color'=>0x000000]);
+$mainLayer->paint->text(103, 12, "clutter", ['color'=>0x000000]);
+$mainLayer->paint->text(100, 9, "clutter", ['color'=>0xFF0000, 'size'=>18]);
 
-$textRenderer->write(101, 69,"space", array('color'=>0x000000));
-$textRenderer->write(99, 73,"space", array('color'=>0x000000));
-$textRenderer->write(103, 72,"space", array('color'=>0x000000));
-$textRenderer->write(100, 69,"space", array('color'=>0xFF0000, 'size'=>18));
+$textRenderer->write(101, 69,"space", ['color'=>0x000000]);
+$textRenderer->write(99, 73,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 72,"space", ['color'=>0x000000]);
+$textRenderer->write(100, 69,"space", ['color'=>0xFF0000, 'size'=>18]);
 
 $dataUrl = $exampleImg->getDataUrlPNG();
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
@@ -42,8 +42,8 @@ $text->fontSize = 12;
 $text->font = "Lato";
 $text->fontBold = true;
 
-$text->position=array("x"=>0,"y"=>0,"width"=>500,"height"=>'auto');
-$text->margin=array('left'=>8, 'right'=>8,'top'=>8,'bottom'=>8);
+$text->position=["x"=>0,"y"=>0,"width"=>500,"height"=>'auto'];
+$text->margin=['left'=>8, 'right'=>8,'top'=>8,'bottom'=>8];
 
 $text->write("This is a text document! ");
 

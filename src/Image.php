@@ -13,7 +13,7 @@ namespace Naomai\PHPLayers {
 	define("GDIMAGE_SUPPORTS_AFFINE", function_exists("imageaffine"));
 	 
 	class Image {
-		protected $layers = array(); // stack order (push-pop)
+		protected $layers = []; // stack order (push-pop)
 		protected $sizeX, $sizeY;
 		protected $layerIdCounter = 0;
 		protected $composer;
@@ -70,7 +70,7 @@ namespace Naomai\PHPLayers {
 			if(!($layerObj instanceof Layer)){
 				throw new InvalidArgumentException("addLayerBottom: Must be a Layer object");
 			}
-			$this->layers = array(($this->layerIdCounter)=>$layerObj) + $this->layers; 
+			$this->layers = [($this->layerIdCounter)=>$layerObj] + $this->layers; 
 			$layerObj->setParentImg($this);
 			return $this->layerIdCounter++;
 		}
@@ -104,10 +104,10 @@ namespace Naomai\PHPLayers {
 		 *  @since 0.1.0
 		 */
 		public function getSize(){
-			return array(
+			return [
 				'w'=>$this->sizeX,
 				'h'=>$this->sizeY
-			);
+			];
 		}
 		
 		/**
@@ -258,12 +258,12 @@ namespace Naomai\PHPLayers {
 		}
 		
 		public function getLayerDimensions(){
-			return  array(
+			return  [
 				'x'=>$this->offsetX,
 				'y'=>$this->offsetY,
 				'w'=>$this->sizeX,
 				'h'=>$this->sizeY
-			);
+			];
 		}
 		public function getGDHandle(){
 			return $this->gdImage;
@@ -476,7 +476,7 @@ namespace Naomai\PHPLayers {
 			$sind = sin($degrees/180*M_PI);
 			$cosd = cos($degrees/180*M_PI);
 			
-			$newSubImage=imageaffine ($this->subImage,array($cosd,$sind,-$sind,$cosd,0,0));
+			$newSubImage=imageaffine ($this->subImage,[$cosd,$sind,-$sind,$cosd,0,0]);
 			
 			$this->offsetX = $this->offsetX + $this->sizeX/2 - imagesx($newSubImage)/2;
 			$this->offsetY = $this->offsetY + $this->sizeY/2 - imagesy($newSubImage)/2;
@@ -826,7 +826,7 @@ namespace Naomai\PHPLayers\PaintTools{
 		
 		public function polygon(array $verts, int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT){
 			$this->setDrawingConfig();
-			$gdVerts=array();
+			$gdVerts=[];
 			foreach($verts as $v){
 				$gdVerts[]=$v[0];
 				$gdVerts[]=$v[1];
@@ -851,7 +851,7 @@ namespace Naomai\PHPLayers\PaintTools{
 			return imageloadfont($fontFile);
 		}
 		
-		public function textGetBox(int $x, int $y, string $text, array $params=array()){
+		public function textGetBox(int $x, int $y, string $text, array $params=[]){
 			$angle = isset($params['angle']) ? $params['angle'] : 0;
 			$font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";
 			$align = isset($params['align']) ? $params['align'] : GDALIGN_LEFT;
@@ -861,15 +861,15 @@ namespace Naomai\PHPLayers\PaintTools{
 			$h = $box[1] - $box[7];
 			$newX = $x - $box[6] - $w * $align / 2;
 			$newY = $y - $box[7];
-			return array(
+			return [
 				'x'=>$x - $w*$align/2,
 				'y'=>$y,
 				'w'=>$w,
 				'h'=>$h
-			);
+			];
 		}
 		
-		public function text(int $x, int $y, string $text, array $params=array()){
+		public function text(int $x, int $y, string $text, array $params=[]){
 			$this->setDrawingConfig();
 			$angle = isset($params['angle']) ? $params['angle'] : 0;
 			$font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";

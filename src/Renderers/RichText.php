@@ -17,11 +17,11 @@ namespace Naomai\PHPLayers\Renderers{
 	class RichText implements ILayerRenderer {
 		protected $layer;
 		
-		protected $document = array();
+		protected $document = [];
 		protected $currentParagraph = null;
 		//viewport
-		public $position = array("auto"=>true);
-		public $margin = array("auto"=>true);
+		public $position = ["auto"=>true];
+		public $margin = ["auto"=>true];
 		//document properties
 		public $backgroundColor = 0xFFFFFF;
 		//current paragraph properties
@@ -57,7 +57,7 @@ namespace Naomai\PHPLayers\Renderers{
 				$this->systemFonts->scanFonts();
 			}*/
 			$this->wwwFonts = new \Naomai\FontCache();
-			$this->wwwFonts->fontDir = realpath(__DIR__ ."/../Fonts");
+			$this->wwwFonts->fontDir = __DIR__ ."/../Fonts";
 			$this->wwwFonts->cacheFile = __DIR__ . "/WWWFonts.dat";
 			if(file_exists($this->wwwFonts->cacheFile)){
 				$this->wwwFonts->preload();
@@ -70,7 +70,7 @@ namespace Naomai\PHPLayers\Renderers{
 		public function getSize(){
 			if(isset($this->position['auto']) && $this->position['auto']===true){
 				$layerRect = $this->layer->getLayerDimensions();
-				return array('x'=>0,'y'=>0,'width'=>$layerRect['w'], 'height'=>$layerRect['h'],'auto'=>true);
+				return ['x'=>0,'y'=>0,'width'=>$layerRect['w'], 'height'=>$layerRect['h'],'auto'=>true];
 			}else{
 				return $this->position;
 			}
@@ -79,7 +79,7 @@ namespace Naomai\PHPLayers\Renderers{
 			$size = $this->getSize();
 			if(isset($this->margin['auto'])){
 				
-				$margin = array('left'=>16,'right'=>16,'top'=>16,'bottom'=>16);
+				$margin = ['left'=>16,'right'=>16,'top'=>16,'bottom'=>16];
 			}else{
 				$margin = $this->margin;
 			}
@@ -170,7 +170,7 @@ namespace Naomai\PHPLayers\Renderers{
 				$this->document[] = $this->currentParagraph;
 			}
 			
-			$gdItems = array();
+			$gdItems = [];
 			
 			$posOuter = $this->getSize();
 			$pos = $this->getInnerSize();
@@ -179,11 +179,11 @@ namespace Naomai\PHPLayers\Renderers{
 			$offsetY = $pos['y'];
 			$docCalculatedHeight = 0;
 			$y = 0;
-			$toDraw = array();
+			$toDraw = [];
 			foreach($this->document as $item){
 				$newGD = $item->render();
 				$docCalculatedHeight+=imagesy($newGD);
-				$toDraw[] = array('item'=>$item,'gd'=>$newGD);
+				$toDraw[] = ['item'=>$item,'gd'=>$newGD];
 			}
 			
 			
@@ -260,7 +260,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 			
 			
 			// prepare boxes
-			$rect = array();
+			$rect = [];
 			$w = 0;
 			$h = 0;
 			
@@ -271,7 +271,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 			
 			
 			for($i=0; $i<mb_strlen($this->textContent); $i++){
-				$charRect = array();
+				$charRect = [];
 				$char = mb_substr($this->textContent, $i, 1);
 				if($char == " "){
 					$charRect['white'] = true;
@@ -325,7 +325,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 				unset($rect[$rectId]['_char']);
 			}
 			imagesavealpha($elGD,true);
-			return array('gd'=>$elGD, 'rect'=>$rect);
+			return ['gd'=>$elGD, 'rect'=>$rect];
 		}
 		
 		protected function getFontType(){
@@ -346,8 +346,8 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 		public $align = GDW\Renderers\RichText::GDWRT_ALIGN_LEFT;
 		public $lineHeight = 16;
 		public $documentPosY = 0;
-		protected $nodes = array();
-		protected $resultRects = array();
+		protected $nodes = [];
+		protected $resultRects = [];
 		
 		public function addNode($node){
 			if($node instanceof Node && !($node instanceof Paragraph)){
@@ -360,7 +360,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 			//$marginSize = $this->document->getMargin();
 			
 			// throw all rects into one array
-			$flatRects = array();
+			$flatRects = [];
 			foreach($this->nodes as $nodeId=>$node){
 				$nodeRendered = $node->render();
 				$gd = $nodeRendered['gd'];
@@ -380,7 +380,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 			$width = $docSize['width'];
 			$height = 0;
 			
-			$lineInfo = array();
+			$lineInfo = [];
 			$charsForCurrentLine = 0;
 			$charsForCurrentWord = 0;
 			$currentLineHeight = $this->lineHeight;
@@ -398,7 +398,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 						
 				if($x + $rect['width'] > $width || isset($rect['linefeed'])){ // line overflow or newline 
 					if(isset($rect['resizable']) && $rect['width']>$width){ // image too big
-						$flatRects[$i]['resizeTo'] = array('width'=>$width, 'height'=>$rect['height'] * ($width/$rect['width']));
+						$flatRects[$i]['resizeTo'] = ['width'=>$width, 'height'=>$rect['height'] * ($width/$rect['width'])];
 					}else if(!isset($rect['linefeed']) && $justWrapped){ // break long word
 						$charsForCurrentLine = $charsForCurrentWord;
 						$charsForCurrentWord = 0;
@@ -417,7 +417,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 						}
 						//$charsForCurrentLine+=1;
 						//eCHO "LF=$charsForCurrentLine;";
-						$lineInfo[] = array("chars"=>$charsForCurrentLine,"width"=>$xSafe,"height"=>$currentLineHeight);
+						$lineInfo[] = ["chars"=>$charsForCurrentLine,"width"=>$xSafe,"height"=>$currentLineHeight];
 						$height += $currentLineHeight;
 						$currentLineHeight = $this->lineHeight;
 						$wordBeginning = $i;
@@ -448,7 +448,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 			}
 
 			$charsForCurrentLine += $charsForCurrentWord;
-			$lineInfo[] = array("chars"=>$charsForCurrentLine,"width"=>$x,"height"=>$currentLineHeight);
+			$lineInfo[] = ["chars"=>$charsForCurrentLine,"width"=>$x,"height"=>$currentLineHeight];
 			$height += $currentLineHeight;
 			/*print_r($lineInfo);
 					die;*/
@@ -459,7 +459,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 			imagealphablending($gd,true);
 			
 			
-			//$resultRects = array(); // one for each childNodes
+			//$resultRects = [); // one for each childNodes
 			
 			$lineOffset = 0;
 			$lineOffsetY = 0;
@@ -478,14 +478,14 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 						imagecopy($gd,$rect['gd'],$x,$lineOffsetY+$rect['y'],$rect['x'],$rect['y'],$rect['width'],$rect['height']);
 					}
 					if(!isset($this->resultRects[$rect['nodeId']])) 
-						$this->resultRects[$rect['nodeId']]=array('gdResult'=>$gd,'rect'=>array());
+						$this->resultRects[$rect['nodeId']]=['gdResult'=>$gd,'rect'=>[]];
 					
 					//echo "NID={$rect['nodeId']} LOF=$lineOffsetY; ";
-					$this->resultRects[$rect['nodeId']]['rect'][$rect['rectId']] = array(
+					$this->resultRects[$rect['nodeId']]['rect'][$rect['rectId']] = [
 						'x'=>$x,'y'=>$lineOffsetY+$rect['y'],
 						'layerX'=>$x+$docSize['x'],'layerY'=>$lineOffsetY+$rect['y']+$docSize['y'],
 						'width'=>$rect['width'],'height'=>$rect['height']
-						);
+					];
 					$x += $rect['width'];
 				}
 				$lineOffset += $line['chars'];
@@ -513,15 +513,15 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 		public $gdContainer;
 		public function render(){
 			if(is_resource($this->gdContainer) && get_resource_type($this->gdContainer)=="gd"){
-				$rect = array(
+				$rect = [
 					'gd'=>$this->gdContainer, 
-					'rect'=>array(
-						array('x'=>0,'y'=>0,'width'=>imagesx($this->gdContainer),'height'=>imagesy($this->gdContainer))
-					)
-				);
+					'rect'=>[
+						['x'=>0,'y'=>0,'width'=>imagesx($this->gdContainer),'height'=>imagesy($this->gdContainer)]
+					]
+					];
 				return $rect;
 			}else{
-				return array('gd'=>null,'rect'=>array());
+				return ['gd'=>null,'rect'=>[]];
 			}
 		}
 	}
