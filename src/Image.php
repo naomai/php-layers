@@ -32,7 +32,7 @@ class Image {
 			}
 			
 			$this->setSize($width,$height);
-			$this->setComposer(new Composers\DefaultComposer($this));
+			$this->setComposer(new Composers\DefaultComposer());
 		}
 	}
 	
@@ -92,6 +92,7 @@ class Image {
 	 *  @since 0.1.0
 	 */
 	public function setComposer($composerObj){
+		$composerObj->setImage($this);
 		$this->composer = $composerObj;
 	}
 	

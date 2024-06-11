@@ -37,7 +37,7 @@ echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 
 // tiled view of layers
 echo "Separate view of different layers:<br/>";
-$layersImg->setComposer(new GDW\Composers\TiledComposer($layersImg));
+$layersImg->setComposer(new GDW\Composers\TiledComposer());
 $dataUrl = $layersImg->getDataUrlPNG();
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 

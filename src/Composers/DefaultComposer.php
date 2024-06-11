@@ -7,9 +7,8 @@ class DefaultComposer{
     protected $layers;
     protected $image;
     
-    public function __construct($image){
-        $this->image = $image;
-        
+    public function __construct(){
+
     }
     
     public function fillLayers($layers){
@@ -21,6 +20,11 @@ class DefaultComposer{
             $layerObj->renderer->apply();
         }
     }
+
+    public function setImage($image){
+        $this->image = $image;
+    }
+
     public function mergeAll(){
         foreach($this->layers as $layer){
             $this->preprocessLayer($layer);
