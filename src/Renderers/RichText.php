@@ -201,7 +201,7 @@ namespace Naomai\GDWrapper\Renderers{
 			}
 			//$this->layer->fill($this->backgroundColor);
 			$this->layer->paint->alphaBlend = true;
-			$this->layer->paint->rectangle($posOuter['x'],$posOuter['y'],$posOuter['x']+$posOuter['width'],$posOuter['y']+$docHeight,GDRECT_FILLED,null, $this->backgroundColor);
+			$this->layer->paint->rectangle($posOuter['x'],$posOuter['y'],$posOuter['x']+$posOuter['width'],$posOuter['y']+$docHeight,GDRECT_FILLED,GDCOLOR_DEFAULT, $this->backgroundColor);
 			$docGD = $this->layer->getGDHandle();
 			
 			foreach($toDraw as $itemDef){

@@ -35,7 +35,7 @@ $mainLayer->paint->text(250, 140, "aligned center", array('color'=>0x808080, 'al
 $mainLayer->paint->text(250, 150, "aligned right", array('color'=>0x808080, 'align' => GDALIGN_RIGHT));
 
 // alpha blending
-$mainLayer->paint->rectangle(180, 180, 320, 240, GDRECT_FILLED, null, 0x994400);
+$mainLayer->paint->rectangle(180, 180, 320, 240, GDRECT_FILLED, GDCOLOR_DEFAULT, 0x994400);
 $mainLayer->paint->text(250, 190, "Without alpha blending, the text is not composed prettily", array('color'=>0xAAAA00, 'align' => GDALIGN_CENTER));
 $mainLayer->paint->alphaBlend = true;
 $mainLayer->paint->text(250, 210, "Let's turn it on", array('color'=>0xAAAA00, 'align' => GDALIGN_CENTER, 'size' => 16));

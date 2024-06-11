@@ -15,6 +15,7 @@ namespace Naomai\GDWrapper{
 		protected $layers = array(); // stack order (push-pop)
 		protected $sizeX, $sizeY;
 		protected $layerIdCounter = 0;
+		protected $composer;
 		
 		/**
 		 *  Creates new Image object.
@@ -769,6 +770,8 @@ namespace Naomai\GDWrapper\PaintTools{
 	define('GDALIGN_CENTER', 1);
 	define('GDALIGN_RIGHT', 2);
 
+	define('GDCOLOR_DEFAULT', -1);
+
 	abstract class ToolsAbstract{
 		protected $destLayer;
 		protected $destGD;
@@ -794,17 +797,17 @@ namespace Naomai\GDWrapper\PaintTools{
 		
 			
 		// PAINT FUNCTIONS
-		public function pixel($x, $y, $color=null){
+		public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT){
 			$this->setDrawingConfig();
 			imagesetpixel($this->destGD, $x, $y, $this->c($color));
 		}
-		public function line($x1, $y1, $x2, $y2, $color=null){
+		public function line(int $x1, int $y1, int $x2, int $y2, $color=GDCOLOR_DEFAULT){
 			$this->setDrawingConfig();
 			
 			imageline ($this->destGD, $x1, $y1, $x2, $y2, $this->c($color));
 		}
 		
-		public function rectangle($x1, $y1, $x2, $y2, $type=GDRECT_BORDER, $colorBorder=null, $colorFill=null){
+		public function rectangle(int $x1, int $y1, int $x2, int $y2, int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT){
 			$this->setDrawingConfig();
 			if($type & GDRECT_FILLED){
 				$crop = 0; //ceil($this->lineSize/2);
@@ -816,11 +819,11 @@ namespace Naomai\GDWrapper\PaintTools{
 			}
 		}
 		
-		public function rectangleBox($box, $type=GDRECT_BORDER, $colorBorder=null, $colorFill=null){
+		public function rectangleBox(array $box, int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT){
 			$this->rectangle($box['x'], $box['y'], $box['x']+$box['w'], $box['y']+$box['h'], $type, $colorBorder, $colorFill);
 		}
 		
-		public function polygon($verts, $type=GDRECT_BORDER, $colorBorder=null, $colorFill=null){
+		public function polygon(array $verts, int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT){
 			$this->setDrawingConfig();
 			$gdVerts=array();
 			foreach($verts as $v){
@@ -838,16 +841,16 @@ namespace Naomai\GDWrapper\PaintTools{
 		}
 		
 		
-		public function textBM($x,$y,$text,$font=3,$color=null){
+		public function textBM(int $x,int $y, string $text, int $font=3,int $color=GDCOLOR_DEFAULT){
 			$this->setDrawingConfig();
 			imagestring($this->destGD,$font,$x,$y,$text,$this->c($color));
 		}
 		
-		public function loadBMFont($fontFile){
+		public function loadBMFont(string $fontFile){
 			return imageloadfont($fontFile);
 		}
 		
-		public function textGetBox($x,$y,$text,$params=array()){
+		public function textGetBox(int $x, int $y, string $text, array $params=array()){
 			$angle = isset($params['angle']) ? $params['angle'] : 0;
 			$font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";
 			$align = isset($params['align']) ? $params['align'] : GDALIGN_LEFT;
@@ -865,7 +868,7 @@ namespace Naomai\GDWrapper\PaintTools{
 			);
 		}
 		
-		public function text($x,$y,$text,$params=array()){
+		public function text(int $x, int $y, string $text, array $params=array()){
 			$this->setDrawingConfig();
 			$angle = isset($params['angle']) ? $params['angle'] : 0;
 			$font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";
@@ -874,7 +877,7 @@ namespace Naomai\GDWrapper\PaintTools{
 			$color = isset($params['color']) ? $params['color'] : 0x808080;
 			$box = imagettfbbox($size, $angle, $font, $text);
 			$w = $box[2] - $box[0];
-			$newX = $x - $box[6] - $w * $align / 2;
+			$newX = round($x - $box[6] - $w * $align / 2);
 			$newY = $y - $box[7];
 			$this->setDrawingConfig();
 			
@@ -892,10 +895,10 @@ namespace Naomai\GDWrapper\PaintTools{
 			imagesetthickness ($this->destGD,$this->lineSize);
 		}
 		protected function c($color){
-			return $color===null?$this->lineColor:$color;
+			return $color===GDCOLOR_DEFAULT?$this->lineColor:$color;
 		}
 		protected function b($color){
-			return $color===null?$this->borderColor:$color;
+			return $color===GDCOLOR_DEFAULT?$this->borderColor:$color;
 		}
 	}
 }
