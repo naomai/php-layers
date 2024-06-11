@@ -1,6 +1,8 @@
 <?php
-require_once("TTFInfo.php");
 
+namespace Naomai;
+
+require_once("TTFInfo.php");
 
 class FontCache{
 	public $fontDir = __DIR__ . "/../Fonts";
@@ -11,7 +13,7 @@ class FontCache{
 	protected $cacheChanged = false;
 	
 	public function __construct(){
-		$this->ttfInfoObject = new ttfInfo();
+		$this->ttfInfoObject = new \ttfInfo();
 	}
 	
 	public function __destruct(){
@@ -32,7 +34,7 @@ class FontCache{
 		while(($fontFile = readdir($dirH)) !== false) {
 			$ext = pathinfo($fontFile,PATHINFO_EXTENSION);
 			if(strcasecmp($ext,"ttf")===0){
-				$fontPath = $this->fontDir . "/" . $fontFile;
+				$fontPath = realpath($this->fontDir . "/" . $fontFile);
 				$base = pathinfo($fontFile,PATHINFO_BASENAME);
 				$fontFileSize = filesize($fontPath);
 				if(!isset($this->fontList[$base]) || $this->fontList[$base]['size'] != $fontFileSize){
@@ -41,8 +43,8 @@ class FontCache{
 					
 					$fontInfo['info'] = $this->getFileInfo($fontPath);
 					
-					$fontInfo['path']=$fontPath;
-					$fontInfo['size']=$fontFileSize;
+					$fontInfo['path'] = $fontPath;
+					$fontInfo['size'] = $fontFileSize;
 					
 					$this->fontList[$base]=$fontInfo;
 					

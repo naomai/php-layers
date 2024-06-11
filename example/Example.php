@@ -3,7 +3,7 @@ require_once "../vendor/autoload.php";
 $gdwExample = true;
 
 
-echo "<h1>GDWrapper Example</h1>\n";
+echo "<h1>PHPLayers Example</h1>\n";
 
 require_once "01BasicGD.php";
 require_once "02Layers.php";

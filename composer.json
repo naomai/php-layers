@@ -1,12 +1,12 @@
 {
-	"name": "naomai/PHP-Layers",
-	"description": "Create your images in PHP using layers, like in Photoshop ",
+	"name": "naomai/php-layers",
+	"description": "Create your images in PHP using layers, like in Photoshop",
     "require" : {
-        "php" : ">=5.3 <8.0"
+        "php" : ">=5.3"
 	},
 	"autoload": {
         "psr-4": { 
-			"Naomai\\GDWrapper\\": "src/" 
+			"Naomai\\PHPLayers\\": "src/" 
 		}
     }
 }

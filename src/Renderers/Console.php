@@ -10,7 +10,6 @@
  */
  
 require_once __DIR__ . "/../Console.class.php";
-//require_once __DIR__ .  "/../GDWrapper.php";
  
 class GDConsole extends Naomai\ANSIConsole implements GDLayerRenderer {
 	protected $layer;

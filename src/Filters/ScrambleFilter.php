@@ -9,8 +9,7 @@
  *
  */
 
-namespace Naomai\GDWrapper\Filters{
-	require_once __DIR__ . "/../GDWrapper.php";
+namespace Naomai\PHPLayers\Filters{
 	class ScrambleFilter extends FiltersAbstract{
 
 		

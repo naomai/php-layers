@@ -8,11 +8,8 @@
  * '14-xx-xx cre
  *
  */
-/*namespace{
-	require_once __DIR__ .  "/../GDWrapper.php";
-}*/
 
-namespace Naomai\GDWrapper\Renderers{
+namespace Naomai\PHPLayers\Renderers{
 	class NonOverlappingText implements ILayerRenderer {
 		public $color = 0xFF0000;
 		public $spacing = 1;

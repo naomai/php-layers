@@ -1,5 +1,5 @@
 <?php
-/** GD OOP Wrapper
+/** PHP-Layers
  * 
  * 2013 naomai
  * 
@@ -8,7 +8,8 @@
  * @version 0.2.0
  * 
  */
-namespace Naomai\GDWrapper{
+
+namespace Naomai\PHPLayers {
 	define("GDIMAGE_SUPPORTS_AFFINE", function_exists("imageaffine"));
 	 
 	class Image {
@@ -519,8 +520,8 @@ namespace Naomai\GDWrapper{
 	}
 }
 
-namespace Naomai\GDWrapper\Composers{
-	use Naomai\GDWrapper as GDW;
+namespace Naomai\PHPLayers\Composers{
+	use Naomai\PHPLayers as GDW;
 	class DefaultComposer{
 		protected $layers;
 		protected $image;
@@ -686,7 +687,7 @@ namespace Naomai\GDWrapper\Composers{
 	}
 }
 
-namespace Naomai\GDWrapper\Filters{
+namespace Naomai\PHPLayers\Filters{
 	abstract class FiltersAbstract{
 		protected $destLayer;
 		protected $destGD;
@@ -762,7 +763,7 @@ namespace Naomai\GDWrapper\Filters{
 	}
 }
 
-namespace Naomai\GDWrapper\PaintTools{
+namespace Naomai\PHPLayers\PaintTools{
 	define('GDRECT_BORDER', 1);
 	define('GDRECT_FILLED', 2);
 	define('GDRECT_FILLEDBORDER', GDRECT_BORDER|GDRECT_FILLED);
@@ -903,7 +904,7 @@ namespace Naomai\GDWrapper\PaintTools{
 	}
 }
 
-namespace Naomai\GDWrapper\Renderers{
+namespace Naomai\PHPLayers\Renderers{
 	interface ILayerRenderer{
 		public function attachLayer($layerObj);
 		public function apply();

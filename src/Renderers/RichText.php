@@ -9,14 +9,11 @@
  *
  */
 namespace{
-	//require_once __DIR__ . "/../Console.class.php";
-	//require_once __DIR__ .  "/../GDWrapper.php";
 	require_once __DIR__ .  "/../Utils/FontCache.php";
-
 }
 
-namespace Naomai\GDWrapper\Renderers{
-	use Naomai\GDWrapper\Renderers\RichTextNodes as Nodes;
+namespace Naomai\PHPLayers\Renderers{
+	use Naomai\PHPLayers\Renderers\RichTextNodes as Nodes;
 	class RichText implements ILayerRenderer {
 		protected $layer;
 		
@@ -51,7 +48,7 @@ namespace Naomai\GDWrapper\Renderers{
 		
 		
 		public function __construct(){
-			/*$this->systemFonts = new \FontCache();
+			/*$this->systemFonts = new \Naomai\FontCache();
 			$this->systemFonts->fontDir = "C:\\Windows\\Fonts";
 			$this->systemFonts->cacheFile = __DIR__ . "\SystemFonts.dat";
 			if(file_exists($this->systemFonts->cacheFile)){
@@ -59,8 +56,8 @@ namespace Naomai\GDWrapper\Renderers{
 			}else{
 				$this->systemFonts->scanFonts();
 			}*/
-			$this->wwwFonts = new \FontCache();
-			$this->wwwFonts->fontDir = __DIR__ ."/../Fonts";
+			$this->wwwFonts = new \Naomai\FontCache();
+			$this->wwwFonts->fontDir = realpath(__DIR__ ."/../Fonts");
 			$this->wwwFonts->cacheFile = __DIR__ . "/WWWFonts.dat";
 			if(file_exists($this->wwwFonts->cacheFile)){
 				$this->wwwFonts->preload();
@@ -122,7 +119,7 @@ namespace Naomai\GDWrapper\Renderers{
 			return $newNode;
 		}
 		public function insertNodeOfType($type){
-			if(is_subclass_of($type, '\Naomai\GDWrapper\Renderers\RichTextNodes\Node')){
+			if(is_subclass_of($type, '\Naomai\PHPLayers\Renderers\RichTextNodes\Node')){
 				if($this->currentParagraph == null){
 					$this->newParagraph();
 				}
@@ -216,9 +213,9 @@ namespace Naomai\GDWrapper\Renderers{
 }
 
 
-namespace Naomai\GDWrapper\Renderers\RichTextNodes{
-	use \Naomai\GDWrapper as GDW;
-	use \Naomai\GDWrapper\Renderers\RichText as GDWRT;
+namespace Naomai\PHPLayers\Renderers\RichTextNodes{
+	use \Naomai\PHPLayers as GDW;
+	use \Naomai\PHPLayers\Renderers\RichText as GDWRT;
 	
 	abstract class Node{
 		protected $parentNode, $document;

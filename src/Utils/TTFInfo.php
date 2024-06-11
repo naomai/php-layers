@@ -152,48 +152,49 @@ class ttfInfo {
     public function getFontInfo() 
     { 
 		$font_tags=array(); //n14
+        $ntOffset = null;
         $fd = fopen ($this->filename, "r"); 
-        $this->text = fread ($fd, filesize($this->filename)); 
+        $fileContent = fread ($fd, filesize($this->filename)); 
         fclose ($fd); 
 
-        $number_of_tables = hexdec($this->dec2ord($this->text[4]).$this->dec2ord($this->text[5])); 
+        $number_of_tables = hexdec($this->dec2ord($fileContent[4]).$this->dec2ord($fileContent[5])); 
 
         for ($i=0;$i<$number_of_tables;$i++) 
         { 
-            $tag = $this->text[12+$i*16].$this->text[12+$i*16+1].$this->text[12+$i*16+2].$this->text[12+$i*16+3];
+            $tag = $fileContent[12+$i*16].$fileContent[12+$i*16+1].$fileContent[12+$i*16+2].$fileContent[12+$i*16+3];
 
             if ($tag == 'name') 
             { 
-                $this->ntOffset = hexdec( 
-                    $this->dec2ord($this->text[12+$i*16+8]).$this->dec2ord($this->text[12+$i*16+8+1]). 
-                    $this->dec2ord($this->text[12+$i*16+8+2]).$this->dec2ord($this->text[12+$i*16+8+3])); 
+                $ntOffset = hexdec( 
+                    $this->dec2ord($fileContent[12+$i*16+8]).$this->dec2ord($fileContent[12+$i*16+8+1]). 
+                    $this->dec2ord($fileContent[12+$i*16+8+2]).$this->dec2ord($fileContent[12+$i*16+8+3])); 
 
-                $offset_storage_dec = hexdec($this->dec2ord($this->text[$this->ntOffset+4]).$this->dec2ord($this->text[$this->ntOffset+5])); 
-                $number_name_records_dec = hexdec($this->dec2ord($this->text[$this->ntOffset+2]).$this->dec2ord($this->text[$this->ntOffset+3])); 
+                $offset_storage_dec = hexdec($this->dec2ord($fileContent[$ntOffset+4]).$this->dec2ord($fileContent[$ntOffset+5])); 
+                $number_name_records_dec = hexdec($this->dec2ord($fileContent[$ntOffset+2]).$this->dec2ord($fileContent[$ntOffset+3])); 
             } 
         } 
 
-        $storage_dec = $offset_storage_dec + $this->ntOffset; 
+        $storage_dec = $offset_storage_dec + $ntOffset; 
         $storage_hex = strtoupper(dechex($storage_dec)); 
 
         for ($j=0;$j<$number_name_records_dec;$j++) 
         { 
-            $platform_id_dec    = hexdec($this->dec2ord($this->text[$this->ntOffset+6+$j*12+0]).$this->dec2ord($this->text[$this->ntOffset+6+$j*12+1])); 
-            $name_id_dec        = hexdec($this->dec2ord($this->text[$this->ntOffset+6+$j*12+6]).$this->dec2ord($this->text[$this->ntOffset+6+$j*12+7])); 
-            $string_length_dec    = hexdec($this->dec2ord($this->text[$this->ntOffset+6+$j*12+8]).$this->dec2ord($this->text[$this->ntOffset+6+$j*12+9])); 
-            $string_offset_dec    = hexdec($this->dec2ord($this->text[$this->ntOffset+6+$j*12+10]).$this->dec2ord($this->text[$this->ntOffset+6+$j*12+11])); 
+            $platform_id_dec    = hexdec($this->dec2ord($fileContent[$ntOffset+6+$j*12+0]).$this->dec2ord($fileContent[$ntOffset+6+$j*12+1])); 
+            $name_id_dec        = hexdec($this->dec2ord($fileContent[$ntOffset+6+$j*12+6]).$this->dec2ord($fileContent[$ntOffset+6+$j*12+7])); 
+            $string_length_dec    = hexdec($this->dec2ord($fileContent[$ntOffset+6+$j*12+8]).$this->dec2ord($fileContent[$ntOffset+6+$j*12+9])); 
+            $string_offset_dec    = hexdec($this->dec2ord($fileContent[$ntOffset+6+$j*12+10]).$this->dec2ord($fileContent[$ntOffset+6+$j*12+11])); 
 
             if (!empty($name_id_dec) and empty($font_tags[$name_id_dec])) 
             { 
                 for($l=0;$l<$string_length_dec;$l++) 
                 { 
-                    if (ord($this->text[$storage_dec+$string_offset_dec+$l]) == '0') { 
+                    if (ord($fileContent[$storage_dec+$string_offset_dec+$l]) == '0') { 
 						continue; 
 					} else { 
 						if(!isset($font_tags[$name_id_dec])) {
 							$font_tags[$name_id_dec]="";
 						} 
-						$font_tags[$name_id_dec] .= ($this->text[$storage_dec+$string_offset_dec+$l]); 
+						$font_tags[$name_id_dec] .= ($fileContent[$storage_dec+$string_offset_dec+$l]); 
 					} 
                 } 
             } 

@@ -1,5 +1,5 @@
 <?php
-use Naomai\GDWrapper as GDW;
+use Naomai\PHPLayers as GDW;
 if(!isset($gdwExample)) {header("Location: Example.php"); exit;}
 
 echo "<h3>3. Text functionality</h1>\n";
