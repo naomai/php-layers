@@ -10,7 +10,7 @@
  */
 
 namespace Naomai\PHPLayers\Filters{
-	class ScrambleFilter extends FiltersAbstract{
+	class ScrambleFilter extends FilterBase{
 
 		
 		public function apply(){
