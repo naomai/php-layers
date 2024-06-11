@@ -110,8 +110,8 @@ namespace Naomai\GDWrapper\Renderers{
 				$grpNewCenterX = ($grpNewMinX + $grpNewMaxX) / 2;
 				$grpNewCenterY = ($grpNewMinY + $grpNewMaxY) / 2;
 				
-				$grpOffsetX = $grpNewCenterX - $grpCenterX;
-				$grpOffsetY = $grpNewCenterY - $grpCenterY;
+				$grpOffsetX = round($grpNewCenterX - $grpCenterX);
+				$grpOffsetY = round($grpNewCenterY - $grpCenterY);
 				
 				foreach($rectsInt as $rectId=>$rect){
 					$this->labelsList[$rectId]['x']-=$grpOffsetX;
@@ -119,6 +119,8 @@ namespace Naomai\GDWrapper\Renderers{
 				}
 				$label['x']-=$grpOffsetX;
 				$label['y']-=$grpOffsetY;
+
+				
 
 				array_push($this->labelsList, $label);
 				
