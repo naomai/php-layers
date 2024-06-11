@@ -14,8 +14,9 @@ abstract class ToolsBase{
     protected $destLayer;
     protected $destGD;
     
-    public function __construct($layerObj){
-        $this->attachToLayer($layerObj);
+    public function __construct($layerObj=null){
+        if($layerObj !== null)
+            $this->attachToLayer($layerObj);
     }
     
     public function attachToLayer($layerObj){

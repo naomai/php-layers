@@ -9,6 +9,9 @@
 
 namespace Naomai\PHPLayers; 
 define("GDIMAGE_SUPPORTS_AFFINE", function_exists("imageaffine"));
+
+const IMAGE_RIGHT = -1;
+const IMAGE_BOTTOM = -1;
 	
 class Image {
 	protected $layers = []; // stack order (push-pop)
@@ -25,13 +28,13 @@ class Image {
 	 */	
 	public function __construct($width, $height, $createLayer = true){
 		if( is_numeric($width) && is_numeric($height)){
+			$this->setSize($width,$height);
 			if($createLayer) {
 				$bgLayer = new Layer($width,$height);
 				$bgLayer->name = "Background";
 				$this->addLayerTop($bgLayer);
 			}
 			
-			$this->setSize($width,$height);
 			$this->setComposer(new Composers\DefaultComposer());
 		}
 	}
@@ -204,6 +207,8 @@ class Image {
 			return is_resource($image) && get_resource_type($image)=="gd";
 		}
 	}
+
+
 }
 
 

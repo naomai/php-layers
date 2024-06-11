@@ -12,6 +12,7 @@ class Layer {
 	public $offsetX=0, $offsetY=0;
 	public $name = "";
 	protected $sizeX, $sizeY;
+    protected $sourceSizeX, $sourceSizeY;
 	protected $blending = Layer::GDLAYER_BLEND_NORMAL;
 	protected $opacity = 100;
 	/**
@@ -39,6 +40,10 @@ class Layer {
 		}
 		$this->sizeX = imagesx($this->gdImage);
 		$this->sizeY = imagesy($this->gdImage);
+
+        $this->sourceSizeX = $this->sizeX;
+        $this->sourceSizeY = $this->sizeY;
+
 		$this->filter = new Filters\PHPFilters($this);
 		
 		$this->paint = new PaintTools\DefaultTools($this);
@@ -87,12 +92,12 @@ class Layer {
 		}else if(count($args) == 0){
 			$x=$this->offsetX;
 			$y=$this->offsetY;
-			$w=$this->sizeX;
-			$h=$this->sizeY;
+			$w=$this->sourceSizeX;
+			$h=$this->sourceSizeY;
 		}else{
 			throw new BadFunctionCallException("Layer::select requires either 0 or 4 arguments.");
 		}
-		return new Selection($this->gdImage,$x,$y,$w,$h);
+        return new Selection($this->gdImage,$x,$y,$w,$h);
 	}
 	
 	public function pasteClip($clip,$x=0,$y=0){
@@ -108,18 +113,19 @@ class Layer {
 		imagecopy($newLayerGD, $this->gdImage, 
 			$this->offsetX,$this->offsetY, 
 			0, 0, 
-			$this->sizeX,$this->sizeY); 
+			imagesx($this->gdImage),imagesy($this->gdImage)); 
 		imagedestroy($this->gdImage);
 		$this->gdImage = $newLayerGD;
-		$this->offsetX = $this->offsetY = 0;
-		$this->sizeX = $imgSize['w'];
-		$this->sizeY = $imgSize['h'];
-		$this->paint->attachToLayer($this);
+        $this->offsetX = $this->offsetY = 0;
+        $this->sizeX = $imgSize['w'];
+        $this->sizeY = $imgSize['h'];
+        $this->paint->attachToLayer($this);
 		$this->filter->attachToLayer($this);
 	}
 	
 	public function setParentImg($parentImg){
 		$this->parentImg = $parentImg;
+        $this->transformPermanently();
 	}
 	
 	

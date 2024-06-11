@@ -8,7 +8,7 @@ class Selection{
 	protected $offsetX, $offsetY, $sizeX, $sizeY;
 	protected $offsetXorig, $offsetYorig, $sizeXorig, $sizeYorig;
 	protected $filterX,$paintX;
-	
+
 	public function __construct(&$image,$x,$y,$w,$h){
 		$this->gdImage = &$image;
 		$this->offsetX = $x;
@@ -99,14 +99,22 @@ class Selection{
 	
 	/* transformations */
 	public function move($x,$y){
+		
 		$this->transformationStart();
+		if($x==IMAGE_RIGHT)
+			$x = imagesx($this->gdImage) - $this->sizeX;
+		if($y==IMAGE_BOTTOM)
+			$y = imagesy($this->gdImage) - $this->sizeY;
+
 		$this->offsetX = $x;
 		$this->offsetY = $y;
+		return $this;
 	}
 	public function moveOffset($ox,$oy){
 		$this->transformationStart();
 		$this->offsetX += $ox;
 		$this->offsetY += $oy;
+		return $this;
 	}
 	public function resize($w,$h){
 		$this->transformationStart();
@@ -116,10 +124,12 @@ class Selection{
 		$this->subImage = $newSubImage;
 		$this->sizeX=$w;
 		$this->sizeY=$h;
+		return $this;
 	}
 	/* PHP5.5+ */
 	public function rotate($degrees){
-		if(!GDIMAGE_SUPPORTS_AFFINE) throw new RuntimeException("rotate function requires imageaffine support from PHP 5.5+");
+		if(!GDIMAGE_SUPPORTS_AFFINE) 
+			throw new RuntimeException("rotate function requires imageaffine support from PHP 5.5+");
 		$this->transformationStart();
 		$sind = sin($degrees/180*M_PI);
 		$cosd = cos($degrees/180*M_PI);
@@ -132,6 +142,7 @@ class Selection{
 		$this->sizeY = imagesy($newSubImage);
 		imagedestroy($this->subImage);
 		$this->subImage = $newSubImage;
+		return $this;
 	}
 	
 	// creates a Clip object with content of selection
