@@ -3,8 +3,6 @@
  * 
  * 2013 naomai
  * 
- * Dependencies: PHP5.3+, GD2, SPL
- *
  * @version 0.2.0
  * 
  */
@@ -518,6 +516,15 @@ namespace Naomai\PHPLayers {
 			return $this->image;		
 		}
 	}
+
+	
+	function clamp_byte($v){
+		return min(max((int)$v,0),255);
+	}
+
+	function clamp_int($v,$min,$max){
+		return min(max((int)$v,$min),$max);
+	}
 }
 
 namespace Naomai\PHPLayers\Composers{
@@ -592,7 +599,7 @@ namespace Naomai\PHPLayers\Composers{
 		// like imagecopy, but with opacity control
 		// $op: 0-transparent, 100-opaque
 		static function mergeWithOpacity($dst_im,$src_im,$dst_x,$dst_y,$src_x,$src_y,$src_w,$src_h,$op){
-			$op=\iclamp($op,0,100);
+			$op=GDW\clamp_int($op,0,100);
 			$dstImgW = imagesx($dst_im);
 			$dstImgH = imagesy($dst_im);
 			
@@ -688,6 +695,7 @@ namespace Naomai\PHPLayers\Composers{
 }
 
 namespace Naomai\PHPLayers\Filters{
+	use Naomai\PHPLayers as GDW;
 	abstract class FiltersAbstract{
 		protected $destLayer;
 		protected $destGD;
@@ -724,19 +732,19 @@ namespace Naomai\PHPLayers\Filters{
 			$this->gdFilter(IMG_FILTER_GRAYSCALE);
 		}
 		public function brightness($level){
-			$level = \iclamp($level, -255, 255);
+			$level = GDW\clamp_int($level, -255, 255);
 			$this->gdFilter(IMG_FILTER_BRIGHTNESS,$level);
 		}
 		public function contrast($level){
-			$level = \iclamp($level, -100, 100);
+			$level = GDW\clamp_int($level, -100, 100);
 			$this->gdFilter(IMG_FILTER_CONTRAST,-$level);
 		}
 		// don't trust the php docs on this one - no IMG_FILTER_GRAYSCALE involved
 		public function colorize($addR=0,$addG=0,$addB=0,$addA=0){
-			$addR = \iclamp($addR, -255, 255);
-			$addG = \iclamp($addG, -255, 255);
-			$addB = \iclamp($addB, -255, 255);
-			$addA = \iclamp($addA, 0, 127);
+			$addR = GDW\clamp_int($addR, -255, 255);
+			$addG = GDW\clamp_int($addG, -255, 255);
+			$addB = GDW\clamp_int($addB, -255, 255);
+			$addA = GDW\clamp_int($addA, 0, 127);
 			$this->gdFilter(IMG_FILTER_COLORIZE,$addR,$addG,$addB,$addA);
 		}
 		public function edge(){
@@ -910,16 +918,4 @@ namespace Naomai\PHPLayers\Renderers{
 		public function apply();
 
 	}
-}
-
-
-namespace{
-
-	function bclamp($v){
-		return min(max((int)$v,0),255);
-	}
-	function iclamp($v,$min,$max){
-		return min(max((int)$v,$min),$max);
-	}
-}
- 
+} 
