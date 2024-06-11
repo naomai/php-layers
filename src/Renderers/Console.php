@@ -1,13 +1,4 @@
 <?php
-/* GDConsole
- * 
- * 2013 namonaki14
- * 
- * Changelog:
- * 
- * '14-08-04 cre
- *
- */
  
 require_once __DIR__ . "/../Console.class.php";
  

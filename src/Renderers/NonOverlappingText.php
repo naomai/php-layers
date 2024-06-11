@@ -1,13 +1,4 @@
 <?php
-/* GDWNonOverlappingText
- * 
- * 2014 namonaki14
- * 
- * Changelog:
- * 
- * '14-xx-xx cre
- *
- */
 
 namespace Naomai\PHPLayers\Renderers{
 	class NonOverlappingText implements ILayerRenderer {

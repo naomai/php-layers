@@ -1,13 +1,5 @@
 <?php
-/* GDWRichText
- * 
- * 2014 namonaki14
- * 
- * Changelog:
- * 
- * '14-xx-xx cre
- *
- */
+
 namespace{
 	require_once __DIR__ .  "/../Utils/FontCache.php";
 }
