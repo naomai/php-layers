@@ -27,10 +27,10 @@ class TiledComposer extends DefaultComposer{
             $layerGD = $layer->getGDHandle();
             $layerDim = $layer->getLayerDimensions();
             
-            $layerGlobalX = $x * $tileWidth + $layerDim['x'] / $layersGridSize;
-            $layerGlobalY = $y * $tileHeight + $layerDim['y'] / $layersGridSize;
-            $layerGlobalW = $layerDim['w'] / $layersGridSize;
-            $layerGlobalH = $layerDim['h'] / $layersGridSize;
+            $layerGlobalX = round($x * $tileWidth + $layerDim['x'] / $layersGridSize);
+            $layerGlobalY = round($y * $tileHeight + $layerDim['y'] / $layersGridSize);
+            $layerGlobalW = round($layerDim['w'] / $layersGridSize);
+            $layerGlobalH = round($layerDim['h'] / $layersGridSize);
             
             imagecopyresampled($bgGD, $layerGD, 
                 $layerGlobalX, $layerGlobalY, 0, 0,
@@ -52,7 +52,7 @@ class TiledComposer extends DefaultComposer{
         }
         
         for($i = 1; $i < $layersGridSize; $i++){
-            imageline($bgGD,$i*$tileWidth,0,$i*$tileWidth,$imgSize['h'], 0xFF0000);
+            imageline($bgGD,round($i*$tileWidth),0,round($i*$tileWidth),$imgSize['h'], 0xFF0000);
             imageline($bgGD,0,$i*$tileHeight,$imgSize['w'],$i*$tileHeight, 0xFF0000);
         }
         
