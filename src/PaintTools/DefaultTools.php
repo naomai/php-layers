@@ -2,7 +2,7 @@
 namespace Naomai\PHPLayers\PaintTools;
 
 class DefaultTools extends ToolsBase{
-		
+        
     public $alphaBlend = false;
     public $antiAlias = false;
     public $lineColor = 0xFFFFFF;
