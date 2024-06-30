@@ -8,6 +8,7 @@
  */
 
 namespace Naomai\PHPLayers; 
+
 define("GDIMAGE_SUPPORTS_AFFINE", function_exists("imageaffine"));
 
 const IMAGE_RIGHT = -1;
@@ -15,7 +16,8 @@ const IMAGE_BOTTOM = -1;
     
 class Image {
     protected $layers = []; // stack order (push-pop)
-    protected $sizeX, $sizeY;
+    protected $sizeX;
+    protected $sizeY;
     protected $layerIdCounter = 0;
     protected $composer;
     
@@ -26,11 +28,11 @@ class Image {
      *  @param int 	$height   height of a new image
      *  @since 0.1.0
      */	
-    public function __construct($width, $height, $createLayer = true){
-        if( is_numeric($width) && is_numeric($height)){
-            $this->setSize($width,$height);
+    public function __construct($width, $height, $createLayer = true) {
+        if(is_numeric($width) && is_numeric($height)) {
+            $this->setSize($width, $height);
             if($createLayer) {
-                $bgLayer = new Layer($width,$height);
+                $bgLayer = new Layer($width, $height);
                 $bgLayer->name = "Background";
                 $this->addLayerTop($bgLayer);
             }
@@ -49,8 +51,8 @@ class Image {
      *  @return Unique layer ID
      *  @since 0.1.0
      */
-    public function addLayerTop($layerObj){
-        if(!($layerObj instanceof Layer)){
+    public function addLayerTop($layerObj) {
+        if(!($layerObj instanceof Layer)) {
             throw new InvalidArgumentException("addLayerTop: Must be a Layer object");
         }
         $this->layers[$this->layerIdCounter] = $layerObj; 
@@ -67,8 +69,8 @@ class Image {
      *  @return Unique layer ID
      *  @since 0.1.0
      */
-    public function addLayerBottom($layerObj){
-        if(!($layerObj instanceof Layer)){
+    public function addLayerBottom($layerObj) {
+        if(!($layerObj instanceof Layer)) {
             throw new InvalidArgumentException("addLayerBottom: Must be a Layer object");
         }
         $this->layers = [($this->layerIdCounter)=>$layerObj] + $this->layers; 
@@ -82,8 +84,8 @@ class Image {
      *  @return Unique layer ID for the new layer
      *  @since 0.1.0
      */
-    public function newLayer(){
-        $newLayer = new Layer($this->sizeX,$this->sizeY);
+    public function newLayer() {
+        $newLayer = new Layer($this->sizeX, $this->sizeY);
         $newLayer->clear();
         $newLayer->name = "Layer ".count($this->layers);
         return $this->addLayerTop($newLayer);
@@ -94,7 +96,7 @@ class Image {
      *  
      *  @since 0.1.0
      */
-    public function setComposer($composerObj){
+    public function setComposer($composerObj) {
         $composerObj->setImage($this);
         $this->composer = $composerObj;
     }
@@ -102,10 +104,11 @@ class Image {
     /**
      *  Gets the size of image object
      *  
-     *  @return Array containing two elements: 'w': image width, 'h': image height
+     *  @return Array containing two elements: 
+     *          'w': image width, 'h': image height
      *  @since 0.1.0
      */
-    public function getSize(){
+    public function getSize() {
         return [
             'w'=>$this->sizeX,
             'h'=>$this->sizeY
@@ -115,13 +118,14 @@ class Image {
     /**
      *  Sets the new side of image object.
      *  
-     *  This method only manipulates on the canvas size, it doesn't resize the existing content.
+     *  This method behaves like "crop" function - only manipulates
+     *  the canvas size, without resizing the existing content.
      *  
      *  @param int $w New image width
      *  @param int $h New image height
      *  @since 0.1.0
      */
-    public function setSize($w,$h){
+    public function setSize($w,$h) {
         $this->sizeX=$w;
         $this->sizeY=$h;
     }
@@ -133,7 +137,7 @@ class Image {
      *  @return Layer object matching the ID provided, or FALSE if ID is invalid.
      *  @since 0.0.0
      */
-    public function getLayerById($id){
+    public function getLayerById($id) {
         return isset($this->layers[$id]) ? $this->layers[$id] : false;
     }
     
@@ -146,7 +150,7 @@ class Image {
      *  @return Layer object containing merged content of image
      *  @since 0.1.0
      */
-    public function getMerged(){
+    public function getMerged() {
         $this->composer->fillLayers($this->layers);
         $finalLayer = $this->composer->mergeAll();
         return $finalLayer;
@@ -162,7 +166,7 @@ class Image {
      *  @return GD2 resource containing merged content of image
      *  @since 0.1.0
      */
-    public function getMergedGD(){
+    public function getMergedGD() {
         return $this->getMerged()->getGDHandle();
     }
 
@@ -172,10 +176,10 @@ class Image {
      * @return string URL containing resulting image
      */
     
-    public function getDataUrlPNG(){
+    public function getDataUrlPNG() {
         ob_start();
         imagepng($this->getMergedGD());
-        $imgd=base64_encode(ob_get_clean ());
+        $imgd=base64_encode(ob_get_clean());
         return "data:image/png;base64,".$imgd;
     }
 
@@ -184,10 +188,10 @@ class Image {
      * 
      * @return string URL containing resulting image
      */
-    public function getDataUrlJPEG(){
+    public function getDataUrlJPEG() {
         ob_start();
         imagejpeg($this->getMergedGD());
-        $imgd=base64_encode(ob_get_clean ());
+        $imgd=base64_encode(ob_get_clean());
         return "data:image/jpeg;base64,".$imgd;
     }
     
@@ -196,9 +200,9 @@ class Image {
      * 
      * @return \Naomai\PHPLayers\Image 
      */
-    public static function createFromGD($gdResource){
-        if(Image::isValidGDImage($gdResource)){
-            $gdImg = new Image(imagesx($gdResource),imagesy($gdResource),false);
+    public static function createFromGD($gdResource) {
+        if(Image::isValidGDImage($gdResource)) {
+            $gdImg = new Image(imagesx($gdResource), imagesy($gdResource), false);
             $gdImg->addLayerTop(new Layer($gdResource));
             return $gdImg;
         }
@@ -209,8 +213,8 @@ class Image {
      * 
      * @return \Naomai\PHPLayers\Image 
      */
-    public static function createFromFile($fileName){
-        if(is_string($fileName) && file_exists ($fileName)){
+    public static function createFromFile($fileName) {
+        if(is_string($fileName) && file_exists($fileName)) {
             $gdResource = imagecreatefromstring(file_get_contents($fileName));
             return self::createFromGD($gdResource);
         }
@@ -223,8 +227,8 @@ class Image {
      *  @return bool TRUE if provided value is a valid GD2 handle
      *  @since 0.2.0
      */
-    public static function isValidGDImage($image){
-        if(version_compare(PHP_VERSION, '8.0.0', '>=')){
+    public static function isValidGDImage($image) {
+        if(version_compare(PHP_VERSION, '8.0.0', '>=')) {
             return is_object($image) && ($image instanceof \GdImage);
         }else{
             return is_resource($image) && get_resource_type($image)=="gd";
@@ -238,12 +242,12 @@ class Image {
 
 
 
-function clamp_byte($v){
-    return min(max((int)$v,0),255);
+function clamp_byte($v) {
+    return min(max((int)$v, 0), 255);
 }
 
-function clamp_int($v,$min,$max){
-    return min(max((int)$v,$min),$max);
+function clamp_int($v, $min, $max) {
+    return min(max((int)$v, $min), $max);
 }
 
 
