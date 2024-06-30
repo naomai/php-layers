@@ -165,6 +165,12 @@ class Image {
 	public function getMergedGD(){
 		return $this->getMerged()->getGDHandle();
 	}
+
+	/**
+	 * Output image into Data URL, as lossless PNG format
+	 * 
+	 * @return string URL containing resulting image
+	 */
 	
 	public function getDataUrlPNG(){
 		ob_start();
@@ -172,6 +178,12 @@ class Image {
 		$imgd=base64_encode(ob_get_clean ());
 		return "data:image/png;base64,".$imgd;
 	}
+
+	/**
+	 * Output image into Data URL, as lossy JPEG
+	 * 
+	 * @return string URL containing resulting image
+	 */
 	public function getDataUrlJPEG(){
 		ob_start();
 		imagejpeg($this->getMergedGD());
@@ -179,6 +191,11 @@ class Image {
 		return "data:image/jpeg;base64,".$imgd;
 	}
 	
+	/**
+	 * Wrap existing GD image into new PHP Layers Image object
+	 * 
+	 * @return \Naomai\PHPLayers\Image 
+	 */
 	public static function createFromGD($gdResource){
 		if(Image::isValidGDImage($gdResource)){
 			$gdImg = new Image(imagesx($gdResource),imagesy($gdResource),false);
@@ -186,6 +203,12 @@ class Image {
 			return $gdImg;
 		}
 	}
+
+	/**
+	 * Import image file into new PHP Layers Image object
+	 * 
+	 * @return \Naomai\PHPLayers\Image 
+	 */
 	public static function createFromFile($fileName){
 		if(is_string($fileName) && file_exists ($fileName)){
 			$gdResource = imagecreatefromstring(file_get_contents($fileName));
