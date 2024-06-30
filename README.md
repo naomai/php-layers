@@ -6,8 +6,12 @@ Map Previews in Unreal Tournament Stats Tracker:
 
 ![Wireframe rendering of a game map](example/UTTDemo.jpg)
 
+**The project should be considered unstable for now, as I'm refactoring the code from an unhinged mess I made 10 years ago.**
+
 ## Example 1: a meme
 Create a heavily outdated meme with just a few lines of code.
+
+![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
 
 ```php
 // import image as background
@@ -31,9 +35,7 @@ $watermarkLayer->select()->move(0, GDW\IMAGE_BOTTOM)->apply();
 $dataUrl = $layersImg->getDataUrlPNG();
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
-![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
-
-The image is made of 3 layers, including the background. With additional line of code, you can show individual layers:
+The image is made of 3 layers, including the background. If we add an extra line, we can show all the layers as a split view:
 
 ```php
 $layersImg->setComposer(new GDW\Composers\TiledComposer());
