@@ -1,6 +1,9 @@
 <?php
 
-namespace Naomai\PHPLayers; 
+namespace Naomai\PHPLayers\Helpers; 
+
+use Naomai\PHPLayers\LayerStack;
+use Naomai\PHPLayers\Layer;
 
 class LayerReorderCall {
     protected LayerStack $layerStack;
@@ -19,11 +22,11 @@ class LayerReorderCall {
     }
 
     public function putAt(int $indexNew) : void {
-       $this->layerStack->putAt($indexNew, $this->layerToMove);
+        $this->layerStack->putAt($indexNew, $this->layerToMove);
     }
 
     public function putTop() : void {
-        $indexNew = $this->layerStack->getCount() - 1;
+        $indexNew = $this->layerStack->getCount();
         $this->putAt($indexNew);
     }
 
@@ -34,7 +37,7 @@ class LayerReorderCall {
 
     public function putOver(Layer $layerTarget) : void {
         $indexOfTarget = $this->layerStack->getIndexOf($layerTarget);
-        if($indexOfTarget === false){
+        if($indexOfTarget === false) {
             return; // TODO decide on handling this case
         }
         $indexNew = $indexOfTarget + 1;
@@ -43,7 +46,7 @@ class LayerReorderCall {
 
     public function putBehind(Layer $layerTarget) : void {
         $indexOfTarget = $this->layerStack->getIndexOf($layerTarget);
-        if($indexOfTarget === false){
+        if($indexOfTarget === false) {
             return; // TODO decide on handling this case
         }
         $indexNew = $indexOfTarget;

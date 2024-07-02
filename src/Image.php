@@ -30,6 +30,7 @@ class Image {
      */	
     public function __construct($width, $height, $createLayer = true) {
         if(is_numeric($width) && is_numeric($height)) {
+            $this->layers = new LayerStack();
             $this->setSize($width, $height);
             if($createLayer) {
                 $bgLayer = new Layer($width, $height);
@@ -38,7 +39,6 @@ class Image {
             }
             
             $this->setComposer(new Composers\DefaultComposer());
-            $this->layers = new LayerStack();
         }
     }
     
@@ -87,7 +87,7 @@ class Image {
     }
 
     public function reorder(Layer $layerToMove){
-        $reorderCall = new LayerReorderCall($this->layers);
+        $reorderCall = new Helpers\LayerReorderCall($this->layers);
         $reorderCall->setLayerToMove($layerToMove);
         return $reorderCall;
     }
@@ -139,7 +139,7 @@ class Image {
      *  @since 0.0.0
      */
     public function getLayerById($id) {
-        return isset($this->layers[$id]) ? $this->layers[$id] : false;
+        return $this->layers->getLayerByIndex($id);
     }
     
     /**

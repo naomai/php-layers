@@ -1,11 +1,12 @@
 <?php
-
 namespace Naomai\PHPLayers\Composers;
+
 use Naomai\PHPLayers as GDW;
 
 class TiledComposer extends DefaultComposer{
     public function mergeAll(){
-        foreach($this->layers as $layer){
+        $layers = $this->layers->getAll();
+        foreach($layers as $layer){
             $this->preprocessLayer($layer);
         }
         $imgSize = $this->image->getSize();
@@ -14,7 +15,7 @@ class TiledComposer extends DefaultComposer{
         $bgGD = $bgLayer->getGDHandle();
         //imagealphablending($bgGD,false);
         
-        $layersCount = count($this->layers);
+        $layersCount = count($layers);
         
         $layersGridSize = ceil(sqrt($layersCount));
         $tileWidth = $imgSize['w'] / $layersGridSize;
@@ -22,7 +23,7 @@ class TiledComposer extends DefaultComposer{
         
         $x=0; $y=0;
         
-        foreach($this->layers as $layer){
+        foreach($layers as $layer){
             
             $layerGD = $layer->getGDHandle();
             $layerDim = $layer->getLayerDimensions();

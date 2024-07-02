@@ -28,6 +28,10 @@ class LayerStack {
         return $layerIndex;
     }
 
+    public function getLayerByIndex(int $index) : Layer {
+        return $this->layers[$index];
+    }
+
     public function getCount() : int {
         return count($this->layers);
     }
