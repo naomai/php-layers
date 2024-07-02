@@ -51,10 +51,7 @@ class Image {
      *  @return Unique layer ID
      *  @since 0.1.0
      */
-    public function addLayerTop($layerObj) {
-        if(!($layerObj instanceof Layer)) {
-            throw new InvalidArgumentException("addLayerTop: Must be a Layer object");
-        }
+    public function addLayerTop(Layer $layerObj) {
         $this->layers[$this->layerIdCounter] = $layerObj; 
         $layerObj->setParentImg($this);
         return $this->layerIdCounter++;
@@ -69,10 +66,7 @@ class Image {
      *  @return Unique layer ID
      *  @since 0.1.0
      */
-    public function addLayerBottom($layerObj) {
-        if(!($layerObj instanceof Layer)) {
-            throw new InvalidArgumentException("addLayerBottom: Must be a Layer object");
-        }
+    public function addLayerBottom(Layer $layerObj) {
         $this->layers = [($this->layerIdCounter)=>$layerObj] + $this->layers; 
         $layerObj->setParentImg($this);
         return $this->layerIdCounter++;
