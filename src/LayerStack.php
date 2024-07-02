@@ -5,6 +5,14 @@ namespace Naomai\PHPLayers;
 class LayerStack {
     protected $layers = []; // 0=bottom
 
+    /**
+     * Inserts layerToPut into given position on the Layer Stack.
+     * If the layerToPut is already on the stack, 
+     * it's pulled from its place beforehand.
+     *
+     * @param  mixed $indexNew   Zero-based position 
+     * @param  Layer $layerToPut Layer to be inserted
+     */
     public function putAt(int $indexNew, Layer $layerToPut) : void {
         if($indexNew < 0) {
             $indexNew = $this->getCount() + $indexNew;
@@ -17,6 +25,11 @@ class LayerStack {
         array_splice($this->layers, $indexNew, 0, [$layerToPut]);
     }
 
+    /**
+     * Removes given layer object from the Layer Stack
+     *
+     * @param  Layer $layer  Layer to be removed
+     */
     public function remove(Layer $layer) : bool {
         $indexCurrent = $this->getIndexOf($layer);
         if($indexCurrent !== false) {
@@ -26,6 +39,11 @@ class LayerStack {
         return false;
     }
 
+    /**
+     * Retrieves index of given layer in Layer Stack
+     *
+     * @param  Layer $layer  Layer for index lookup
+     */
     public function getIndexOf(Layer $layer) : int|bool {
         $layerId = array_search($layer, $this->layers, true);
         if($layerId === false) {
@@ -35,6 +53,12 @@ class LayerStack {
         return $layerIndex;
     }
 
+    /**
+     * Retrieves layer of given index from Layer Stack
+     *
+     * @param  int $index  Index of layer 
+     * @retyrb ?Layer      Layer matching given index, or null if not found
+     */
     public function getLayerByIndex(int $index) : ?Layer {
         if(!isset($this->layers[$index])) {
             return null;
@@ -42,10 +66,20 @@ class LayerStack {
         return $this->layers[$index];
     }
 
+    /**
+     * Retrieves number of all layers on Layer Stack
+     *
+     * @return int Total number of layers on the stack
+     */
     public function getCount() : int {
         return count($this->layers);
     }
 
+    /**
+     * Retrieves all layers on the stack
+     *
+     * @return array  All layers in bottom-to-top order
+     */
     public function getAll() : array {
         return $this->layers;
     }
