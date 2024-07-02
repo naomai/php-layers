@@ -4,13 +4,13 @@ namespace Naomai\PHPLayers\Composers;
 use Naomai\PHPLayers as GDW;
 
 class TiledComposer extends DefaultComposer{
-    public function mergeAll(){
+    public function mergeAll() {
         $layers = $this->layers->getAll();
         foreach($layers as $layer){
             $this->preprocessLayer($layer);
         }
         $imgSize = $this->image->getSize();
-        $bgLayer = new GDW\Layer($imgSize['w'],$imgSize['h'],0,0);
+        $bgLayer = new GDW\Layer($imgSize['w'], $imgSize['h'], 0, 0);
         $bgLayer->clear();
         $bgGD = $bgLayer->getGDHandle();
         //imagealphablending($bgGD,false);
@@ -24,7 +24,6 @@ class TiledComposer extends DefaultComposer{
         $x=0; $y=0;
         
         foreach($layers as $layer){
-            
             $layerGD = $layer->getGDHandle();
             $layerDim = $layer->getLayerDimensions();
             
@@ -33,7 +32,8 @@ class TiledComposer extends DefaultComposer{
             $layerGlobalW = round($layerDim['w'] / $layersGridSize);
             $layerGlobalH = round($layerDim['h'] / $layersGridSize);
             
-            imagecopyresampled($bgGD, $layerGD, 
+            imagecopyresampled(
+                $bgGD, $layerGD, 
                 $layerGlobalX, $layerGlobalY, 0, 0,
                 $layerGlobalW, $layerGlobalH, $layerDim['w'], $layerDim['h']
             );
@@ -43,8 +43,16 @@ class TiledComposer extends DefaultComposer{
                 $layerTag .= " (".round($layer->getOpacity())."%)";
             }
             
-            imagestring($bgGD,5,$layerGlobalX+3,$layerGlobalY+$layerGlobalH - 16,$layerTag, 0x000000);
-            imagestring($bgGD,5,$layerGlobalX+2,$layerGlobalY+$layerGlobalH - 17,$layerTag, 0xFFFFFF);
+            imagestring(
+                $bgGD, 5, 
+                $layerGlobalX+3, $layerGlobalY+$layerGlobalH - 16, 
+                $layerTag, 0x000000
+            );
+            imagestring(
+                $bgGD, 5,
+                $layerGlobalX+2, $layerGlobalY+$layerGlobalH - 17,
+                $layerTag, 0xFFFFFF
+            );
             
             $x++;
             if($x >= $layersGridSize) {
@@ -52,13 +60,22 @@ class TiledComposer extends DefaultComposer{
             }
         }
         
-        for($i = 1; $i < $layersGridSize; $i++){
-            imageline($bgGD,round($i*$tileWidth),0,round($i*$tileWidth),$imgSize['h'], 0xFF0000);
-            imageline($bgGD,0,$i*$tileHeight,$imgSize['w'],$i*$tileHeight, 0xFF0000);
+        for($i = 1; $i < $layersGridSize; $i++) {
+            imageline(
+                $bgGD, 
+                round($i*$tileWidth), 0, 
+                round($i*$tileWidth), $imgSize['h'], 
+                0xFF0000
+            );
+            imageline(
+                $bgGD, 
+                0, $i*$tileHeight, 
+                $imgSize['w'], $i*$tileHeight, 
+                0xFF0000
+            );
         }
         
-        
-        imagesavealpha($bgGD,true);
+        imagesavealpha($bgGD, true);
         return $bgLayer;
     }
 }

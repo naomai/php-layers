@@ -86,7 +86,7 @@ class Image {
         return $this->layerPutTop($newLayer);
     }
 
-    public function reorder(Layer $layerToMove){
+    public function reorder(Layer $layerToMove) {
         $reorderCall = new Helpers\LayerReorderCall($this->layers);
         $reorderCall->setLayerToMove($layerToMove);
         return $reorderCall;
