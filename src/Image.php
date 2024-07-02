@@ -86,7 +86,8 @@ class Image {
             $name = "Layer ".$this->layers->getCount();
         }
         $newLayer->name = $name;
-        return $this->layerPutTop($newLayer);
+        $this->layerPutTop($newLayer);
+        return $newLayer;
     }
 
     public function reorder(Layer $layerToMove) {
