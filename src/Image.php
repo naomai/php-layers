@@ -24,7 +24,7 @@ class Image {
     /**
      *  Creates new Image object.
      *  
-     *  @param int 	$width 	  or width of a new image
+     *  @param int 	$width 	  width of a new image
      *  @param int 	$height   height of a new image
      *  @since 0.1.0
      */	
@@ -47,7 +47,7 @@ class Image {
      *  
      *  Inserted layer is drawn over the existing image.
      *  
-     *  @param [in] $layerObj Parameter_Description
+     *  @param Layer $layerObj Parameter_Description
      *  @return Unique layer ID
      *  @since 0.1.0
      */
@@ -62,7 +62,7 @@ class Image {
      *  
      *  Inserted layer is drawn behind the existing image.
      *  
-     *  @param [in] $layerObj Parameter_Description
+     *  @param Layer $layerObj Parameter_Description
      *  @return Unique layer ID
      *  @since 0.1.0
      */
@@ -75,7 +75,7 @@ class Image {
     /**
      *  Create new layer and put it on top of layer set. 
      *  
-     *  @return Unique layer ID for the new layer
+     *  @return int Unique layer ID for the new layer
      *  @since 0.1.0
      */
     public function newLayer() {
@@ -98,7 +98,7 @@ class Image {
     /**
      *  Gets the size of image object
      *  
-     *  @return Array containing two elements: 
+     *  @return array containing two elements: 
      *          'w': image width, 'h': image height
      *  @since 0.1.0
      */
@@ -157,7 +157,7 @@ class Image {
      *  The result is a GD2 image resource accessible by native PHP functions.
      *  The original layer set is left intact.
      *  
-     *  @return GD2 resource containing merged content of image
+     *  @return \GdImage|resource GD2 resource containing merged content of image
      *  @since 0.1.0
      */
     public function getMergedGD() {
@@ -192,7 +192,7 @@ class Image {
     /**
      * Wrap existing GD image into new PHP Layers Image object
      * 
-     * @return \Naomai\PHPLayers\Image 
+     * @return Image 
      */
     public static function createFromGD($gdResource) {
         if(Image::isValidGDImage($gdResource)) {
@@ -205,7 +205,7 @@ class Image {
     /**
      * Import image file into new PHP Layers Image object
      * 
-     * @return \Naomai\PHPLayers\Image 
+     * @return Image 
      */
     public static function createFromFile($fileName) {
         if(is_string($fileName) && file_exists($fileName)) {
@@ -217,7 +217,7 @@ class Image {
     /**
      * Check if variable contains valid GD2 image handle
      * 
-     *  @param object|resource $layerObj Parameter_Description
+     *  @param mixed $layerObj Parameter_Description
      *  @return bool TRUE if provided value is a valid GD2 handle
      *  @since 0.2.0
      */
