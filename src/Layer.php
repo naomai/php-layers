@@ -50,7 +50,7 @@ class Layer {
                 $this->offsetY = $args[3];
             }
         }else{
-            throw new BadFunctionCallException(
+            throw new \BadFunctionCallException(
                 "Layer::__construct requires either 1 or 2 arguments of strictly specified types."
             );
         }
@@ -111,7 +111,7 @@ class Layer {
             $w=$this->sourceSizeX;
             $h=$this->sourceSizeY;
         } else {
-            throw new BadFunctionCallException("Layer::select requires either 0 or 4 arguments.");
+            throw new \BadFunctionCallException("Layer::select requires either 0 or 4 arguments.");
         }
         return new Selection($this->gdImage, $x, $y, $w, $h);
     }
