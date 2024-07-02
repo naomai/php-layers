@@ -15,7 +15,7 @@ const IMAGE_RIGHT = -1;
 const IMAGE_BOTTOM = -1;
     
 class Image {
-    protected $layers = []; // stack order (push-pop)
+    protected LayerStack $layers; 
     protected $sizeX;
     protected $sizeY;
     protected $layerIdCounter = 0;
@@ -38,6 +38,7 @@ class Image {
             }
             
             $this->setComposer(new Composers\DefaultComposer());
+            $this->layers = new LayerStack();
         }
     }
     
@@ -52,7 +53,7 @@ class Image {
      *  @since 0.1.0
      */
     public function layerPutTop(Layer $layerObj) {
-        $this->layers[$this->layerIdCounter] = $layerObj; 
+        $this->reorder($layerObj)->putTop();
         $layerObj->setParentImg($this);
         return $this->layerIdCounter++;
     }
@@ -67,7 +68,7 @@ class Image {
      *  @since 0.1.0
      */
     public function layerPutBottom(Layer $layerObj) {
-        $this->layers = [($this->layerIdCounter)=>$layerObj] + $this->layers; 
+        $this->reorder($layerObj)->putBottom();
         $layerObj->setParentImg($this);
         return $this->layerIdCounter++;
     }
@@ -81,8 +82,14 @@ class Image {
     public function newLayer() {
         $newLayer = new Layer($this->sizeX, $this->sizeY);
         $newLayer->clear();
-        $newLayer->name = "Layer ".count($this->layers);
+        $newLayer->name = "Layer ".$this->layers->getCount();
         return $this->layerPutTop($newLayer);
+    }
+
+    public function reorder(Layer $layerToMove){
+        $reorderCall = new LayerReorderCall($this->layers);
+        $reorderCall->setLayerToMove($layerToMove);
+        return $reorderCall;
     }
     
     /**

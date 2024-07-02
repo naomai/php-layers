@@ -1,0 +1,40 @@
+<?php
+
+namespace Naomai\PHPLayers; 
+
+class LayerStack {
+    protected $layers = []; // 0=bottom
+
+    public function putAt(int $indexNew, Layer $layerToPut) : void {
+        $this->remove($layerToPut);
+        array_splice($this->layers, $indexNew, 0, [$layerToPut]);
+    }
+
+    public function remove(Layer $layer) : bool {
+        $indexCurrent = $this->getIndexOf($layer);
+        if($indexCurrent !== false) {
+            array_splice($this->layers, $indexCurrent, 1);
+            return true;
+        }
+        return false;
+    }
+
+    public function getIndexOf(Layer $layer) : int|bool {
+        $layerId = array_search($layer, $this->layers, true);
+        if($layerId === false) {
+            return false;
+        }
+        $layerIndex = array_search($layerId, array_keys($this->layers));
+        return $layerIndex;
+    }
+
+    public function getCount() : int {
+        return count($this->layers);
+    }
+
+    public function getAll() : array {
+        return $this->layers;
+    }
+
+
+}

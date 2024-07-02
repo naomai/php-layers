@@ -4,14 +4,14 @@ namespace Naomai\PHPLayers\Composers;
 use Naomai\PHPLayers as GDW;
 
 class DefaultComposer{
-    protected $layers;
+    protected GDW\LayerStack $layers;
     protected $image;
     
     public function __construct(){
 
     }
     
-    public function fillLayers($layers){
+    public function fillLayers(GDW\LayerStack $layers){
         $this->layers = $layers;
     }
     
@@ -26,23 +26,24 @@ class DefaultComposer{
     }
 
     public function mergeAll(){
-        foreach($this->layers as $layer){
+        $layers = $this->layers->getAll();
+        foreach($layers as $layer){
             $this->preprocessLayer($layer);
         }
         $imgSize = $this->image->getSize();
         $bgLayer = new GDW\Layer($imgSize['w'],$imgSize['h'],0,0);
         $bgLayer->clear();
 
-        array_unshift($this->layers,$bgLayer);
+        array_unshift($layers,$bgLayer);
         
-        while(count($this->layers) > 1){
-            $layerBottom = array_shift($this->layers);
-            $layerTop = array_shift($this->layers);
+        while(count($layers) > 1){
+            $layerBottom = array_shift($layers);
+            $layerTop = array_shift($layers);
             $newLayer = $this->mergeDown($layerTop,$layerBottom);
-            array_unshift($this->layers,$newLayer);
+            array_unshift($layers,$newLayer);
         };
     
-        return reset($this->layers);
+        return reset($layers);
     }
 
     public function mergeDown($layerTop, $layerBottom){
