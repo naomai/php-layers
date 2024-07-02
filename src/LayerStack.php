@@ -6,6 +6,13 @@ class LayerStack {
     protected $layers = []; // 0=bottom
 
     public function putAt(int $indexNew, Layer $layerToPut) : void {
+        if($indexNew < 0) {
+            $indexNew = $this->getCount() + $indexNew;
+        }
+        if($indexNew < 0) {
+            throw new \InvalidArgumentException("Negative index out of bound");
+        }
+
         $this->remove($layerToPut);
         array_splice($this->layers, $indexNew, 0, [$layerToPut]);
     }
@@ -28,7 +35,10 @@ class LayerStack {
         return $layerIndex;
     }
 
-    public function getLayerByIndex(int $index) : Layer {
+    public function getLayerByIndex(int $index) : ?Layer {
+        if(!isset($this->layers[$index])) {
+            return null;
+        }
         return $this->layers[$index];
     }
 
