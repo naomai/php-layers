@@ -34,7 +34,7 @@ class Image {
             if($createLayer) {
                 $bgLayer = new Layer($width, $height);
                 $bgLayer->name = "Background";
-                $this->addLayerTop($bgLayer);
+                $this->layerPutTop($bgLayer);
             }
             
             $this->setComposer(new Composers\DefaultComposer());
@@ -47,11 +47,11 @@ class Image {
      *  
      *  Inserted layer is drawn over the existing image.
      *  
-     *  @param Layer $layerObj Parameter_Description
-     *  @return Unique layer ID
+     *  @param Layer $layerObj layer to be put
+     *  @return int Unique layer ID
      *  @since 0.1.0
      */
-    public function addLayerTop(Layer $layerObj) {
+    public function layerPutTop(Layer $layerObj) {
         $this->layers[$this->layerIdCounter] = $layerObj; 
         $layerObj->setParentImg($this);
         return $this->layerIdCounter++;
@@ -62,11 +62,11 @@ class Image {
      *  
      *  Inserted layer is drawn behind the existing image.
      *  
-     *  @param Layer $layerObj Parameter_Description
-     *  @return Unique layer ID
+     *  @param Layer $layerObj layer to be put
+     *  @return int Unique layer ID
      *  @since 0.1.0
      */
-    public function addLayerBottom(Layer $layerObj) {
+    public function layerPutBottom(Layer $layerObj) {
         $this->layers = [($this->layerIdCounter)=>$layerObj] + $this->layers; 
         $layerObj->setParentImg($this);
         return $this->layerIdCounter++;
@@ -82,7 +82,7 @@ class Image {
         $newLayer = new Layer($this->sizeX, $this->sizeY);
         $newLayer->clear();
         $newLayer->name = "Layer ".count($this->layers);
-        return $this->addLayerTop($newLayer);
+        return $this->layerPutTop($newLayer);
     }
     
     /**
@@ -197,7 +197,7 @@ class Image {
     public static function createFromGD($gdResource) {
         if(Image::isValidGDImage($gdResource)) {
             $gdImg = new Image(imagesx($gdResource), imagesy($gdResource), false);
-            $gdImg->addLayerTop(new Layer($gdResource));
+            $gdImg->layerPutTop(new Layer($gdResource));
             return $gdImg;
         }
     }

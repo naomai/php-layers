@@ -11,14 +11,14 @@ $layersImg = GDW\Image::createFromFile(__DIR__ . "/eins.jpg");
 $watermarkLayer = GDW\Layer::createFromFile(__DIR__ . "/cheesymemz.png");
 
 // attach the layer to image, so we can move things around
-$layersImg->addLayerTop($watermarkLayer);
+$layersImg->layerPutTop($watermarkLayer);
 // we're going to move the watermark to bottom left corner
 // make selection (like CTRL+A), then drag the contents, and finally apply the result.
 $watermarkLayer->select()->move(0, GDW\IMAGE_BOTTOM)->apply();
 
 // make things more THUG
 $thugLayer = GDW\Layer::createFromFile(__DIR__ . "/thug.png");
-$layersImg->addLayerTop($thugLayer);
+$layersImg->layerPutTop($thugLayer);
 // moving to a fixed position
 $thugLayer->select()->move(290, 95)->apply();
 
