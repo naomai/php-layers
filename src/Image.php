@@ -79,10 +79,13 @@ class Image {
      *  @return int Unique layer ID for the new layer
      *  @since 0.1.0
      */
-    public function newLayer() {
+    public function newLayer(string $name=null) {
         $newLayer = new Layer($this->sizeX, $this->sizeY);
         $newLayer->clear();
-        $newLayer->name = "Layer ".$this->layers->getCount();
+        if(is_null($name)) {
+            $name = "Layer ".$this->layers->getCount();
+        }
+        $newLayer->name = $name;
         return $this->layerPutTop($newLayer);
     }
 
