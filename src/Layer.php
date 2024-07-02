@@ -90,7 +90,7 @@ class Layer {
         return $this->opacity;
     }
 
-    public function reorder() : LayerReorderCall {
+    public function reorder() : Helpers\LayerReorderCall {
         return $this->parentImg->reorder($this);
     }
     
