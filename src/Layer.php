@@ -89,6 +89,10 @@ class Layer {
     public function getOpacity() {
         return $this->opacity;
     }
+
+    public function reorder() : LayerReorderCall {
+        return $this->parentImg->reorder($this);
+    }
     
     /* PAINT */
     public function fill($color) {
