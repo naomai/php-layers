@@ -201,10 +201,10 @@ class Layer {
         return $this->select($x, $y, $w, $h);
     }
     /**
-     * Select entire layer surface
+     * Create selection 
      * 
-     * @param  int $x X-coordinate of selection top-left corner, relative to image
-     * @param  int $y Y-coordinate of selection top-left corner, relative to image
+     * @param  int $x Horizontal position of selection, relative to image
+     * @param  int $y Vertical position of selection, relative to image
      * @param  int $w Width of selection
      * @param  int $h Height of selection
      *
