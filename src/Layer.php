@@ -258,10 +258,12 @@ class Layer {
         return $l;
     }
     public static function createFromFile(string $fileName) : Layer {
-        if(file_exists($fileName)) {
-            $gdResource = imagecreatefromstring(file_get_contents($fileName));
-            return self::createFromGD($gdResource);
+        if(!file_exists($fileName)) {
+            throw new \RuntimeException("File not found: ".$fileName);
         }
+        $gdResource = imagecreatefromstring(file_get_contents($fileName));
+        return self::createFromGD($gdResource);
+        
     }
 
 }
