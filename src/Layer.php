@@ -5,31 +5,75 @@ namespace Naomai\PHPLayers;
 class Layer {
     protected $gdImage = null;
     
-    /**
-     *  @var int $offsetX Layer position on the destination image (X coordinate) 
-     *  @var int $offsetY Layer position on the destination image (Y coordinate) 
+    /** 
+     * Position on the destination image (X coordinate) 
      */
-    public $offsetX=0;
-    public $offsetY=0;
-    public $name = "";
+    public int $offsetX=0;
+
+    /** 
+     *  Position on the destination image (Y coordinate) 
+     */
+    public int $offsetY=0;
+
+    /** 
+     * Width of the image 
+     * */
     protected $sizeX;
+
+    /** 
+     * Height of the image 
+     * */
     protected $sizeY;
+
+    /** 
+     * Width of the layer surface 
+     * */
     protected $sourceSizeX;
+
+    /** 
+     * Height of the layer surface 
+     * */
     protected $sourceSizeY;
-    protected $blending = Layer::GDLAYER_BLEND_NORMAL;
-    protected $opacity = 100;
-    /**
-     *  @var GDLayerFilter	$filter 	Object providing image filters
-     *  @var int 			$paint 		Object providing drawing functions
-     *  @var int 			$renderer 	Image preprocessor used before merging with other layers
+
+    /** 
+     * Layer name 
+     * */
+    public string $name = "";
+    
+    /** 
+     * Blending type 
      */
-    public $filter;
+    protected int $blending = Layer::GDLAYER_BLEND_NORMAL;
+
+    /** 
+     *  Layer opacity 
+     * 0=transparent, 100=fully opaque
+     * */
+    protected int $opacity = 100;
+
+    /** 
+     * Object providing image filters
+     */
+    public Filters\FilterBase $filter;
+    
+    /** 
+     * Object providing drawing functions
+     */
     public $paint;
+
+    /** 
+     * Image preprocessor used before merging with other layers
+     * */
     public $renderer;
+
+    /**
+     * Image object the layer is attached to
+     */
     protected $parentImg;
     
+    /** TODO Enumeration */
     const GDLAYER_BLEND_NORMAL=0;
-    
+        
     public function __construct() {
         $args = func_get_args();
         if(count($args) === 1 
@@ -70,8 +114,13 @@ class Layer {
             imagedestroy($this->gdImage);
         }
     }
-    
-    public function getLayerDimensions() {
+        
+    /**
+     * Get dimensions and position of layer surface
+     *
+     * @return array{x: int, y: int, w: int, h:int}
+     */
+    public function getLayerDimensions() : array {
         return  [
             'x'=>$this->offsetX,
             'y'=>$this->offsetY,
@@ -79,7 +128,13 @@ class Layer {
             'h'=>$this->sizeY
         ];
     }
-    public function getGDHandle() {
+        
+    /**
+     * Get GdImage object of the layer
+     *
+     * @return GdImage
+     */
+    public function getGDHandle() : \GdImage {
         return $this->gdImage;
     }
     
