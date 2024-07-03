@@ -214,7 +214,7 @@ class Layer {
         return new Selection($this->gdImage, $x, $y, $w, $h);
     }
     
-    public function pasteClip($clip,$x=0,$y=0) {
+    public function pasteClip(Clip $clip, int $x=0, int $y=0) {
         $clipImg = $clip->getContents();
         imagecopy($this->gdImage, $clipImg, $x, $y, 0, 0, imagesx($clipImg), imagesy($clipImg));
     }
@@ -241,6 +241,7 @@ class Layer {
     
     public function setParentImg($parentImg) {
         $this->parentImg = $parentImg;
+        // expand internal GD to image size
         $this->transformPermanently();
     }
     
