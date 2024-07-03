@@ -28,7 +28,7 @@ class FontCache{
     public function scanFonts(){
         $dirH = opendir($this->fontDir);
         if(!$dirH){
-            throw new Exception("Invalid font directory");
+            throw new \Exception("Invalid font directory");
         }
         
         while(($fontFile = readdir($dirH)) !== false) {

@@ -129,7 +129,7 @@ class Selection{
     /* PHP5.5+ */
     public function rotate($degrees){
         if(!GDIMAGE_SUPPORTS_AFFINE) 
-            throw new RuntimeException("rotate function requires imageaffine support from PHP 5.5+");
+            throw new \RuntimeException("rotate function requires imageaffine support from PHP 5.5+");
         $this->transformationStart();
         $sind = sin($degrees/180*M_PI);
         $cosd = cos($degrees/180*M_PI);
