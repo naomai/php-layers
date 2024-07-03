@@ -1,17 +1,19 @@
 <?php
 namespace Naomai\PHPLayers\Filters;
-use Naomai\PHPLayers as GDW;
+
+use Naomai\PHPLayers\Layer;
 
 abstract class FilterBase {
     protected $destLayer;
     protected $destGD;
     
-    public function __construct($layerObj=null){
-        if($layerObj!==null)
+    public function __construct(?Layer $layerObj=null) {
+        if($layerObj!==null) {
             $this->attachToLayer($layerObj);
+        }
     }
     
-    public function attachToLayer($layerObj){
+    public function attachToLayer(Layer $layerObj) {
         $this->destLayer = $layerObj;
         $this->destGD = $layerObj->getGDHandle();
     }
