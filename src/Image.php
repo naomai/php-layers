@@ -205,12 +205,10 @@ class Image {
      * 
      * @return Image 
      */
-    public static function createFromGD($gdResource) {
-        if(Image::isValidGDImage($gdResource)) {
-            $gdImg = new Image(imagesx($gdResource), imagesy($gdResource), false);
-            $gdImg->layerPutTop(new Layer($gdResource));
-            return $gdImg;
-        }
+    public static function createFromGD(\GdImage $gdResource) {
+        $gdImg = new Image(imagesx($gdResource), imagesy($gdResource), false);
+        $gdImg->layerPutTop(new Layer($gdResource));
+        return $gdImg;
     }
 
     /**
@@ -231,6 +229,7 @@ class Image {
      *  @param mixed $layerObj Parameter_Description
      *  @return bool TRUE if provided value is a valid GD2 handle
      *  @since 0.2.0
+     *  @deprecated use type declarations instead
      */
     public static function isValidGDImage($image) {
         if(version_compare(PHP_VERSION, '8.0.0', '>=')) {

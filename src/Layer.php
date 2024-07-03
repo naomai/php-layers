@@ -110,9 +110,7 @@ class Layer {
     }
     
     public function __destruct() {
-        if(Image::isValidGDImage($this->gdImage)) {
-            imagedestroy($this->gdImage);
-        }
+        imagedestroy($this->gdImage);
     }
         
     /**
