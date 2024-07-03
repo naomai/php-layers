@@ -214,12 +214,12 @@ class Layer {
         return new Selection($this->gdImage, $x, $y, $w, $h);
     }
     
-    public function pasteClip(Clip $clip, int $x=0, int $y=0) {
+    public function pasteClip(Clip $clip, int $x=0, int $y=0) : void {
         $clipImg = $clip->getContents();
         imagecopy($this->gdImage, $clipImg, $x, $y, 0, 0, imagesx($clipImg), imagesy($clipImg));
     }
     
-    public function transformPermanently() {
+    public function transformPermanently() : void {
         $imgSize = $this->parentImg->getSize();
         $newLayerGD = imagecreatetruecolor($imgSize['w'], $imgSize['h']);
         imagealphablending($newLayerGD, false);
@@ -239,30 +239,26 @@ class Layer {
         $this->filter->attachToLayer($this);
     }
     
-    public function setParentImg($parentImg) {
+    public function setParentImg(Image $parentImg) : void {
         $this->parentImg = $parentImg;
         // expand internal GD to image size
         $this->transformPermanently();
     }
     
     
-    public function setRenderer($rend) {
-        if($rend instanceof Renderers\ILayerRenderer) {
-            $rend->attachLayer($this);
-            $this->renderer = $rend;
-        }
+    public function setRenderer(Renderers\ILayerRenderer $rend) : void {
+        $rend->attachLayer($this);
+        $this->renderer = $rend;
     }
     
     // CREATE
     
-    public static function createFromGD($gdResource) {
-        if(Image::isValidGDImage($gdResource)) {
-            $l = new Layer($gdResource);
-            return $l;
-        }
+    public static function createFromGD(\GdImage $gdResource) : Layer {
+        $l = new Layer($gdResource);
+        return $l;
     }
-    public static function createFromFile($fileName) {
-        if(is_string($fileName) && file_exists($fileName)) {
+    public static function createFromFile(string $fileName) : Layer {
+        if(file_exists($fileName)) {
             $gdResource = imagecreatefromstring(file_get_contents($fileName));
             return self::createFromGD($gdResource);
         }
