@@ -46,7 +46,7 @@ class Layer {
     protected int $blending = Layer::GDLAYER_BLEND_NORMAL;
 
     /** 
-     *  Layer opacity 
+     *  Layer opacity in percent
      * 0=transparent, 100=fully opaque
      * */
     protected int $opacity = 100;
@@ -69,7 +69,7 @@ class Layer {
     /**
      * Image object the layer is attached to
      */
-    protected $parentImg;
+    protected Image $parentImg;
     
     /** TODO Enumeration */
     const GDLAYER_BLEND_NORMAL=0;
@@ -137,28 +137,56 @@ class Layer {
     public function getGDHandle() : \GdImage {
         return $this->gdImage;
     }
-    
-    public function setOpacity($opacity) {
+        
+    /**
+     * Set opacity of layer in percent
+     *
+     * @param  int $opacity Opacity (0=transparent, 100=fully opaque
+     */
+    public function setOpacity(int $opacity) : void {
         $this->opacity = $opacity;
     }
-    public function getOpacity() {
+
+    /**
+     * Get opacity of layer in percent
+     *
+     * @return  int $opacity Opacity (0=transparent, 100=fully opaque)
+     */
+    public function getOpacity() : int {
         return $this->opacity;
     }
 
+    /**
+     * Get helper object for rearranging layers in Layer Stack
+     *
+     * @return Helpers\LayerReorderCall  Helper object with reorder operations
+     */
     public function reorder() : Helpers\LayerReorderCall {
         return $this->parentImg->reorder($this);
     }
     
-    /* PAINT */
-    public function fill($color) {
+    /* PAINT */    
+    /**
+     * Cover entire layer surface with $color, discarding previous content.
+     * Effectively, replaces every pixel of layer.
+     * Not to be confused with Flood Fill. 
+     *
+     * @param  int $color
+     */
+    public function fill(int $color) : void {
         imagealphablending($this->gdImage, false);
         imagefilledrectangle($this->gdImage, 0, 0, $this->sizeX-1, $this->sizeY-1, $color);
         imagealphablending($this->gdImage, true);
     }
-
-    public function clear() {
+    
+    /**
+     * Clears layer surface. The layer content is fully wiped, 
+     * resulting in fully transparent surface. 
+     */
+    public function clear() : void {
         $this->fill(0x7F000000);
     }
+    
     /* SELECT */
     public function select() {
         $args=func_get_args();
