@@ -13,3 +13,4 @@ jobs:
       uses: php-actions/phpunit@v4
       with:
         configuration: "phpunit.xml"
+        php_extensions: "gd"
