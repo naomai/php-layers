@@ -8,7 +8,7 @@ echo "<h3>4. Watermark</h1>\n";
 $layersImg = GDW\Image::createFromFile(__DIR__ . "/eins.jpg");
 
 // create watermark layer
-$watermarkLayer = GDW\Layer::createFromFile(__DIR__ . "/cheesymemz.png");
+$watermarkLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/cheesymemz.png");
 
 // attach the layer to image, so we can move things around
 $layersImg->layerPutTop($watermarkLayer);
@@ -17,7 +17,7 @@ $layersImg->layerPutTop($watermarkLayer);
 $watermarkLayer->selectWhole()->move(0, GDW\IMAGE_BOTTOM)->apply();
 
 // make things more THUG
-$thugLayer = GDW\Layer::createFromFile(__DIR__ . "/thug.png");
+$thugLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/thug.png");
 $layersImg->layerPutTop($thugLayer);
 // moving to a fixed position
 $thugLayer->selectWhole()->move(290, 95)->apply();

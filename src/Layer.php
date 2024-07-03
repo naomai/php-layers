@@ -76,37 +76,20 @@ class Layer {
         
     public function __construct() {
         $args = func_get_args();
-        if(count($args) === 1 
-            && Image::isValidGDImage($args[0])
-        ) { // (resource $img)
-            $this->gdImage = $args[0];
-
-        } elseif(count($args) >= 2 
-            && is_numeric($args[0]) 
-            && is_numeric($args[1])
-        ) { // (int $w, int $h)
-            $this->gdImage = imagecreatetruecolor($args[0], $args[1]);
-            if(count($args) === 4 
-                && is_numeric($args[2]) 
-                && is_numeric($args[3])
-            ) { // (int $w, int $h, int $x, int $y)
-                $this->offsetX = $args[2];
-                $this->offsetY = $args[3];
-            }
-        }else{
+        if(count($args) !== 0) {
             throw new \BadFunctionCallException(
-                "Layer::__construct requires either 1 or 2 arguments of strictly specified types."
+                "Layer::__construct with arguments is deprecated"
             );
         }
-        $this->sizeX = imagesx($this->gdImage);
-        $this->sizeY = imagesy($this->gdImage);
 
-        $this->sourceSizeX = $this->sizeX;
-        $this->sourceSizeY = $this->sizeY;
+        $this->setLayerDimensions(0, 0, 1, 1);
 
+        $this->gdImage = imagecreatetruecolor(1, 1);
+            
         $this->filter = new Filters\PHPFilters($this);
         
         $this->paint = new PaintTools\DefaultTools($this);
+
     }
     
     public function __destruct() {
@@ -122,9 +105,16 @@ class Layer {
         return  [
             'x'=>$this->offsetX,
             'y'=>$this->offsetY,
-            'w'=>$this->sizeX,
-            'h'=>$this->sizeY
+            'w'=>$this->sourceSizeX,
+            'h'=>$this->sourceSizeY
         ];
+    }
+
+    public function setLayerDimensions(int $offsetX, int $offsetY, int $width, int $height) {
+        $this->offsetX = $offsetX;
+        $this->offsetY = $offsetY;
+        $this->sourceSizeX = $width;
+        $this->sourceSizeY = $height;
     }
         
     /**
@@ -239,8 +229,6 @@ class Layer {
     
     public function setParentImg(Image $parentImg) : void {
         $this->parentImg = $parentImg;
-        // expand internal GD to image size
-        $this->transformPermanently();
     }
     
     
@@ -248,20 +236,24 @@ class Layer {
         $rend->attachLayer($this);
         $this->renderer = $rend;
     }
-    
-    // CREATE
-    
-    public static function createFromGD(\GdImage $gdResource) : Layer {
-        $l = new Layer($gdResource);
-        return $l;
+
+    public function importFromGD(\GdImage $gdSource) : Layer {
+        $this->gdImage = $gdSource;
+        $this->sizeX = imagesx($this->gdImage);
+        $this->sizeY = imagesy($this->gdImage);
+        $this->setLayerDimensions(0, 0, $this->sizeX, $this->sizeY);
+        $this->transformPermanently();
+        return $this;
     }
-    public static function createFromFile(string $fileName) : Layer {
+
+    public function importFromFile(string $fileName) : Layer {
         if(!file_exists($fileName)) {
             throw new \RuntimeException("File not found: ".$fileName);
         }
-        $gdResource = imagecreatefromstring(file_get_contents($fileName));
-        return self::createFromGD($gdResource);
-        
+        $gdSource = imagecreatefromstring(file_get_contents($fileName));
+        $this->importFromGD($gdSource);
+        return $this;
     }
+
 
 }

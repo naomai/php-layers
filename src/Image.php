@@ -76,11 +76,14 @@ class Image {
     /**
      *  Create new layer and put it on top of layer set. 
      *  
-     *  @return int Unique layer ID for the new layer
+     *  @return Layer new layer object
      *  @since 0.1.0
      */
-    public function newLayer(string $name=null) {
-        $newLayer = new Layer($this->sizeX, $this->sizeY);
+    public function newLayer(string $name=null) : Layer {
+        $newLayer = new Layer();
+        $newLayer->setParentImg($this);
+        $newLayer->setLayerDimensions(0, 0, $this->sizeX, $this->sizeY);
+        $newLayer->transformPermanently();
         $newLayer->clear();
         if(is_null($name)) {
             $name = "Layer ".$this->layers->getCount();
@@ -206,9 +209,12 @@ class Image {
      * @return Image 
      */
     public static function createFromGD(\GdImage $gdResource) {
-        $gdImg = new Image(imagesx($gdResource), imagesy($gdResource), false);
-        $gdImg->layerPutTop(new Layer($gdResource));
-        return $gdImg;
+        $imageObj = new Image(imagesx($gdResource), imagesy($gdResource), false);
+        $bgLayer = new Layer();
+        $bgLayer->setParentImg($imageObj);
+        $bgLayer->importFromGD($gdResource);
+        $imageObj->layerPutTop($bgLayer);
+        return $imageObj;
     }
 
     /**

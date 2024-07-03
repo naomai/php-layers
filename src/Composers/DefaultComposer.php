@@ -33,7 +33,10 @@ class DefaultComposer{
             $this->preprocessLayer($layer);
         }
         $imgSize = $this->image->getSize();
-        $bgLayer = new GDW\Layer($imgSize['w'], $imgSize['h'], 0, 0);
+        $bgLayer = new GDW\Layer();
+        $bgLayer->setParentImg($this->image);
+        $bgLayer->setLayerDimensions(0, 0, $imgSize['w'], $imgSize['h']);
+        $bgLayer->transformPermanently();
         $bgLayer->clear();
 
         array_unshift($layers, $bgLayer);
@@ -76,7 +79,9 @@ class DefaultComposer{
         );
             
         imagesavealpha($newLayerGD, true);
-        $newLayer = new GDW\Layer($newLayerGD);
+        $newLayer = new GDW\Layer();
+        $newLayer->setParentImg($this->image);
+        $newLayer->importFromGD($newLayerGD);
         return $newLayer;
     }
     
