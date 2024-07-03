@@ -14,13 +14,13 @@ $watermarkLayer = GDW\Layer::createFromFile(__DIR__ . "/cheesymemz.png");
 $layersImg->layerPutTop($watermarkLayer);
 // we're going to move the watermark to bottom left corner
 // make selection (like CTRL+A), then drag the contents, and finally apply the result.
-$watermarkLayer->select()->move(0, GDW\IMAGE_BOTTOM)->apply();
+$watermarkLayer->selectWhole()->move(0, GDW\IMAGE_BOTTOM)->apply();
 
 // make things more THUG
 $thugLayer = GDW\Layer::createFromFile(__DIR__ . "/thug.png");
 $layersImg->layerPutTop($thugLayer);
 // moving to a fixed position
-$thugLayer->select()->move(290, 95)->apply();
+$thugLayer->selectWhole()->move(290, 95)->apply();
 
 // export the image as data URL
 $dataUrl = $layersImg->getDataUrlPNG();

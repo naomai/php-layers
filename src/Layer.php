@@ -187,19 +187,30 @@ class Layer {
         $this->fill(0x7F000000);
     }
     
-    /* SELECT */
-    public function select() {
-        $args=func_get_args();
-        if(count($args) == 4) {
-            list($x,$y,$w,$h)=$args;
-        } elseif(count($args) == 0) {
-            $x=$this->offsetX;
-            $y=$this->offsetY;
-            $w=$this->sourceSizeX;
-            $h=$this->sourceSizeY;
-        } else {
-            throw new \BadFunctionCallException("Layer::select requires either 0 or 4 arguments.");
-        }
+    /* SELECT */    
+    /**
+     * Select entire layer surface
+     *
+     * @return Selection Helper object for transforming selection
+     */
+    public function selectWhole() : Selection {
+        $x=$this->offsetX;
+        $y=$this->offsetY;
+        $w=$this->sourceSizeX;
+        $h=$this->sourceSizeY;
+        return $this->select($x, $y, $w, $h);
+    }
+    /**
+     * Select entire layer surface
+     * 
+     * @param  int $x X-coordinate of selection top-left corner, relative to image
+     * @param  int $y Y-coordinate of selection top-left corner, relative to image
+     * @param  int $w Width of selection
+     * @param  int $h Height of selection
+     *
+     * @return Selection Helper object for transforming selection
+     */    
+    public function select(int $x, int $y, int $w, int $h) : Selection {
         return new Selection($this->gdImage, $x, $y, $w, $h);
     }
     
