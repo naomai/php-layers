@@ -12,7 +12,7 @@ define('GDALIGN_RIGHT', 2);
 
 define('GDCOLOR_DEFAULT', -1);
 
-abstract class ToolsBase{
+abstract class ToolsBase {
     protected $destLayer;
     protected $destGD;
     
@@ -22,7 +22,7 @@ abstract class ToolsBase{
         }
     }
     
-    public function attachToLayer($layerObj){
+    public function attachToLayer($layerObj) {
         $this->destLayer = $layerObj;
         $this->destGD = $layerObj->getGDHandle();
     }
