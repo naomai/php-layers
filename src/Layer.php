@@ -1,6 +1,6 @@
 <?php
 
-namespace Naomai\PHPLayers; 
+namespace Naomai\PHPLayers;
 
 class Layer {
     protected $gdImage = null;
@@ -18,22 +18,22 @@ class Layer {
     /** 
      * Width of the image 
      * */
-    protected $sizeX;
+    protected int $sizeX;
 
     /** 
      * Height of the image 
      * */
-    protected $sizeY;
+    protected int $sizeY;
 
     /** 
      * Width of the layer surface 
      * */
-    protected $sourceSizeX;
+    protected int $sourceSizeX;
 
     /** 
      * Height of the layer surface 
      * */
-    protected $sourceSizeY;
+    protected int $sourceSizeY;
 
     /** 
      * Layer name 
@@ -59,12 +59,12 @@ class Layer {
     /** 
      * Object providing drawing functions
      */
-    public $paint;
+    public PaintTools\ToolsBase $paint;
 
     /** 
      * Image preprocessor used before merging with other layers
      * */
-    public $renderer;
+    public ?Renderers\ILayerRenderer $renderer = null;
 
     /**
      * Image object the layer is attached to
