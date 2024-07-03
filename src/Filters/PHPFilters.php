@@ -10,12 +10,7 @@ class PHPFilters extends FilterBase{
         array_unshift($args,$this->destGD);
         call_user_func_array("imagefilter", $args);
     }
-    
-    public function updateGDSource($gdResource){
-        $this->destGD = &$gdResource;
-    }
-    
-    
+     
     /* filter defs */
     public function invert(){
         $this->gdFilter(IMG_FILTER_NEGATE);

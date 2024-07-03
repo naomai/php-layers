@@ -1,6 +1,8 @@
 <?php
 namespace Naomai\PHPLayers\PaintTools;
 
+use Naomai\PHPLayers\Layer;
+
 define('GDRECT_BORDER', 1);
 define('GDRECT_FILLED', 2);
 define('GDRECT_FILLEDBORDER', GDRECT_BORDER|GDRECT_FILLED);
@@ -14,13 +16,18 @@ abstract class ToolsBase{
     protected $destLayer;
     protected $destGD;
     
-    public function __construct($layerObj=null){
-        if($layerObj !== null)
+    public function __construct(?Layer $layerObj=null) {
+        if($layerObj !== null) {
             $this->attachToLayer($layerObj);
+        }
     }
     
     public function attachToLayer($layerObj){
         $this->destLayer = $layerObj;
         $this->destGD = $layerObj->getGDHandle();
+    }
+
+    public function attachToGD(\GdImage $gdResource) {
+        $this->destGD = $gdResource;
     }
 }

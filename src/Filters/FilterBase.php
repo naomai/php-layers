@@ -17,4 +17,8 @@ abstract class FilterBase {
         $this->destLayer = $layerObj;
         $this->destGD = $layerObj->getGDHandle();
     }
+
+    public function attachToGD(\GdImage $gdResource) {
+        $this->destGD = $gdResource;
+    }
 }

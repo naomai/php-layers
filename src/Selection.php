@@ -3,11 +3,18 @@
 namespace Naomai\PHPLayers; 
 
 class Selection{
-    protected $gdImage;
-    protected $subImage;
-    protected $offsetX, $offsetY, $sizeX, $sizeY;
-    protected $offsetXorig, $offsetYorig, $sizeXorig, $sizeYorig;
-    protected $filterX,$paintX;
+    protected \GdImage $gdImage;
+    protected ?\GdImage $subImage = null;
+    protected int $offsetX;
+    protected int $offsetY;
+    protected int $sizeX;
+    protected int $sizeY;
+    protected int $offsetXorig;
+    protected int $offsetYorig;
+    protected int $sizeXorig;
+    protected int $sizeYorig;
+    protected Filters\FilterBase $filterX;
+    protected PaintTools\ToolsBase $paintX;
 
     public function __construct(&$image,$x,$y,$w,$h){
         $this->gdImage = &$image;
@@ -16,21 +23,22 @@ class Selection{
         $this->sizeX   = $w;
         $this->sizeY   = $h;
         $this->copyOriginalSelectionDimensions();
-        $this->filterX = new Filters\PHPFilters($this->subImage);
-        $this->paintX = new PaintTools\DefaultTools($this->subImage);
+
+        $this->filterX = new Filters\PHPFilters();
+        $this->paintX = new PaintTools\DefaultTools();
     }
     
-    public function __destruct(){
-        if($this->subImage !== null){
+    public function __destruct() {
+        if($this->subImage !== null) {
             imagedestroy($this->subImage);
         }
     }
     
-    public function __get($v){
+    public function __get($v) {
         if($v=="filter") {
             $this->transformationStart();
             return $this->filterX;
-        }else if($v=="paint") {
+        } elseif($v=="paint") {
             $this->transformationStart();
             return $this->paintX;
         }
@@ -40,7 +48,8 @@ class Selection{
         $this->subImage = imagecreatetruecolor($this->sizeX,$this->sizeY);
         imagealphablending ($this->subImage,false);
         imagecopy($this->subImage,$this->gdImage,0,0,$this->offsetX,$this->offsetY,$this->sizeX,$this->sizeY);
-        $this->filterX->updateGDSource($this->subImage);
+        $this->filterX->attachToGD($this->subImage);
+        $this->paintX->attachToGD($this->subImage);
     }
     protected function blankSourceSelectionRect(){
         imagealphablending ($this->gdImage,false);
