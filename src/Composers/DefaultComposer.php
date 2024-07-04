@@ -34,6 +34,25 @@ class DefaultComposer{
         foreach($layers as $layer){
             $this->preprocessLayer($layer);
         }
+
+        if(count($layers)==1){
+            /* special case - image with one layer, no need for merging
+               just make sure the resulting layer is of the same dimensions 
+               as image */
+            $layerSingle = reset($layers);
+
+            $layerSize = $layerSingle->getDimensions();
+            $imageSize = $this->image->getSize();
+
+            if(
+                $layerSize['w'] != $imageSize['w'] 
+                || $layerSize['h'] != $imageSize['h'] 
+            ) {
+                $layerSingle->transformPermanently();
+            }
+            imagesavealpha($layerSingle->getGDHandle(), true);
+            return $layerSingle;
+        }
         
         while(count($layers) > 1){
             $layerBottom = array_shift($layers);
