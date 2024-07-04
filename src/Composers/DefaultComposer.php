@@ -191,11 +191,14 @@ class DefaultComposer{
         }
         return $imageIntermediate;
     }
+    
     protected static function blendColorsWithGamma(int $color1, int $color2, float $blend){
         $color1Linear = self::convertSRGBColorToLinearArray($color1);
         $color2Linear = self::convertSRGBColorToLinearArray($color2);
         //TODO
     }
+
+    /* implementation based on VrExtensionsJni.cpp from Android Open Source Project */
 
     private static function convertSRGBChannelToLinear(float $cs) {
         if ($cs <= 0.04045) {
