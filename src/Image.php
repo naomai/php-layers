@@ -153,7 +153,7 @@ class Image {
      *  @return Layer object containing merged content of image
      *  @since 0.1.0
      */
-    public function getMerged() {
+    public function getMerged() : Layer {
         $this->composer->setLayerStack($this->layers);
         $finalLayer = $this->composer->mergeAll();
         return $finalLayer;
@@ -169,7 +169,7 @@ class Image {
      *  @return \GdImage GD2 handle containing merged content of image
      *  @since 0.1.0
      */
-    public function getMergedGD() {
+    public function getMergedGD() : \GdImage {
         return $this->getMerged()->getGDHandle();
     }
 
@@ -179,7 +179,7 @@ class Image {
      * @return string URL containing resulting image
      */
     
-    public function getDataUrlPNG() {
+    public function getDataUrlPNG() : string {
         ob_start();
         imagepng($this->getMergedGD());
         $imgd=base64_encode(ob_get_clean());
@@ -191,7 +191,7 @@ class Image {
      * 
      * @return string URL containing resulting image
      */
-    public function getDataUrlJPEG() {
+    public function getDataUrlJPEG() : string {
         ob_start();
         imagejpeg($this->getMergedGD());
         $imgd=base64_encode(ob_get_clean());
@@ -203,7 +203,7 @@ class Image {
      * 
      * @return Image 
      */
-    public static function createFromGD(\GdImage $gdHandle) {
+    public static function createFromGD(\GdImage $gdHandle) : Image {
         $imageObj = new Image(imagesx($gdHandle), imagesy($gdHandle), true);
         $bgLayer = $imageObj->getLayerByIndex(0);
         $bgLayer->importFromGD($gdHandle);
@@ -215,7 +215,7 @@ class Image {
      * 
      * @return Image 
      */
-    public static function createFromFile(string $fileName) {
+    public static function createFromFile(string $fileName) : Image {
         if(!file_exists($fileName)) {
             throw new \RuntimeException("File not found: ".$fileName);
         }
