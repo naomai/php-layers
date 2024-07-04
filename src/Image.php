@@ -154,7 +154,7 @@ class Image {
      *  @since 0.1.0
      */
     public function getMerged() {
-        $this->composer->fillLayers($this->layers);
+        $this->composer->setLayerStack($this->layers);
         $finalLayer = $this->composer->mergeAll();
         return $finalLayer;
     }

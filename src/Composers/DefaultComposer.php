@@ -15,7 +15,7 @@ class DefaultComposer{
 
     }
     
-    public function fillLayers(LayerStack $layers) {
+    public function setLayerStack(LayerStack $layers) {
         $this->layers = $layers;
     }
     
