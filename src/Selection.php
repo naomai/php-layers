@@ -16,7 +16,7 @@ class Selection{
     protected Filters\FilterBase $filterX;
     protected PaintTools\ToolsBase $paintX;
 
-    public function __construct(Layer $layer, $x, $y, $w, $h) {
+    public function __construct(Layer $layer, int $x, int $y, int $w, int $h) {
         $this->layer = $layer;
         $this->offsetX = $x;
         $this->offsetY = $y;
@@ -34,7 +34,8 @@ class Selection{
         }
     }
     
-    public function __get($v) {
+    // reimplement as methods (#2)
+    public function __get(string $v) {
         if($v=="filter") {
             $this->transformationStart();
             return $this->filterX;
@@ -56,6 +57,7 @@ class Selection{
         $this->filterX->attachToGD($this->subImage);
         $this->paintX->attachToGD($this->subImage);
     }
+
     protected function blankSourceSelectionRect() {
         $layerGD = $this->layer->getGDHandle();
         imagealphablending($layerGD, false);
@@ -67,6 +69,7 @@ class Selection{
         );
         imagealphablending($layerGD, true);
     }
+
     protected function applySubImage() {
         $layerGD = $this->layer->getGDHandle();
         imagecopy(
@@ -103,7 +106,7 @@ class Selection{
         $this->sizeYorig   = $this->sizeY;
     }
     
-    public function fill($color) {
+    public function fill(int $color) {
         imagealphablending($this->subImage, true);
         imagefilledrectangle(
             $this->subImage,
@@ -112,7 +115,7 @@ class Selection{
             $color
         );
     }
-    public function fillOverwrite($color) {
+    public function fillOverwrite(int $color) {
         imagealphablending($this->subImage, false);
         imagefilledrectangle(
             $this->subImage,
@@ -122,7 +125,7 @@ class Selection{
         );
         imagealphablending($this->subImage, true);
     }
-    public function floodFill($x,$y,$color) {
+    public function floodFill(int $x, int $y, int $color) {
         imagealphablending($this->subImage, true);
         imagefill($this->subImage, $x, $y, $color);
     }	
@@ -132,10 +135,8 @@ class Selection{
         imagealphablending($this->subImage, true);
     }
 
-
-    
     /* transformations */
-    public function move($x,$y) {
+    public function move(int $x, int $y) : Selection {
         $this->transformationStart();
         $layerDimensions = $this->layer->getDimensions();
         if($x==Image::IMAGE_RIGHT) {
@@ -148,13 +149,13 @@ class Selection{
         $this->offsetY = $y;
         return $this;
     }
-    public function moveOffset($ox, $oy) {
+    public function moveOffset(int $ox, int $oy) : Selection {
         $this->transformationStart();
         $this->offsetX += $ox;
         $this->offsetY += $oy;
         return $this;
     }
-    public function resize($w, $h) {
+    public function resize(int $w, int $h) : Selection {
         $this->transformationStart();
         $newSubImage = imagecreatetruecolor($w, $h);
         imagecopyresampled(
@@ -171,7 +172,7 @@ class Selection{
         return $this;
     }
 
-    public function rotate($degrees) {
+    public function rotate(float $degrees) : Selection {
         $this->transformationStart();
         $sind = sin($degrees/180*M_PI);
         $cosd = cos($degrees/180*M_PI);
@@ -191,13 +192,13 @@ class Selection{
     }
     
     // creates a Clip object with content of selection
-    public function copyClip() {
+    public function copyClip() : Clip {
         $this->transformationStart();
         return new Clip($this->subImage);
         
     }
     
-    public function pasteClip($clip, $x=0, $y=0) {
+    public function pasteClip(Clip $clip, int $x=0, int $y=0) {
         $clipImg = $clip->getContents();
         $this->transformationStart();
         imagecopy(
