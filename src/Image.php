@@ -25,16 +25,14 @@ class Image {
      *  @param int 	$height   height of a new image
      *  @since 0.1.0
      */	
-    public function __construct($width, $height, $createLayer = true) {
-        if(is_numeric($width) && is_numeric($height)) {
-            $this->layers = new LayerStack();
-            $this->setSize($width, $height);
-            if($createLayer) {
-                $bgLayer = $this->newLayer("Background");
-            }
-            
-            $this->setComposer(new Composers\DefaultComposer());
+    public function __construct(int $width, int $height, $createLayer = true) {
+        $this->layers = new LayerStack();
+        $this->setSize($width, $height);
+        if($createLayer) {
+            $bgLayer = $this->newLayer("Background");
         }
+        
+        $this->setComposer(new Composers\DefaultComposer());
     }
     
     
@@ -128,7 +126,7 @@ class Image {
      *  @param int $h New image height
      *  @since 0.1.0
      */
-    public function setSize($w,$h) {
+    public function setSize(int $w, int $h) {
         $this->sizeX=$w;
         $this->sizeY=$h;
     }
@@ -139,7 +137,7 @@ class Image {
      *  @param int $id Index of the layer in Layer Stack
      *  @return ?Layer object matching the index provided, or null if invalid.
      */
-    public function getLayerByIndex($id) : ?Layer {
+    public function getLayerByIndex(int $id) : ?Layer {
         return $this->layers->getLayerByIndex($id);
     }
     
@@ -214,7 +212,7 @@ class Image {
      * 
      * @return Image 
      */
-    public static function createFromFile($fileName) {
+    public static function createFromFile(string $fileName) {
         if(!file_exists($fileName)) {
             throw new \RuntimeException("File not found: ".$fileName);
         }
@@ -230,7 +228,8 @@ class Image {
      *  @since 0.2.0
      *  @deprecated use type declarations instead
      */
-    public static function isValidGDImage($image) {
+    public static function isValidGDImage(mixed $image) {
+        trigger_error("isValidGDImage is deprecated, use ")
         if(version_compare(PHP_VERSION, '8.0.0', '>=')) {
             return is_object($image) && ($image instanceof \GdImage);
         }else{
