@@ -160,13 +160,13 @@ class Image {
     }
     
     /**
-     *  Finalize image into GD2 image resource.
+     *  Finalize image into GD2 image handle.
      *  
      *  Merges all layers in image layer set using current layer composer.
-     *  The result is a GD2 image resource accessible by native PHP functions.
+     *  The result is a GD2 image handle accessible by native PHP functions.
      *  The original layer set is left intact.
      *  
-     *  @return \GdImage|resource GD2 resource containing merged content of image
+     *  @return \GdImage GD2 handle containing merged content of image
      *  @since 0.1.0
      */
     public function getMergedGD() {
@@ -203,10 +203,10 @@ class Image {
      * 
      * @return Image 
      */
-    public static function createFromGD(\GdImage $gdResource) {
-        $imageObj = new Image(imagesx($gdResource), imagesy($gdResource), true);
+    public static function createFromGD(\GdImage $gdHandle) {
+        $imageObj = new Image(imagesx($gdHandle), imagesy($gdHandle), true);
         $bgLayer = $imageObj->getLayerByIndex(0);
-        $bgLayer->importFromGD($gdResource);
+        $bgLayer->importFromGD($gdHandle);
         return $imageObj;
     }
 
@@ -219,8 +219,8 @@ class Image {
         if(!file_exists($fileName)) {
             throw new \RuntimeException("File not found: ".$fileName);
         }
-        $gdResource = imagecreatefromstring(file_get_contents($fileName));
-        return self::createFromGD($gdResource);
+        $gdHandle = imagecreatefromstring(file_get_contents($fileName));
+        return self::createFromGD($gdHandle);
     }
 }
 
