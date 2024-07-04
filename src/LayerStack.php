@@ -78,7 +78,7 @@ class LayerStack {
     /**
      * Retrieves all layers on the stack
      *
-     * @return array  All layers in bottom-to-top order
+     * @return Layer[]  All layers in bottom-to-top order
      */
     public function getAll() : array {
         return $this->layers;

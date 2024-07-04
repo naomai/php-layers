@@ -3,7 +3,7 @@
 namespace Naomai\PHPLayers; 
 
 class Selection{
-    protected \GdImage $gdImage;
+    protected Layer $layer;
     protected ?\GdImage $subImage = null;
     protected int $offsetX;
     protected int $offsetY;
@@ -16,8 +16,8 @@ class Selection{
     protected Filters\FilterBase $filterX;
     protected PaintTools\ToolsBase $paintX;
 
-    public function __construct(&$image, $x, $y, $w, $h) {
-        $this->gdImage = &$image;
+    public function __construct(Layer $layer, $x, $y, $w, $h) {
+        $this->layer = $layer;
         $this->offsetX = $x;
         $this->offsetY = $y;
         $this->sizeX   = $w;
@@ -48,7 +48,7 @@ class Selection{
         $this->subImage = imagecreatetruecolor($this->sizeX, $this->sizeY);
         imagealphablending($this->subImage, false);
         imagecopy(
-            $this->subImage, $this->gdImage, 
+            $this->subImage, $this->layer->getGDHandle(), 
             0, 0, 
             $this->offsetX, $this->offsetY, 
             $this->sizeX, $this->sizeY
@@ -57,22 +57,29 @@ class Selection{
         $this->paintX->attachToGD($this->subImage);
     }
     protected function blankSourceSelectionRect() {
-        imagealphablending($this->gdImage, false);
+        $layerGD = $this->layer->getGDHandle();
+        imagealphablending($layerGD, false);
         imagefilledrectangle(
-            $this->gdImage,
+            $layerGD,
             $this->offsetXorig, $this->offsetYorig,
             $this->offsetXorig+$this->sizeXorig-1, $this->offsetYorig+$this->sizeYorig-1,
             0x7F000000
         );
-        imagealphablending($this->gdImage, true);
+        imagealphablending($layerGD, true);
     }
     protected function applySubImage() {
+        $layerGD = $this->layer->getGDHandle();
         imagecopy(
-            $this->gdImage, $this->subImage, 
+            $layerGD, $this->subImage, 
             $this->offsetX, $this->offsetY, 
             0, 0, 
             $this->sizeX, $this->sizeY
         );
+
+        $imageDimensions = $this->layer->getDimensions();
+
+        // drop Layer Surface coords
+        $this->layer->setSurfaceDimensions($imageDimensions['w'], $imageDimensions['h'], 0, 0);
     }
     
     protected function transformationStart() {
@@ -129,13 +136,13 @@ class Selection{
     
     /* transformations */
     public function move($x,$y) {
-        
         $this->transformationStart();
+        $layerDimensions = $this->layer->getDimensions();
         if($x==IMAGE_RIGHT) {
-            $x = imagesx($this->gdImage) - $this->sizeX;
+            $x = $layerDimensions['w'] - $this->sizeX;
         }
         if($y==IMAGE_BOTTOM) {
-            $y = imagesy($this->gdImage) - $this->sizeY;
+            $y = $layerDimensions['h'] - $this->sizeY;
         }
         $this->offsetX = $x;
         $this->offsetY = $y;

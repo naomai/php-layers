@@ -33,9 +33,7 @@ class Image {
             $this->layers = new LayerStack();
             $this->setSize($width, $height);
             if($createLayer) {
-                $bgLayer = new Layer($width, $height);
-                $bgLayer->name = "Background";
-                $this->layerPutTop($bgLayer);
+                $bgLayer = $this->newLayer("Background");
             }
             
             $this->setComposer(new Composers\DefaultComposer());
@@ -82,7 +80,7 @@ class Image {
     public function newLayer(string $name=null) : Layer {
         $newLayer = new Layer();
         $newLayer->setParentImg($this);
-        $newLayer->setLayerDimensions(0, 0, $this->sizeX, $this->sizeY);
+        $newLayer->setSurfaceDimensions($this->sizeX, $this->sizeY);
         $newLayer->transformPermanently();
         $newLayer->clear();
         if(is_null($name)) {
@@ -209,11 +207,9 @@ class Image {
      * @return Image 
      */
     public static function createFromGD(\GdImage $gdResource) {
-        $imageObj = new Image(imagesx($gdResource), imagesy($gdResource), false);
-        $bgLayer = new Layer();
-        $bgLayer->setParentImg($imageObj);
+        $imageObj = new Image(imagesx($gdResource), imagesy($gdResource), true);
+        $bgLayer = $imageObj->getLayerById(0);
         $bgLayer->importFromGD($gdResource);
-        $imageObj->layerPutTop($bgLayer);
         return $imageObj;
     }
 
@@ -223,10 +219,11 @@ class Image {
      * @return Image 
      */
     public static function createFromFile($fileName) {
-        if(is_string($fileName) && file_exists($fileName)) {
-            $gdResource = imagecreatefromstring(file_get_contents($fileName));
-            return self::createFromGD($gdResource);
+        if(!file_exists($fileName)) {
+            throw new \RuntimeException("File not found: ".$fileName);
         }
+        $gdResource = imagecreatefromstring(file_get_contents($fileName));
+        return self::createFromGD($gdResource);
     }
 
     /**

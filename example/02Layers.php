@@ -9,12 +9,10 @@ $mainLayer = $layersImg->getLayerById(0);
 $mainLayer->clear();
 
 // create new layer with image from file
-$catLayer = GDW\Layer::createFromFile(__DIR__ . "/neko.jpg");
-$catLayer->name = "Nasty cat";
+$catLayer = $layersImg->newLayer("Nasty cat")
+    ->importFromFile(__DIR__ . "/neko.jpg");
 // make it transparent
 $catLayer->setOpacity(75);
-// add it to layer set of image
-$layersImg->layerPutTop($catLayer);
 
 // let's move to the background layer, this text will be hidden behind the cat-layer
 $mainLayer->paint->text(100, 90, "I ate your snack. Now, pet me ^^", ['color'=>0x000000, 'size' => 16]);

@@ -6,34 +6,44 @@ class Layer {
     protected $gdImage = null;
     
     /** 
-     * Position on the destination image (X coordinate) 
-     */
-    public int $offsetX=0;
-
-    /** 
-     *  Position on the destination image (Y coordinate) 
-     */
-    public int $offsetY=0;
-
-    /** 
-     * Width of the image 
+     * Width of the layer buffer 
      * */
     protected int $sizeX;
 
     /** 
-     * Height of the image 
+     * Height of the layer buffer 
      * */
     protected int $sizeY;
 
     /** 
-     * Width of the layer surface 
+     * Width of the layer surface
+     * 
+     * When imported from file, this will be the width of source image
+     * Used for selectWhole function with Edge Positioning
      * */
     protected int $sourceSizeX;
 
     /** 
      * Height of the layer surface 
+     * 
+     * When imported from file, this will be the height of source image
+     * Used for selectWhole function with Edge Positioning
      * */
     protected int $sourceSizeY;
+
+    /** 
+     * Position of Layer Surface on the destination image (X coordinate) 
+     * 
+     * Used to track the position of source image on layer
+     */
+    public int $offsetX=0;
+
+    /** 
+     * Position of Layer Surface on the destination image (Y coordinate) 
+     * 
+     * Used to track the position of source image on layer
+     */
+    public int $offsetY=0;
 
     /** 
      * Layer name 
@@ -82,7 +92,8 @@ class Layer {
             );
         }
 
-        $this->setLayerDimensions(0, 0, 1, 1);
+        
+        $this->setSurfaceDimensions(1, 1);
 
         $this->gdImage = imagecreatetruecolor(1, 1);
             
@@ -101,7 +112,7 @@ class Layer {
      *
      * @return array{x: int, y: int, w: int, h:int}
      */
-    public function getLayerDimensions() : array {
+    public function getSurfaceDimensions() : array {
         return  [
             'x'=>$this->offsetX,
             'y'=>$this->offsetY,
@@ -110,17 +121,32 @@ class Layer {
         ];
     }
 
-    public function setLayerDimensions(int $offsetX, int $offsetY, int $width, int $height) {
+    /**
+     * Get dimensions and position of internal layer buffer
+     *
+     * @return array{x: int, y: int, w: int, h:int}
+     */
+    public function getDimensions() : array {
+        return  [
+            'x'=>0,
+            'y'=>0,
+            'w'=>$this->sizeX,
+            'h'=>$this->sizeY
+        ];
+    }
+
+    public function setSurfaceDimensions(int $width, int $height, int $offsetX=0, int $offsetY=0) : Layer {
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
         $this->sourceSizeX = $width;
         $this->sourceSizeY = $height;
+        return $this;
     }
         
     /**
      * Get GdImage object of the layer
      *
-     * @return GdImage
+     * @return \GdImage
      */
     public function getGDHandle() : \GdImage {
         return $this->gdImage;
@@ -155,7 +181,7 @@ class Layer {
     
     /* PAINT */    
     /**
-     * Cover entire layer surface with $color, discarding previous content.
+     * Cover entire layer buffer with $color, discarding previous content.
      * Effectively, replaces every pixel of layer.
      * Not to be confused with Flood Fill. 
      *
@@ -168,7 +194,7 @@ class Layer {
     }
     
     /**
-     * Clears layer surface. The layer content is fully wiped, 
+     * Clears layer buffer. The layer content is fully wiped, 
      * resulting in fully transparent surface. 
      */
     public function clear() : void {
@@ -177,11 +203,24 @@ class Layer {
     
     /* SELECT */    
     /**
-     * Select entire layer surface
+     * Select entire layer buffer surface
      *
      * @return Selection Helper object for transforming selection
      */
     public function selectWhole() : Selection {
+        $x=0;
+        $y=0;
+        $w=$this->sizeX;
+        $h=$this->sizeY;
+        return $this->select($x, $y, $w, $h);
+    }
+
+    /**
+     * Select Layer Surface area
+     *
+     * @return Selection Helper object for transforming selection
+     */
+    public function selectSurface() : Selection {
         $x=$this->offsetX;
         $y=$this->offsetY;
         $w=$this->sourceSizeX;
@@ -199,7 +238,7 @@ class Layer {
      * @return Selection Helper object for transforming selection
      */    
     public function select(int $x, int $y, int $w, int $h) : Selection {
-        return new Selection($this->gdImage, $x, $y, $w, $h);
+        return new Selection($this, $x, $y, $w, $h);
     }
     
     public function pasteClip(Clip $clip, int $x=0, int $y=0) : void {
@@ -214,13 +253,14 @@ class Layer {
         imagefill($newLayerGD, 0, 0, 0x7F000000);
         imagecopy(
             $newLayerGD, $this->gdImage, 
-            $this->offsetX, $this->offsetY, 
+            //$this->offsetX, $this->offsetY, 
+            0, 0,
             0, 0, 
             imagesx($this->gdImage), imagesy($this->gdImage)
         ); 
         imagedestroy($this->gdImage);
         $this->gdImage = $newLayerGD;
-        $this->offsetX = $this->offsetY = 0;
+        //$this->offsetX = $this->offsetY = 0;
         $this->sizeX = $imgSize['w'];
         $this->sizeY = $imgSize['h'];
         $this->paint->attachToLayer($this);
@@ -241,7 +281,7 @@ class Layer {
         $this->gdImage = $gdSource;
         $this->sizeX = imagesx($this->gdImage);
         $this->sizeY = imagesy($this->gdImage);
-        $this->setLayerDimensions(0, 0, $this->sizeX, $this->sizeY);
+        $this->setSurfaceDimensions($this->sizeX, $this->sizeY);
         $this->transformPermanently();
         return $this;
     }
@@ -252,6 +292,7 @@ class Layer {
         }
         $gdSource = imagecreatefromstring(file_get_contents($fileName));
         $this->importFromGD($gdSource);
+        $this->name = basename($fileName);
         return $this;
     }
 

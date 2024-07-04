@@ -1,23 +1,27 @@
 <?php
 namespace Naomai\PHPLayers\Composers;
 
-use Naomai\PHPLayers as GDW;
+use Naomai\PHPLayers;
+use Naomai\PHPLayers\Layer;
+use Naomai\PHPLayers\LayerStack;
+use Naomai\PHPLayers\Image;
+use Naomai\PHPLayers\Renderers\ILayerRenderer;
 
 class DefaultComposer{
-    protected GDW\LayerStack $layers;
-    protected $image;
+    protected LayerStack $layers;
+    protected Image $image;
     
     public function __construct() {
 
     }
     
-    public function fillLayers(GDW\LayerStack $layers) {
+    public function fillLayers(LayerStack $layers) {
         $this->layers = $layers;
     }
     
     public function preprocessLayer($layerObj) {
         if($layerObj->renderer != null 
-            && $layerObj->renderer instanceof GDW\Renderers\ILayerRenderer
+            && $layerObj->renderer instanceof ILayerRenderer
         ) {
             $layerObj->renderer->apply();
         }
@@ -32,14 +36,6 @@ class DefaultComposer{
         foreach($layers as $layer){
             $this->preprocessLayer($layer);
         }
-        $imgSize = $this->image->getSize();
-        $bgLayer = new GDW\Layer();
-        $bgLayer->setParentImg($this->image);
-        $bgLayer->setLayerDimensions(0, 0, $imgSize['w'], $imgSize['h']);
-        $bgLayer->transformPermanently();
-        $bgLayer->clear();
-
-        array_unshift($layers, $bgLayer);
         
         while(count($layers) > 1){
             $layerBottom = array_shift($layers);
@@ -47,39 +43,42 @@ class DefaultComposer{
             $newLayer = $this->mergeDown($layerTop, $layerBottom);
             array_unshift($layers, $newLayer);
         };
-    
-        return reset($layers);
+        $layerResult = reset($layers);
+        imagesavealpha($layerResult->getGDHandle(), true);
+
+        return $layerResult;
     }
 
     public function mergeDown($layerTop, $layerBottom) {
         $gdTop = $layerTop->getGDHandle();
         $gdBottom = $layerBottom->getGDHandle();
         
-        $topDimensions = $layerTop->getLayerDimensions();
-        $bottomDimensions = $layerBottom->getLayerDimensions();
+        $topDimensions = $layerTop->getDimensions();
+        $bottomDimensions = $layerBottom->getDimensions();
         $imgSize = $this->image->getSize();
         
         $newLayerGD = imagecreatetruecolor($imgSize['w'], $imgSize['h']);
+        imagealphablending($newLayerGD, false);
         imagefill($newLayerGD, 0, 0, 0x7f000000);
-        
+        imagealphablending($newLayerGD, true);
         imagecopy(
             $newLayerGD, $gdBottom, 
-            $bottomDimensions['x'], $bottomDimensions['y'], 
+            0, 0, 
             0, 0, 
             $bottomDimensions['w'], $bottomDimensions['h']
         ); 
             
-            
+         
         self::mergeWithOpacity(
             $newLayerGD, $gdTop,
-            $topDimensions['x'], $topDimensions['y'],
+            0, 0,
             0, 0,
             $topDimensions['w'], $topDimensions['h'],
             $layerTop->getOpacity()
         );
             
         imagesavealpha($newLayerGD, true);
-        $newLayer = new GDW\Layer();
+        $newLayer = new Layer();
         $newLayer->setParentImg($this->image);
         $newLayer->importFromGD($newLayerGD);
         return $newLayer;
@@ -90,7 +89,7 @@ class DefaultComposer{
     static function mergeWithOpacity(
         $dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $op
     ) {
-        $op=GDW\clamp_int($op, 0, 100);
+        $op=PHPLayers\clamp_int($op, 0, 100);
         $dstImgW = imagesx($dst_im);
         $dstImgH = imagesy($dst_im);
         

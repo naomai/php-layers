@@ -9,18 +9,15 @@ $layersImg = GDW\Image::createFromFile(__DIR__ . "/eins.jpg");
 
 // create watermark layer
 $watermarkLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/cheesymemz.png");
-
-// attach the layer to image, so we can move things around
-$layersImg->layerPutTop($watermarkLayer);
-// we're going to move the watermark to bottom left corner
-// make selection (like CTRL+A), then drag the contents, and finally apply the result.
-$watermarkLayer->selectWhole()->move(0, GDW\IMAGE_BOTTOM)->apply();
+// move the watermark to bottom left corner.
+// make selection (like CTRL+A), then drag the contents, 
+// and finally apply the result.
+$watermarkLayer->selectSurface()->move(0, GDW\IMAGE_BOTTOM)->apply();
 
 // make things more THUG
 $thugLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/thug.png");
-$layersImg->layerPutTop($thugLayer);
 // moving to a fixed position
-$thugLayer->selectWhole()->move(290, 95)->apply();
+$thugLayer->selectSurface()->move(290, 95)->apply();
 
 // export the image as data URL
 $dataUrl = $layersImg->getDataUrlPNG();
