@@ -135,7 +135,9 @@ class Layer {
         ];
     }
 
-    public function setSurfaceDimensions(int $width, int $height, int $offsetX=0, int $offsetY=0) : Layer {
+    public function setSurfaceDimensions(
+        int $width, int $height, int $offsetX=0, int $offsetY=0
+    ) : Layer {
         $this->offsetX = $offsetX;
         $this->offsetY = $offsetY;
         $this->sourceSizeX = $width;
@@ -189,7 +191,12 @@ class Layer {
      */
     public function fill(int $color) : void {
         imagealphablending($this->gdImage, false);
-        imagefilledrectangle($this->gdImage, 0, 0, $this->sizeX-1, $this->sizeY-1, $color);
+        imagefilledrectangle(
+            $this->gdImage, 
+            0, 0, 
+            $this->sizeX-1, $this->sizeY-1, 
+            $color
+        );
         imagealphablending($this->gdImage, true);
     }
     
@@ -243,7 +250,12 @@ class Layer {
     
     public function pasteClip(Clip $clip, int $x=0, int $y=0) : void {
         $clipImg = $clip->getContents();
-        imagecopy($this->gdImage, $clipImg, $x, $y, 0, 0, imagesx($clipImg), imagesy($clipImg));
+        imagecopy(
+            $this->gdImage, $clipImg, 
+            $x, $y, 
+            0, 0, 
+            imagesx($clipImg), imagesy($clipImg)
+        );
     }
     
     public function transformPermanently() : void {
