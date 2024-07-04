@@ -8,8 +8,6 @@
  */
 
 namespace Naomai\PHPLayers; 
-
-define("GDIMAGE_SUPPORTS_AFFINE", function_exists("imageaffine"));
     
 class Image {
     protected LayerStack $layers; 
