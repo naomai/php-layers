@@ -15,7 +15,6 @@ class Image {
     protected LayerStack $layers; 
     protected $sizeX;
     protected $sizeY;
-    protected $layerIdCounter = 0;
     protected $composer;
 
     const IMAGE_RIGHT = -1;
@@ -47,13 +46,13 @@ class Image {
      *  Inserted layer is drawn over the existing image.
      *  
      *  @param Layer $layerObj layer to be put
-     *  @return int Unique layer ID
+     *  @return int Index of the layer in Layer Stack
      *  @since 0.1.0
      */
     public function layerPutTop(Layer $layerObj) {
-        $this->reorder($layerObj)->putTop();
+        $index = $this->reorder($layerObj)->putTop();
         $layerObj->setParentImg($this);
-        return $this->layerIdCounter++;
+        return $index;
     }
     
     /**
@@ -66,9 +65,9 @@ class Image {
      *  @since 0.1.0
      */
     public function layerPutBottom(Layer $layerObj) {
-        $this->reorder($layerObj)->putBottom();
+        $index = $this->reorder($layerObj)->putBottom();
         $layerObj->setParentImg($this);
-        return $this->layerIdCounter++;
+        return $index;
     }
     
     /**
@@ -139,11 +138,10 @@ class Image {
     /**
      *  Gets the Layer object from layer set using unique layer ID
      *  
-     *  @param int $id Unique layer ID
-     *  @return Layer object matching the ID provided, or FALSE if ID is invalid.
-     *  @since 0.0.0
+     *  @param int $id Index of the layer in Layer Stack
+     *  @return ?Layer object matching the index provided, or null if invalid.
      */
-    public function getLayerById($id) {
+    public function getLayerByIndex($id) : ?Layer {
         return $this->layers->getLayerByIndex($id);
     }
     
@@ -208,7 +206,7 @@ class Image {
      */
     public static function createFromGD(\GdImage $gdResource) {
         $imageObj = new Image(imagesx($gdResource), imagesy($gdResource), true);
-        $bgLayer = $imageObj->getLayerById(0);
+        $bgLayer = $imageObj->getLayerByIndex(0);
         $bgLayer->importFromGD($gdResource);
         return $imageObj;
     }

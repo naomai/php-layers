@@ -6,7 +6,7 @@ echo "<h3>3. Text functionality</h1>\n";
 echo "<h4>Non-overlapping text</h1>\n";
 
 $exampleImg = new GDW\Image(400, 200);
-$mainLayer = $exampleImg->getLayerById(0);
+$mainLayer = $exampleImg->getLayerByIndex(0);
 $mainLayer->clear();
 
 $textRenderer = new GDW\Renderers\NonOverlappingText();
@@ -31,7 +31,7 @@ unset($exampleImg, $mainLayer, $dataUrl);
 echo "<h4>Rich text</h1>\n";
 
 $exampleImg = new GDW\Image(500, 200);
-$mainLayer = $exampleImg->getLayerById(0);
+$mainLayer = $exampleImg->getLayerByIndex(0);
 $mainLayer->clear();
 
 $text = new GDW\Renderers\RichText();

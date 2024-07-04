@@ -19,29 +19,34 @@ class LayerReorderCall {
      * it's pulled from its place beforehand.
      *
      * @param  mixed $indexNew Zero-based position 
+     * @return int Actual index of inserted layer on LayerStack
      */
-    public function putAt(int $indexNew) : void {
-        $this->layerStack->putAt($indexNew, $this->layerToMove);
+    public function putAt(int $indexNew) : int {
+        $indexActual = $this->layerStack->putAt($indexNew, $this->layerToMove);
+        return $indexActual;
     }
 
     /**
      * Inserts layerToMove at the top of Layer Stack.
      * If the layerToMove is already on the stack, 
      * it's pulled from its place beforehand.
+     * 
+     * @return int Actual index of inserted layer on LayerStack
      */
-    public function putTop() : void {
+    public function putTop() : int {
         $indexNew = $this->layerStack->getCount();
-        $this->putAt($indexNew);
+        return $this->putAt($indexNew);
     }
     
     /**
      * Inserts layerToMove at the bottom of Layer Stack.
      * If the layerToMove is already on the stack, 
      * it's pulled from its place beforehand.
+     * @return int Actual index of inserted layer on LayerStack
      */
-    public function putBottom() : void {
+    public function putBottom() : int {
         $indexNew = 0;
-        $this->putAt($indexNew);
+        return $this->putAt($indexNew);
     }
 
     /**
@@ -50,14 +55,15 @@ class LayerReorderCall {
      * it's pulled from its place beforehand.
      * 
      * @param Layer $layerTarget
+     * @return ?int Actual index of inserted layer on LayerStack
      */
-    public function putOver(Layer $layerTarget) : void {
+    public function putOver(Layer $layerTarget) : ?int {
         $indexOfTarget = $this->layerStack->getIndexOf($layerTarget);
         if($indexOfTarget === false) {
-            return; // TODO decide on handling this case
+            return null; // TODO decide on handling this case
         }
         $indexNew = $indexOfTarget + 1;
-        $this->putAt($indexNew);
+        return $this->putAt($indexNew);
     }
 
     /**
@@ -66,14 +72,15 @@ class LayerReorderCall {
      * it's pulled from its place beforehand.
      * 
      * @param Layer $layerTarget
+     * @return ?int Actual index of inserted layer on LayerStack
      */
-    public function putBehind(Layer $layerTarget) : void {
+    public function putBehind(Layer $layerTarget) : ?int {
         $indexOfTarget = $this->layerStack->getIndexOf($layerTarget);
         if($indexOfTarget === false) {
-            return; // TODO decide on handling this case
+            return null; // TODO decide on handling this case
         }
         $indexNew = $indexOfTarget;
-        $this->putAt($indexNew);
+        return $this->putAt($indexNew);
     }
 
     public function getLayerStack() : LayerStack {

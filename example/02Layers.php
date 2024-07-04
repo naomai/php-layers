@@ -5,7 +5,7 @@ if(!isset($gdwExample)) {header("Location: Example.php"); exit;}
 echo "<h3>2. Layers</h1>\n";
 
 $layersImg = new GDW\Image(400, 230);
-$mainLayer = $layersImg->getLayerById(0);
+$mainLayer = $layersImg->getLayerByIndex(0);
 $mainLayer->clear();
 
 // create new layer with image from file

@@ -12,17 +12,24 @@ class LayerStack {
      *
      * @param  mixed $indexNew   Zero-based position 
      * @param  Layer $layerToPut Layer to be inserted
+     * @return int Actual index of inserted layer on LayerStack
      */
-    public function putAt(int $indexNew, Layer $layerToPut) : void {
+    public function putAt(int $indexNew, Layer $layerToPut) : int {
+        $layersCount = $this->getCount();
         if($indexNew < 0) {
-            $indexNew = $this->getCount() + $indexNew;
+            $indexNew = $layersCount + $indexNew;
         }
         if($indexNew < 0) {
             throw new \InvalidArgumentException("Negative index out of bound");
         }
 
+        if($indexNew > $this->getCount()) {
+            $indexNew = $layersCount;
+        }
         $this->remove($layerToPut);
         array_splice($this->layers, $indexNew, 0, [$layerToPut]);
+
+        return $indexNew;
     }
 
     /**

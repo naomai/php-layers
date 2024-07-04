@@ -7,7 +7,7 @@ echo "<h3>1. Basic GD2 functionality</h1>\n";
 //create new image with size 500x320
 $linesImg = new GDW\Image(500, 320);
 //grab main layer (background)
-$mainLayer = $linesImg->getLayerById(0);
+$mainLayer = $linesImg->getLayerByIndex(0);
 $mainLayer->clear();
 
 // set line thickness for all further shapes

@@ -81,7 +81,7 @@ final class ReorderTest extends TestCase {
     private function createTestImageObj() : array {
         $imageObj = PHPLayers\Image::createFromFile(__DIR__ . "/BasicSquares.png");
         $layers = [];
-        $background = $imageObj->getLayerById(0);
+        $background = $imageObj->getLayerByIndex(0);
         $background->name = "_Test0";
         $layers[] = $background;
         $layers[] = $imageObj->newLayer("_Test1");
@@ -93,7 +93,7 @@ final class ReorderTest extends TestCase {
     static function extractNames($imageObj) {
         $names = [];
         $layerIndex = 0;
-        while(!is_null($layer = $imageObj->getLayerById($layerIndex))) {
+        while(!is_null($layer = $imageObj->getLayerByIndex($layerIndex))) {
             $names[] = $layer->name;
             $layerIndex++;
         }
