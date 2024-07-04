@@ -19,8 +19,8 @@ class TiledComposer extends DefaultComposer{
         $layersCount = count($layers);
         
         $layersGridSize = ceil(sqrt($layersCount));
-        $tileWidth = $imgSize['w'] / $layersGridSize;
-        $tileHeight = $imgSize['h'] / $layersGridSize;
+        $tileWidth = round($imgSize['w'] / $layersGridSize);
+        $tileHeight = round($imgSize['h'] / $layersGridSize);
         
         $x=0; $y=0;
         
@@ -36,7 +36,7 @@ class TiledComposer extends DefaultComposer{
             imagecopyresampled(
                 $layerDestGD, $layerGD, 
                 $layerGlobalX, $layerGlobalY, 0, 0,
-                $layerGlobalW, $layerGlobalH, $layerDim['w'], $layerDim['h']
+                $tileWidth, $tileHeight, $imgSize['w'], $imgSize['h']
             );
             
             $layerTag = $layer->name;
