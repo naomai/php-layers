@@ -138,10 +138,10 @@ class Selection{
     public function move($x,$y) {
         $this->transformationStart();
         $layerDimensions = $this->layer->getDimensions();
-        if($x==IMAGE_RIGHT) {
+        if($x==Image::IMAGE_RIGHT) {
             $x = $layerDimensions['w'] - $this->sizeX;
         }
-        if($y==IMAGE_BOTTOM) {
+        if($y==Image::IMAGE_BOTTOM) {
             $y = $layerDimensions['h'] - $this->sizeY;
         }
         $this->offsetX = $x;

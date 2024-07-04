@@ -10,9 +10,6 @@
 namespace Naomai\PHPLayers; 
 
 define("GDIMAGE_SUPPORTS_AFFINE", function_exists("imageaffine"));
-
-const IMAGE_RIGHT = -1;
-const IMAGE_BOTTOM = -1;
     
 class Image {
     protected LayerStack $layers; 
@@ -20,6 +17,9 @@ class Image {
     protected $sizeY;
     protected $layerIdCounter = 0;
     protected $composer;
+
+    const IMAGE_RIGHT = -1;
+    const IMAGE_BOTTOM = -1;
     
     /**
      *  Creates new Image object.
