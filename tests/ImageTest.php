@@ -38,7 +38,9 @@ final class ImageTest extends TestCase {
         return $imageObj;
     }
 
-    #[Depends('testCreateFromFile')]
+    /**
+    * @depends testCreateFromFile
+    */
     public function testContentFromFile(Image $imageObj) : void {
         $mergedGd = $imageObj->getMergedGD();
 
@@ -58,7 +60,9 @@ final class ImageTest extends TestCase {
         $this->assertEquals(0x3F00FFFF, $pixelTransparency); 
     }
     
-    #[Depends('testCreateFromFile')]
+    /**
+    * @depends testCreateFromFile
+    */
     public function testImageSetSize(Image $imageObj) : void {
         // expand canvas
         $imageObj->setSize(65, 75);
@@ -82,7 +86,9 @@ final class ImageTest extends TestCase {
         $this->assertEquals(20, imagesx($gdLarger));
         $this->assertEquals(15, imagesy($gdLarger));
     }
-    #[Depends('testCreateFromFile')]
+    /**
+    * @depends testCreateFromFile
+    */
     public function testImageSetSizeInvalid(Image $imageObj) : void {
         // invalid params
         $exceptionClass="";
@@ -119,7 +125,9 @@ final class ImageTest extends TestCase {
     }
     
 
-    #[Depends('testCreateFromGD')]
+    /**
+    * @depends testCreateFromGD
+    */
     public function testNewLayer(Image $imageObj) : Layer  {
         $layer = $imageObj->newLayer("TestLayer");
         $this->assertInstanceOf(Layer::class, $layer);
