@@ -16,40 +16,48 @@ final class ReorderTest extends TestCase {
     public function testLayerReorderTopBottom() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $layers[0]->reorder()->putTop();
+        $index = $layers[0]->reorder()->putTop();
         $names = self::extractNames($imageObj);
+        $this->assertEquals(2, $index);
         $this->assertEquals(["_Test1", "_Test2", "_Test0"], $names);
 
-        $layers[2]->reorder()->putBottom();
+        $index = $layers[2]->reorder()->putBottom();
         $names = self::extractNames($imageObj);
+        $this->assertEquals(0, $index);
         $this->assertEquals(["_Test2", "_Test1", "_Test0"], $names);
 
-        $imageObj->reorder($layers[1])->putTop();
+        $index = $imageObj->reorder($layers[1])->putTop();
         $names = self::extractNames($imageObj);
+        $this->assertEquals(2, $index);
         $this->assertEquals(["_Test2", "_Test0", "_Test1"], $names);
 
-        $imageObj->reorder($layers[0])->putBottom();
+        $index = $imageObj->reorder($layers[0])->putBottom();
         $names = self::extractNames($imageObj);
+        $this->assertEquals(0, $index);
         $this->assertEquals(["_Test0", "_Test2", "_Test1"], $names);
     }
 
     public function testLayerReorderRelative() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $layers[0]->reorder()->putOver($layers[2]);
+        $index = $layers[0]->reorder()->putOver($layers[2]);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(2, $index);
         $this->assertEquals(["_Test1", "_Test2", "_Test0"], $names);
 
-        $layers[0]->reorder()->putBehind($layers[2]);
+        $index = $layers[0]->reorder()->putBehind($layers[2]);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(1, $index);
         $this->assertEquals(["_Test1", "_Test0", "_Test2"], $names);
 
-        $imageObj->reorder($layers[1])->putOver($layers[2]);
+        $index = $imageObj->reorder($layers[1])->putOver($layers[2]);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(2, $index);
         $this->assertEquals(["_Test0", "_Test2", "_Test1"], $names);
 
-        $imageObj->reorder($layers[2])->putBehind($layers[0]);
+        $index = $imageObj->reorder($layers[2])->putBehind($layers[0]);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(0, $index);
         $this->assertEquals(["_Test2", "_Test0", "_Test1"], $names);
     }
 
@@ -57,22 +65,29 @@ final class ReorderTest extends TestCase {
     public function testLayerReorderAbsolute() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $layers[0]->reorder()->putAt(2);
+        $index = $layers[0]->reorder()->putAt(2);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(2, $index);
         $this->assertEquals(["_Test1", "_Test2", "_Test0"], $names);
 
-        $layers[1]->reorder()->putAt(1);
+        $index = $layers[1]->reorder()->putAt(1);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(1, $index);
         $this->assertEquals(["_Test2", "_Test1", "_Test0"], $names);
 
-        $layers[2]->reorder()->putAt(5);
+        //index beyond stack size - should be placed as last
+        $index = $layers[2]->reorder()->putAt(5);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(2, $index);
         $this->assertEquals(["_Test1", "_Test0", "_Test2"], $names);
 
-        $layers[1]->reorder()->putAt(-1);
+        //negative index - count from the end of stack
+        $index = $layers[1]->reorder()->putAt(-1);
         $names = self::extractNames($imageObj);
+        $this->assertEquals(2, $index);
         $this->assertEquals(["_Test0", "_Test2", "_Test1"], $names);
 
+        //negative index beyond stack size - exception
         $this->expectException(\InvalidArgumentException::class);
         $layers[1]->reorder()->putAt(-4);
 
