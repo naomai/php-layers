@@ -219,30 +219,7 @@ class Image {
         $gdResource = imagecreatefromstring(file_get_contents($fileName));
         return self::createFromGD($gdResource);
     }
-
-    /**
-     * Check if variable contains valid GD2 image handle
-     * 
-     *  @param mixed $layerObj Parameter_Description
-     *  @return bool TRUE if provided value is a valid GD2 handle
-     *  @since 0.2.0
-     *  @deprecated use type declarations instead
-     */
-    public static function isValidGDImage(mixed $image) {
-        trigger_error("isValidGDImage is deprecated, use ")
-        if(version_compare(PHP_VERSION, '8.0.0', '>=')) {
-            return is_object($image) && ($image instanceof \GdImage);
-        }else{
-            return is_resource($image) && get_resource_type($image)=="gd";
-        }
-    }
-
-
 }
-
-
-
-
 
 function clamp_byte($v) {
     return min(max((int)$v, 0), 255);
@@ -251,7 +228,3 @@ function clamp_byte($v) {
 function clamp_int($v, $min, $max) {
     return min(max((int)$v, $min), $max);
 }
-
-
-
-
