@@ -127,6 +127,9 @@ class Image {
      *  @since 0.1.0
      */
     public function setSize(int $w, int $h) {
+        if($w<=0 || $h<=0) {
+            throw new \InvalidArgumentException("Invalid image size, dimensions should be > 0");
+        }
         $this->sizeX=$w;
         $this->sizeY=$h;
     }
