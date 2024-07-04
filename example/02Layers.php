@@ -30,7 +30,12 @@ $catLayer->paint->text(150, 175, "i hid a mesg frum u ^.^", ['color'=>0x0000FF, 
 
 
 
+$tStart = microtime(true);
 $dataUrl = $layersImg->getDataUrlPNG();
+$tEnd = microtime(true);
+
+printf("Tool %d ms", ($tEnd-$tStart)*1000);
+
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 
 // tiled view of layers

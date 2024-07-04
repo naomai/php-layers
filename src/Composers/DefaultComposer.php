@@ -19,15 +19,13 @@ class DefaultComposer{
         $this->layers = $layers;
     }
     
-    public function preprocessLayer($layerObj) {
-        if($layerObj->renderer != null 
-            && $layerObj->renderer instanceof ILayerRenderer
-        ) {
+    public function preprocessLayer(Layer $layerObj) {
+        if($layerObj->renderer !== null) {
             $layerObj->renderer->apply();
         }
     }
 
-    public function setImage($image) {
+    public function setImage(Image $image) {
         $this->image = $image;
     }
 
@@ -49,7 +47,7 @@ class DefaultComposer{
         return $layerResult;
     }
 
-    public function mergeDown($layerTop, $layerBottom) {
+    public function mergeDown(Layer $layerTop, Layer $layerBottom) : Layer {
         $gdTop = $layerTop->getGDHandle();
         $gdBottom = $layerBottom->getGDHandle();
         
@@ -84,51 +82,153 @@ class DefaultComposer{
         return $newLayer;
     }
     
-    // like imagecopy, but with opacity control
-    // $op: 0-transparent, 100-opaque
+    // imagecopymerge equivalent with correct handling of alpha channel
+    // $opacityPct: 0-transparent, 100-opaque
     static function mergeWithOpacity(
-        $dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $op
+        \GdImage $dst_im, \GdImage $src_im, 
+        int $dst_x, int $dst_y, 
+        int $src_x, int $src_y, 
+        int $src_width, int $src_height, 
+        int $opacityPct,
+        bool $gammaBlending=false
     ) {
-        $op=PHPLayers\clamp_int($op, 0, 100);
+        $opacityPct=PHPLayers\clamp_int($opacityPct, 0, 100);
+
+        if($opacityPct==0) {
+            // fully transparent, skip
+            return;
+        }
+
         $dstImgW = imagesx($dst_im);
         $dstImgH = imagesy($dst_im);
         
         imagealphablending($dst_im, true);
-        if($op==100) {
-            imagecopy(
-                $dst_im, $src_im,
-                $dst_x, $dst_y,
-                $src_x, $src_y,
-                $src_w, $src_h
-            ); // native equivalent
-        }elseif($op==0) {
-        
-        }else{
-            $opFracP = $op / 100;
-            $opFracN = 1 - $opFracP;
+
+        $imageToCopy = $src_im;
+        if($opacityPct!=100) {
+
+            if($gammaBlending) {
+                $imageToCopy = self::intermediateForMergeGammaBlend($src_im, $dst_im, $dst_x, $dst_y, $src_width, $src_height, $opacityPct);
+            }else{
+                $imageToCopy = self::intermediateForMerge($src_im, $dst_x, $dst_y, $src_width, $src_height, $opacityPct);
+            }
             
-            $startX = $dst_x < 0 ? -$dst_x : 0;
-            $startY = $dst_y < 0 ? -$dst_y : 0;
-            $endX = $dst_x + $src_w > $dstImgW ? $dstImgW - $dst_x : $src_w;
-            $endY = $dst_y + $src_h > $dstImgH ? $dstImgH - $dst_y : $src_h;
+        }
+
+        imagecopy(
+            $dst_im, $imageToCopy,
+            $dst_x, $dst_y,
+            $src_x, $src_y,
+            $src_width, $src_height
+        );
+    }
+
+    protected static function intermediateForMerge(
+        $src_im, 
+        $dst_x, $dst_y, 
+        $src_width, $src_height, 
+        $opacityPct
+    ) : \GdImage {
+        $opFrac = $opacityPct / 100;
+
+        $imageIntermediate = imagecreatetruecolor($src_width, $src_height);
+        imagealphablending($imageIntermediate, false);
+        imagefill($imageIntermediate, 0, 0, 0x7F000000);
             
-            for($y = $startY; $y<$endY; $y++) {
-                for($x = $startX; $x<$endX; $x++) {
-                    $srcPixX = $src_x + $x; $srcPixY = $src_y + $y;
-                    $dstPixX = $dst_x + $x; $dstPixY = $dst_y + $y;
-                    $pixSrc = imagecolorat($src_im, $srcPixX, $srcPixY);
-                    $pixDst = imagecolorat($dst_im, $dstPixX, $dstPixY);
-                    
-                    $srcO = (($pixSrc>>24)&0x7F);
-                    $srcO = (int)(127-(127-$srcO) * $opFracP);
-                    
-                    imagesetpixel(
-                        $dst_im, 
-                        $dstPixX, $dstPixY, 
-                        ($pixSrc & 0xFFFFFF) | ($srcO << 24)
-                    );
-                }
+        for($y = 0; $y<$src_height; $y++) {
+            for($x = 0; $x<$src_width; $x++) {
+                $srcPixX = $x; $srcPixY = $y;
+                $dstPixX = $dst_x + $x; $dstPixY = $dst_y + $y;
+                $pixSrc = imagecolorat($src_im, $srcPixX, $srcPixY);
+                
+                $opacitySrc = (($pixSrc>>24)&0x7F);
+                $opacityAdjusted = (int)(127-(127-$opacitySrc) * $opFrac);
+                
+                imagesetpixel(
+                    $imageIntermediate, 
+                    $dstPixX, $dstPixY, 
+                    ($pixSrc & 0xFFFFFF) | ($opacityAdjusted << 24)
+                );
             }
         }
+        return $imageIntermediate;
+    }
+
+    protected static function intermediateForMergeGammaBlend(
+        $src_im, $dst_im,
+        $dst_x, $dst_y, 
+        $src_width, $src_height, 
+        $opacityPct
+    ) : \GdImage {
+        $opFrac = $opacityPct / 100;
+
+        $imageIntermediate = imagecreatetruecolor($src_width, $src_height);
+        imagealphablending($imageIntermediate, false);
+        imagefill($imageIntermediate, 0, 0, 0x7F000000);
+            
+        for($y = 0; $y<$src_height; $y++) {
+            for($x = 0; $x<$src_width; $x++) {
+                $srcPixX = $x; $srcPixY = $y;
+                $dstPixX = $dst_x + $x; $dstPixY = $dst_y + $y;
+                $pixSrc = imagecolorat($src_im, $srcPixX, $srcPixY);
+                $pixDst = imagecolorat($src_im, $dstPixX, $dstPixY);
+                
+                $opacitySrc = 127-(($pixSrc>>24)&0x7F);
+                $opacityDst = 127-(($pixDst>>24)&0x7F);
+
+                if($opacitySrc == 0 || $opacityDst == 0) {
+                    continue;
+                }
+
+                $opacityAdjusted = (int)(127 - ($opacitySrc * $opFrac));
+
+                imagesetpixel(
+                    $imageIntermediate, 
+                    $dstPixX, $dstPixY, 
+                    ($pixSrc & 0xFFFFFF) | ($opacityAdjusted << 24)
+                );
+            }
+        }
+        return $imageIntermediate;
+    }
+    protected static function blendColorsWithGamma(int $color1, int $color2, float $blend){
+        $color1Linear = self::convertSRGBColorToLinearArray($color1);
+        $color2Linear = self::convertSRGBColorToLinearArray($color2);
+        //TODO
+    }
+
+    private static function convertSRGBChannelToLinear(float $cs) {
+        if ($cs <= 0.04045) {
+            return $cs / 12.92;
+        } else{
+            return pow(($cs + 0.055) / 1.055, 2.4);
+        }
+    }
+    private static function convertLinearChannelToSRGB(float $cs) {
+        if($cs <= 0.0) {
+            return 0.0;
+        } elseif ($cs < 0.0031308) {
+            return 12.92 * $cs;
+        } elseif ($cs < 1.0) {
+            return 1.055 * pow($cs, 0.41666) - 0.055;
+        } else {
+            return 1.0;
+        }
+    }
+    private static function convertSRGBColorToLinearArray(int $color) {
+        $r = self::convertSRGBChannelToLinear(($color & 0xff) / 255.0);
+        $g = self::convertSRGBChannelToLinear((($color >> 8) & 0xff) / 255.0);
+        $b = self::convertSRGBChannelToLinear((($color >> 16) & 0xff) / 255.0);
+        return [$r, $g, $b, $color>>24];
+    }
+    private static function convertLinearColorArrayToSRGB(array $colorArr) {
+        $r = self::convertLinearChannelToSRGB($colorArr[0]);
+        $g = self::convertLinearChannelToSRGB($colorArr[1]);
+        $b = self::convertLinearChannelToSRGB($colorArr[2]);
+        $r8 = round($r * 255.0);
+        $g8 = round($g * 255.0);
+        $b8 = round($b * 255.0);
+        $a8 = $colorArr[3];
+        return ($a8 << 24) | ($b8 << 16) | ($g8 << 8) | $r8;
     }
 }
