@@ -14,11 +14,14 @@ Create a heavily outdated meme with just a few lines of code.
 ![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
 
 ```php
+use Naomai\PHPLayers;
+use Naomai\PHPLayers\Image;
+
 // import image as background
-$layersImg = GDW\Image::createFromFile(__DIR__ . "/eins.jpg");
+$layersImg = Image::createFromFile("eins.jpg");
 
 // create watermark layer
-$watermarkLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/cheesymemz.png");
+$watermarkLayer = $layersImg->newLayer()->importFromFile("cheesymemz.png");
 
 // move the watermark to bottom left corner.
 // 1. make selection (like CTRL+A)
@@ -26,12 +29,12 @@ $watermarkLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/cheesymemz.
 // 3. finally apply the result.
 $watermarkLayer
     ->selectSurface()
-    ->move(0, GDW\IMAGE_BOTTOM)
+    ->move(0, Image::IMAGE_BOTTOM)
     ->apply();
 
 
 // make things more THUG
-$thugLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/thug.png");
+$thugLayer = $layersImg->newLayer()->importFromFile("thug.png");
 
 // moving to a fixed position
 $thugLayer
@@ -46,8 +49,10 @@ echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 The image is made of 3 layers, including the background. If we add an extra line, we can show all the layers as a split view:
 
 ```php
-$layersImg->setComposer(new GDW\Composers\TiledComposer());
+// TiledComposer is putting all layers in a grid, instead of merging them
+$layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
 
+// export the image as data URL
 $dataUrl = $layersImg->getDataUrlPNG();
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
