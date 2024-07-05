@@ -21,6 +21,14 @@ $mainLayer->paint->text(100, 9, "clutter", ['color'=>0xFF0000, 'size'=>18]);
 $textRenderer->write(101, 69,"space", ['color'=>0x000000]);
 $textRenderer->write(99, 73,"space", ['color'=>0x000000]);
 $textRenderer->write(103, 72,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 72,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
+$textRenderer->write(103, 72,"space", ['color'=>0x000000]);
+
 $textRenderer->write(100, 69,"space", ['color'=>0xFF0000, 'size'=>18]);
 
 $dataUrl = $exampleImg->getDataUrlPNG();
