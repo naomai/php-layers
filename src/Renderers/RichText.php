@@ -1,11 +1,9 @@
 <?php
 
-namespace{
-    require_once __DIR__ .  "/../Utils/FontCache.php";
-}
+    namespace Naomai\PHPLayers\Renderers;
 
-namespace Naomai\PHPLayers\Renderers{
-    use Naomai\PHPLayers\Renderers\RichTextNodes as Nodes;
+    require_once __DIR__ .  "/../Utils/FontCache.php";
+
     class RichText implements ILayerRenderer {
         protected $layer;
         
@@ -97,7 +95,7 @@ namespace Naomai\PHPLayers\Renderers{
             if($this->currentParagraph == null) {
                 $this->newParagraph();
             }
-            $newNode = new Nodes\TextNode($this->currentParagraph);
+            $newNode = new TextNode($this->currentParagraph);
             $newNode->textContent    = $string;
             $newNode->textColor      = $this->textColor;
             $newNode->highlightColor = $this->highlightColor;
@@ -115,7 +113,7 @@ namespace Naomai\PHPLayers\Renderers{
             return $newNode;
         }
         public function insertNodeOfType($type) {
-            if(is_subclass_of($type, '\Naomai\PHPLayers\Renderers\RichTextNodes\Node')) {
+            if(is_subclass_of($type, '\Naomai\PHPLayers\Renderers\Node')) {
                 if($this->currentParagraph == null) {
                     $this->newParagraph();
                 }
@@ -130,9 +128,8 @@ namespace Naomai\PHPLayers\Renderers{
                 $this->currentParagraph->align = $this->align;
                 $this->document[] = $this->currentParagraph;
             }
-            
-            
-            $newPar = new Nodes\Paragraph($this);
+
+            $newPar = new Paragraph($this);
             $this->currentParagraph = $newPar;
             return $newPar;
         }
@@ -251,28 +248,21 @@ namespace Naomai\PHPLayers\Renderers{
             return abs(crc32($fontFile))."_".$size;
         }
     }
-}
 
-
-namespace Naomai\PHPLayers\Renderers\RichTextNodes{
-    use \Naomai\PHPLayers as GDW;
-    use Naomai\PHPLayers\Renderers\FontSizer;
-    use \Naomai\PHPLayers\Renderers\RichText as GDWRT;
-    
     abstract class Node{
-        protected $parentNode;
+        protected RichText|Node $parentNode;
         protected $document;
         /* render() returns an array with following structure:
         ( 
             'gd'=>GD handle with rendered element,
             'rect'=>array of rects around each symbol
         )*/
-        public function __construct($parent) {
+        public function __construct(RichText|Node $parent) {
             $this->parentNode = $parent;
             $this->document = $this->getDocument();
         }
         protected function getDocument() {
-            if($this->parentNode instanceof GDWRT) {
+            if($this->parentNode instanceof RichText) {
                 return $this->parentNode;
             }else if($this->parentNode instanceof Node) {
                 return $this->parentNode->getDocument();
@@ -400,16 +390,17 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
     }
 
     class Paragraph extends Node {
-        public $align = GDW\Renderers\RichText::GDWRT_ALIGN_LEFT;
+        public $align = RichText::GDWRT_ALIGN_LEFT;
         public $lineHeight = 16;
         public $documentPosY = 0;
         protected $nodes = [];
         protected $resultRects = [];
         
-        public function addNode($node) {
-            if($node instanceof Node && !($node instanceof Paragraph)) {
-                $this->nodes[] = $node;
+        public function addNode(Node $node) {
+            if($node instanceof Paragraph) {
+                return;
             }
+            $this->nodes[] = $node;
         }
         
         public function render() {
@@ -592,4 +583,4 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
             }
         }
     }
-}
+
