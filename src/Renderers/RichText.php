@@ -32,6 +32,8 @@ namespace Naomai\PHPLayers\Renderers{
         protected $systemFonts;
         protected $wwwFonts;
         protected $defaultFont;
+
+        protected FontSizer $sizer;
         
         
         const GDWRT_ALIGN_LEFT   = 0;
@@ -57,6 +59,8 @@ namespace Naomai\PHPLayers\Renderers{
                 $this->wwwFonts->scanFonts();
             }
             $this->defaultFont = $this->wwwFonts->getFontFamily("Lato");
+
+            $this->sizer = new FontSizer;
         }
         
         public function getSize(){
@@ -106,8 +110,11 @@ namespace Naomai\PHPLayers\Renderers{
             $newNode->fontItalic     = $this->fontItalic;
             $newNode->textUnderline  = $this->textUnderline;
             $newNode->textStrike     = $this->textStrike;
+            $newNode->setSizer($this->sizer);
             
             $this->currentParagraph->addNode($newNode);
+
+
             return $newNode;
         }
         public function insertNodeOfType($type){
@@ -202,11 +209,44 @@ namespace Naomai\PHPLayers\Renderers{
             
         }
     }
+
+    class FontSizer {
+        protected $cachedMetrics = [];
+
+        public function getCharacterMetrics(string $chr, string $fontFile, int $size) {
+            $fontMetrics = $this->getFontCachedMetrics($fontFile, $size);
+            
+            if(!isset($fontMetrics[$chr])) {
+                $fontMetrics[$chr] = $this->measureCharacter($chr, $fontFile, $size);
+            }
+            return $fontMetrics[$chr];
+        }
+
+        protected function getFontCachedMetrics(string $fontFile, int $size) {
+            $fontIndex = self::getCacheIndexName($fontFile, $size);
+            if(!isset($this->cachedMetrics[$fontIndex])) {
+                $this->cachedMetrics[$fontIndex] = [];
+            }
+            return $this->cachedMetrics[$fontIndex];
+        }
+
+        protected function measureCharacter(string $chr, string $fontFile, int $size) {
+            $fontIndex = self::getCacheIndexName($fontFile, $size);
+            $gdBox = imagettfbbox($size, 0, $fontFile, $chr);
+            $this->cachedMetrics[$fontIndex][$chr] = $gdBox;
+            return $gdBox;
+        }
+
+        static protected function getCacheIndexName(string $fontFile, int $size) : string {
+            return abs(crc32($fontFile))."_".$size;
+        }
+    }
 }
 
 
 namespace Naomai\PHPLayers\Renderers\RichTextNodes{
     use \Naomai\PHPLayers as GDW;
+    use Naomai\PHPLayers\Renderers\FontSizer;
     use \Naomai\PHPLayers\Renderers\RichText as GDWRT;
     
     abstract class Node{
@@ -246,6 +286,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
         public $fontItalic;
         public $textUnderline;
         public $textStrike;
+        protected FontSizer $sizer;
         
         public function render(){
             $fontFile = $this->document->getFontFile($this->font, $this->getFontType());
@@ -278,18 +319,15 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
                 }
                 $charRect['_char'] = $char;
                 
-
-                $gdBox = imagettfbbox($this->fontSize, 0, $fontFile, $char);
+                $gdBox = $this->sizer->getCharacterMetrics($char, $fontFile, $this->fontSize);
                 
                 $charRect['x'] = $w;
                 $charRect['y'] = $gdBox[7];
                 $charRect['width'] = max($gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]) - min($gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6])+1 ;
                 $charRect['height'] = $gdBox[1] - $gdBox[7];
                 
-                /*$offsetX = max($offsetX, $gdBox[0]-$gdBox[6]);
-                $offsetY = max($offsetY, $gdBox[3]-$gdBox[7]);*/
-                $minX=min($minX,$gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]); // X of point closest to the left edge
-                $maxX=max($maxX,$gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]); // X ----\\---- right edge
+                //$minX=min($minX,$gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]); // X of point closest to the left edge
+                //$maxX=max($maxX,$gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]); // X ----\\---- right edge
                 $minY=min($minY,$gdBox[1],$gdBox[3],$gdBox[5],$gdBox[7]); // Y ----\\---- top edge
                 $maxY=max($maxY,$gdBox[1],$gdBox[3],$gdBox[5],$gdBox[7]); // Y ----\\---- bottom edge
                 
@@ -331,6 +369,10 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
                 $type = "Regular";
             }
             return $type;
+        }
+
+        public function setSizer(FontSizer $sizer){
+            $this->sizer = $sizer;
         }
     }
 
@@ -502,9 +544,9 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
     }
 
     class ImageNode extends Node{
-        public $gdContainer;
+        public ?\GdImage $gdContainer;
         public function render(){
-            if(is_resource($this->gdContainer) && get_resource_type($this->gdContainer)=="gd"){
+            if($this->gdContainer!==false){
                 $rect = [
                     'gd'=>$this->gdContainer, 
                     'rect'=>[
@@ -512,7 +554,7 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
                     ]
                     ];
                 return $rect;
-            }else{
+            } else {
                 return ['gd'=>null,'rect'=>[]];
             }
         }
