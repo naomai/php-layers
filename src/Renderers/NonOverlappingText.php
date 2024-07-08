@@ -49,10 +49,7 @@ class NonOverlappingText implements ILayerRenderer {
     protected function spaceOutLabels() {
         //based on: http://stackoverflow.com/a/3279877
 
-        while($this->areRectanglesIntersecting()){
-
-            $intersections = $this->getSortedIntersectingRects();
-
+        while($intersections = $this->getSortedIntersectingRects()){
             $label = $this->labelsList[$intersections[0]['labelid']];
             unset($this->labelsList[$intersections[0]['labelid']]);
 
@@ -66,26 +63,29 @@ class NonOverlappingText implements ILayerRenderer {
             array_push($rectsInt, $label);
             foreach($rectsInt as $rect){
                 $grpMinX = min($grpMinX, $rect['x']);
-                $grpMaxX = max($grpMaxX, $rect['x']/*+$rect['w']*/);
+                $grpMaxX = max($grpMaxX, $rect['x']+$rect['w']);
                 $grpMinY = min($grpMinY, $rect['y']);
-                $grpMaxY = max($grpMaxY, $rect['y']/*+$rect['h']*/);
+                $grpMaxY = max($grpMaxY, $rect['y']+$rect['h']);
             }
             array_pop($rectsInt);
 
             $grpCenterX = ($grpMinX + $grpMaxX) / 2;
             $grpCenterY = ($grpMinY + $grpMaxY) / 2;
             
-            $rectCenterX = $label['x'] /* +$label['w']/2 */;
-            $rectCenterY = $label['y'] /* +$label['h']/2 */;
+            $rectCenterX = $label['x']  +$label['w']/2 ;
+            $rectCenterY = $label['y']  +$label['h']/2 ;
             
-            $vecX = $rectCenterX - $grpCenterX + mt_rand(-1.5, 1.5);
-            $vecY = $rectCenterY - $grpCenterY + mt_rand(-1.5, 1.5);
-            
+            $vecX = $rectCenterX - $grpCenterX;
+            $vecY = $rectCenterY - $grpCenterY;
+
             if($vecX==0 && $vecY==0) {
-                $vecX=mt_rand(0.1, 1);
-                $vecY=mt_rand(0.1, 1);
+                $vecX=mt_rand(1, 10)/10;
+                $vecY=mt_rand(1, 10)/10;
             }
             $div = max(abs($vecX), abs($vecY));
+            if($div>1.5) {
+                $div = 1.5;
+            }
             
             $moveX = $vecX / $div;
             $moveY = $vecY / $div;
@@ -94,9 +94,9 @@ class NonOverlappingText implements ILayerRenderer {
             $label['y'] += $moveY;
             
             $grpNewMinX = min($grpMinX, $label['x']);
-            $grpNewMaxX = max($grpMaxX, $label['x']/*+$label['w']*/);
+            $grpNewMaxX = max($grpMaxX, $label['x']+$label['w']);
             $grpNewMinY = min($grpMinY, $label['y']);
-            $grpNewMaxY = max($grpMaxY, $label['y']/*+$label['h']*/);
+            $grpNewMaxY = max($grpMaxY, $label['y']+$label['h']);
             
             $grpNewCenterX = ($grpNewMinX + $grpNewMaxX) / 2;
             $grpNewCenterY = ($grpNewMinY + $grpNewMaxY) / 2;
@@ -130,6 +130,7 @@ class NonOverlappingText implements ILayerRenderer {
     
     protected function getIntersectionsForRectangle($rect) {
         $intersections = array();
+
         foreach($this->labelsList as $labelId=>$label) {
             if($rect==$label) {
                 continue;
@@ -163,15 +164,8 @@ class NonOverlappingText implements ILayerRenderer {
             $intersections[] = ['labelid'=>$labelId,'intersections'=>count($labelInt)];
         }
         usort(
-            $intersections, function($a, $b){
-                if($a['intersections']>$b['intersections']) {
-                    return 1;
-                } elseif($a['intersections']<$b['intersections']) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            }
+            $intersections, 
+            fn($a, $b) => ($a['intersections']<=>$b['intersections'])
         );
         return $intersections;
     }
