@@ -41,19 +41,11 @@ namespace Naomai\PHPLayers\Renderers{
         const GDWRT_ALIGN_RIGHT  = 2;
         
         
-        public function __construct(){
-            /*$this->systemFonts = new \Naomai\FontCache();
-            $this->systemFonts->fontDir = "C:\\Windows\\Fonts";
-            $this->systemFonts->cacheFile = __DIR__ . "\SystemFonts.dat";
-            if(file_exists($this->systemFonts->cacheFile)){
-                $this->systemFonts->preload();
-            }else{
-                $this->systemFonts->scanFonts();
-            }*/
+        public function __construct() {
             $this->wwwFonts = new \Naomai\FontCache();
             $this->wwwFonts->fontDir = __DIR__ ."/../Fonts";
             $this->wwwFonts->cacheFile = __DIR__ . "/WWWFonts.dat";
-            if(file_exists($this->wwwFonts->cacheFile)){
+            if(file_exists($this->wwwFonts->cacheFile)) {
                 $this->wwwFonts->preload();
             }else{
                 $this->wwwFonts->scanFonts();
@@ -63,17 +55,21 @@ namespace Naomai\PHPLayers\Renderers{
             $this->sizer = new FontSizer;
         }
         
-        public function getSize(){
-            if(isset($this->position['auto']) && $this->position['auto']===true){
+        public function getSize() {
+            if(isset($this->position['auto']) && $this->position['auto']===true) {
                 $layerRect = $this->layer->getLayerDimensions();
-                return ['x'=>0,'y'=>0,'width'=>$layerRect['w'], 'height'=>$layerRect['h'],'auto'=>true];
+                return [
+                    'x'=>0,'y'=>0,
+                    'width'=>$layerRect['w'], 'height'=>$layerRect['h'],
+                    'auto'=>true
+                ];
             }else{
                 return $this->position;
             }
         }
-        public function getMargin(){
+        public function getMargin() {
             $size = $this->getSize();
-            if(isset($this->margin['auto'])){
+            if(isset($this->margin['auto'])) {
                 
                 $margin = ['left'=>16,'right'=>16,'top'=>16,'bottom'=>16];
             }else{
@@ -82,22 +78,23 @@ namespace Naomai\PHPLayers\Renderers{
             
             return $margin;
         }
-        public function getInnerSize(){ // with margins
+        public function getInnerSize() {
+            // with margins
             $size = $this->getSize();
             $margin = $this->getMargin();
 
             $size['x']     += $margin['left'];
             $size['width'] -= $margin['left']+$margin['right'];
             $size['y']     += $margin['top'];
-            if($size['height']!='auto'){
-                $size['height']-= $margin['top'] +$margin['bottom'];
+            if($size['height']!='auto') {
+                $size['height'] -= $margin['top'] + $margin['bottom'];
             }
             return $size;
         }
 
         
-        public function write($string){
-            if($this->currentParagraph == null){
+        public function write($string) {
+            if($this->currentParagraph == null) {
                 $this->newParagraph();
             }
             $newNode = new Nodes\TextNode($this->currentParagraph);
@@ -117,9 +114,9 @@ namespace Naomai\PHPLayers\Renderers{
 
             return $newNode;
         }
-        public function insertNodeOfType($type){
-            if(is_subclass_of($type, '\Naomai\PHPLayers\Renderers\RichTextNodes\Node')){
-                if($this->currentParagraph == null){
+        public function insertNodeOfType($type) {
+            if(is_subclass_of($type, '\Naomai\PHPLayers\Renderers\RichTextNodes\Node')) {
+                if($this->currentParagraph == null) {
                     $this->newParagraph();
                 }
                 $newNode = new $type($this->currentParagraph);
@@ -128,8 +125,8 @@ namespace Naomai\PHPLayers\Renderers{
             }
         }
         
-        public function newParagraph(){
-            if($this->currentParagraph != null){
+        public function newParagraph() {
+            if($this->currentParagraph != null) {
                 $this->currentParagraph->align = $this->align;
                 $this->document[] = $this->currentParagraph;
             }
@@ -140,31 +137,31 @@ namespace Naomai\PHPLayers\Renderers{
             return $newPar;
         }
         
-        public function getFontFile($fontFamily, $type){
+        public function getFontFile($fontFamily, $type) {
             $ff = $this->wwwFonts->getFontFamily($fontFamily);
-            if(count($ff) == 0){
+            if(count($ff) == 0) {
                 $ff = $this->systemFonts->getFontFamily($fontFamily);
             }
-            if(count($ff) == 0){
+            if(count($ff) == 0) {
                 $ff = $this->defaultFont;
             }
             $typeLC = strtolower($type);
             
-            if(isset($ff[$typeLC])) 
+            if(isset($ff[$typeLC])) {
                 $fontInfo = $ff[$typeLC];
-            else if(isset($ff["regular"])) 
+            } elseif(isset($ff["regular"])) {
                 $fontInfo = $ff["regular"];
-            else
+            } else {
                 $fontInfo = reset($ff);
-            
+            }
             return $fontInfo['path'];
         }
         
-        public function attachLayer($layerObj){
+        public function attachLayer($layerObj) {
             $this->layer = $layerObj;
         }
-        public function apply(){
-            if($this->currentParagraph != null){
+        public function apply() {
+            if($this->currentParagraph != null) {
                 $this->currentParagraph->align = $this->align;
                 $this->document[] = $this->currentParagraph;
             }
@@ -179,15 +176,17 @@ namespace Naomai\PHPLayers\Renderers{
             $docCalculatedHeight = 0;
             $y = 0;
             $toDraw = [];
-            foreach($this->document as $item){
+            foreach($this->document as $item) {
                 $newGD = $item->render();
-                $docCalculatedHeight+=imagesy($newGD);
+                $docCalculatedHeight += imagesy($newGD);
                 $toDraw[] = ['item'=>$item,'gd'=>$newGD];
             }
             
             
             
-            if((isset($posOuter['auto']) && $posOuter['auto']==true) || $posOuter['height']=='auto'){
+            if((isset($posOuter['auto']) && $posOuter['auto']==true) 
+                || $posOuter['height']=='auto'
+            ) {
                 $margin = $this->getMargin();
             
                 $docHeight = $docCalculatedHeight + $margin['bottom'];
@@ -197,12 +196,23 @@ namespace Naomai\PHPLayers\Renderers{
             }
             //$this->layer->fill($this->backgroundColor);
             $this->layer->paint->alphaBlend = true;
-            $this->layer->paint->rectangle($posOuter['x'],$posOuter['y'],$posOuter['x']+$posOuter['width'],$posOuter['y']+$docHeight,GDRECT_FILLED,GDCOLOR_DEFAULT, $this->backgroundColor);
+            $this->layer->paint->rectangle(
+                $posOuter['x'], $posOuter['y'],
+                $posOuter['x']+$posOuter['width'], $posOuter['y']+$docHeight,
+                GDRECT_FILLED,
+                GDCOLOR_DEFAULT, 
+                $this->backgroundColor
+            );
             $docGD = $this->layer->getGDHandle();
             
-            foreach($toDraw as $itemDef){
+            foreach($toDraw as $itemDef) {
                 $itemDef['item']->documentPosY = $y;
-                imagecopy($docGD,$itemDef['gd'],$offsetX,$y+$offsetY,0,0,imagesx($itemDef['gd']), imagesy($itemDef['gd']));
+                imagecopy(
+                    $docGD, $itemDef['gd'],
+                    $offsetX, $y+$offsetY,
+                    0, 0,
+                    imagesx($itemDef['gd']), imagesy($itemDef['gd'])
+                );
                 $itemDef['item']->notifyRendered();
                 $y += imagesy($itemDef['gd']);
             }
@@ -222,7 +232,7 @@ namespace Naomai\PHPLayers\Renderers{
             return $fontMetrics[$chr];
         }
 
-        protected function getFontCachedMetrics(string $fontFile, int $size) {
+        protected function getFontCachedMetrics(string $fontFile, int $size) : array {
             $fontIndex = self::getCacheIndexName($fontFile, $size);
             if(!isset($this->cachedMetrics[$fontIndex])) {
                 $this->cachedMetrics[$fontIndex] = [];
@@ -230,7 +240,7 @@ namespace Naomai\PHPLayers\Renderers{
             return $this->cachedMetrics[$fontIndex];
         }
 
-        protected function measureCharacter(string $chr, string $fontFile, int $size) {
+        protected function measureCharacter(string $chr, string $fontFile, int $size) : array {
             $fontIndex = self::getCacheIndexName($fontFile, $size);
             $gdBox = imagettfbbox($size, 0, $fontFile, $chr);
             $this->cachedMetrics[$fontIndex][$chr] = $gdBox;
@@ -250,20 +260,21 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
     use \Naomai\PHPLayers\Renderers\RichText as GDWRT;
     
     abstract class Node{
-        protected $parentNode, $document;
+        protected $parentNode;
+        protected $document;
         /* render() returns an array with following structure:
         ( 
             'gd'=>GD handle with rendered element,
             'rect'=>array of rects around each symbol
         )*/
-        public function __construct($parent){
+        public function __construct($parent) {
             $this->parentNode = $parent;
             $this->document = $this->getDocument();
         }
-        protected function getDocument(){
-            if($this->parentNode instanceof GDWRT){
+        protected function getDocument() {
+            if($this->parentNode instanceof GDWRT) {
                 return $this->parentNode;
-            }else if($this->parentNode instanceof Node){
+            }else if($this->parentNode instanceof Node) {
                 return $this->parentNode->getDocument();
             }else{
                 die("WHA?");
@@ -271,24 +282,25 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
         }
         
         public abstract function render();
-        public function notifyRenderResult($rect){
+        public function notifyRenderResult($rect) {
             
         }
         
     }
 
-    class TextNode extends Node{
+    class TextNode extends Node {
         public $textContent = "";
         public $textColor;
         public $highlightColor;
-        public $font, $fontSize;
+        public $font;
+        public $fontSize;
         public $fontBold;
         public $fontItalic;
         public $textUnderline;
         public $textStrike;
         protected FontSizer $sizer;
         
-        public function render(){
+        public function render() {
             $fontFile = $this->document->getFontFile($this->font, $this->getFontType());
             
             
@@ -303,18 +315,18 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
             $minX=0; $minY=0; $maxX=0; $maxY=0;
             
             
-            for($i=0; $i<mb_strlen($this->textContent); $i++){
+            for($i=0; $i<mb_strlen($this->textContent); $i++) {
                 $charRect = [];
                 $char = mb_substr($this->textContent, $i, 1);
-                if($char == " "){
+                if($char == " ") {
                     $charRect['white'] = true;
-                }else if($char == "\r"){
+                } elseif($char == "\r") {
                     
-                }else if($char == "\n"){
+                } elseif($char == "\n") {
                     $charRect['linefeed'] = true;
-                }else if($char == "\t"){
+                } elseif($char == "\t") {
                     $charRect['tab'] = true;
-                }else{
+                } else {
                     
                 }
                 $charRect['_char'] = $char;
@@ -323,16 +335,17 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
                 
                 $charRect['x'] = $w;
                 $charRect['y'] = $gdBox[7];
-                $charRect['width'] = max($gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]) - min($gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6])+1 ;
+                $charRect['width'] 
+                    = max($gdBox[0], $gdBox[2], $gdBox[4], $gdBox[6]) 
+                    - min($gdBox[0], $gdBox[2], $gdBox[4], $gdBox[6])+1;
                 $charRect['height'] = $gdBox[1] - $gdBox[7];
                 
-                //$minX=min($minX,$gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]); // X of point closest to the left edge
-                //$maxX=max($maxX,$gdBox[0],$gdBox[2],$gdBox[4],$gdBox[6]); // X ----\\---- right edge
-                $minY=min($minY,$gdBox[1],$gdBox[3],$gdBox[5],$gdBox[7]); // Y ----\\---- top edge
-                $maxY=max($maxY,$gdBox[1],$gdBox[3],$gdBox[5],$gdBox[7]); // Y ----\\---- bottom edge
+                $minY=min($minY, $gdBox[1], $gdBox[3], $gdBox[5], $gdBox[7]); 
+                    // Y of point closest to the top edge
+                $maxY=max($maxY, $gdBox[1], $gdBox[3], $gdBox[5], $gdBox[7]); 
+                    // Y of point closest to the bottom edge
                 
                 $w += $charRect['width'];
-                //$h = max($h,$charRect['width']);
 
                 $rect[] = $charRect;
             }
@@ -341,74 +354,81 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
             $h = $maxY - $minY;
             
             // draw
-            $elGD = imagecreatetruecolor($w,$h);
-            imagealphablending($elGD,false);
-            imagefilledrectangle($elGD,0,0,$w,$h,$this->highlightColor);
-            imagealphablending($elGD,true);
+            $elGD = imagecreatetruecolor($w, $h);
+            imagealphablending($elGD, false);
+            imagefilledrectangle($elGD, 0, 0, $w, $h, $this->highlightColor);
+            imagealphablending($elGD, true);
             
-            foreach($rect as $rectId=>$current){
+            foreach($rect as $rectId=>$current) {
                 $current['y'] += $offsetY;
                 $rect[$rectId]['y'] += $offsetY;
-                //imagerectangle($elGD,$current['x'],$current['y'], $current['x']+$current['width'],$current['y']+$current['height'],0xff0000);
-                imagettftext($elGD,$this->fontSize,0,$current['x']+$offsetX,$offsetY,$this->textColor,$fontFile,$current['_char']);
+                /*imagerectangle(
+                    $elGD,
+                    $current['x'],$current['y'], 
+                    $current['x']+$current['width'],$current['y']+$current['height'],
+                    0xff0000
+                ); */
+                imagettftext(
+                    $elGD, $this->fontSize, 0,
+                    $current['x']+$offsetX, $offsetY,
+                    $this->textColor, $fontFile,
+                    $current['_char']
+                );
                 
                 unset($rect[$rectId]['_char']);
             }
-            imagesavealpha($elGD,true);
+            imagesavealpha($elGD, true);
             return ['gd'=>$elGD, 'rect'=>$rect];
         }
         
-        protected function getFontType(){
-            if($this->fontBold && $this->fontItalic){
+        protected function getFontType() {
+            if($this->fontBold && $this->fontItalic) {
                 $type = "Bold Italic";
-            }else if($this->fontBold){
+            } elseif($this->fontBold) {
                 $type = "Bold";
-            }else if($this->fontItalic){
+            } elseif($this->fontItalic) {
                 $type = "Italic";
-            }else{
+            } else {
                 $type = "Regular";
             }
             return $type;
         }
 
-        public function setSizer(FontSizer $sizer){
+        public function setSizer(FontSizer $sizer) {
             $this->sizer = $sizer;
         }
     }
 
-    class Paragraph extends Node{
+    class Paragraph extends Node {
         public $align = GDW\Renderers\RichText::GDWRT_ALIGN_LEFT;
         public $lineHeight = 16;
         public $documentPosY = 0;
         protected $nodes = [];
         protected $resultRects = [];
         
-        public function addNode($node){
-            if($node instanceof Node && !($node instanceof Paragraph)){
+        public function addNode($node) {
+            if($node instanceof Node && !($node instanceof Paragraph)) {
                 $this->nodes[] = $node;
             }
         }
         
-        public function render(){
+        public function render() {
             $docSize = $this->document->getInnerSize();
             //$marginSize = $this->document->getMargin();
             
             // throw all rects into one array
             $flatRects = [];
-            foreach($this->nodes as $nodeId=>$node){
+            foreach($this->nodes as $nodeId=>$node) {
                 $nodeRendered = $node->render();
                 $gd = $nodeRendered['gd'];
                 $rects = $nodeRendered['rect'];
-                foreach($rects as $rectId=>$rect){
+                foreach($rects as $rectId=>$rect) {
                     $rect['gd'] = $gd;
                     $rect['nodeId'] = $nodeId;
                     $rect['rectId'] = $rectId;
                     $flatRects[] = $rect;
                 }
             }
-            /*print_r($flatRects);
-            die;*/
-            //echo "R=".count($flatRects);
             
             // prepare
             $width = $docSize['width'];
@@ -424,28 +444,32 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
             $xSafe = 0;
             $justWrapped = false;
             
-            
-            
-            for($i=0; $i<count($flatRects); $i++){
+            for($i=0; $i<count($flatRects); $i++) {
                 $rect = $flatRects[$i];
-                //eCHO "(i=$i,W=$x,H=$height)   ";
                         
-                if($x + $rect['width'] > $width || isset($rect['linefeed'])){ // line overflow or newline 
-                    if(isset($rect['resizable']) && $rect['width']>$width){ // image too big
-                        $flatRects[$i]['resizeTo'] = ['width'=>$width, 'height'=>$rect['height'] * ($width/$rect['width'])];
-                    }else if(!isset($rect['linefeed']) && $justWrapped){ // break long word
+                if($x + $rect['width'] > $width || isset($rect['linefeed'])) {
+                    // line overflow or newline 
+                    if(isset($rect['resizable']) && $rect['width']>$width) {
+                        // image too big
+                        $flatRects[$i]['resizeTo'] = [
+                            'width'=>$width, 
+                            'height'=>$rect['height'] * ($width/$rect['width'])
+                        ];
+                    } elseif(!isset($rect['linefeed']) && $justWrapped) {
+                        // break long word
                         $charsForCurrentLine = $charsForCurrentWord;
                         $charsForCurrentWord = 0;
                         //ECHO "CFCW=$charsForCurrentLine;";
                         $xSafe = $x;
                         $i-=1;
-                    }else if(!isset($rect['linefeed'])){ // go back to last 'safe' position (first character of current word)
-                        //eCHO "WB=$wordBeginning;";
+                    } elseif(!isset($rect['linefeed'])) {
+                        // go back to last 'safe' position (first character of current word)
                         $i = $wordBeginning-1;
                     }
                     
-                    if(isset($rect['linefeed']) || $xSafe>0){ // line feed or overflow with whitespace character
-                        if(isset($rect['linefeed'])){
+                    if(isset($rect['linefeed']) || $xSafe>0) {
+                        // line feed or overflow with whitespace character
+                        if(isset($rect['linefeed'])) {
                             $charsForCurrentLine += $charsForCurrentWord+1;
                             $xSafe = $x;
                         }
@@ -463,62 +487,66 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
                     $xSafe = 0;
                     //$y += $this->lineHeight;
                     $justWrapped = true;
-                }else if(isset($rect['white'])){
+                } elseif(isset($rect['white'])) {
                     $xSafe = $x;
                     $wordBeginning = $i+1;
                     $justWrapped = false;
                     $charsForCurrentLine += $charsForCurrentWord+1;
                     $charsForCurrentWord = 0;
                     $x += $rect['width'];
-                }else{
+                } else {
                     $charsForCurrentWord++;
                     $x += $rect['width'];
-                    $currentLineHeight = max($currentLineHeight,$rect['height']);
+                    $currentLineHeight = max($currentLineHeight, $rect['height']);
                 }
-                /*if(count($lineInfo)>20){
-                    print_r($lineInfo);
-                    die;
-                }*/
             }
 
             $charsForCurrentLine += $charsForCurrentWord;
-            $lineInfo[] = ["chars"=>$charsForCurrentLine,"width"=>$x,"height"=>$currentLineHeight];
+            $lineInfo[] = [
+                "chars"=>$charsForCurrentLine,
+                "width"=>$x,
+                "height"=>$currentLineHeight
+            ];
             $height += $currentLineHeight;
-            /*print_r($lineInfo);
-                    die;*/
-            //$height = count($lineInfo) * $this->lineHeight;
+
             $gd = imagecreatetruecolor($width, $height);
-            imagealphablending($gd,false);
-            imagefilledrectangle($gd,0,0,$width,$height,0x7f000000);
-            imagealphablending($gd,true);
-            
-            
-            //$resultRects = [); // one for each childNodes
-            
+            imagealphablending($gd, false);
+            imagefilledrectangle($gd, 0, 0, $width, $height, 0x7f000000);
+            imagealphablending($gd, true);
+
             $lineOffset = 0;
             $lineOffsetY = 0;
-            foreach($lineInfo as $lineNum=>$line){
+            foreach($lineInfo as $lineNum=>$line) {
                 //echo "LIN$lineNum=".$line['chars']."!";
                 $lineAlignOffset = round(($width - $line['width']) * ($this->align / 2));
                 //$lineOffsetY = $lineNum * $this->lineHeight;
                 
                 $x = $lineAlignOffset;
-                for($c=0; $c<$line['chars']; $c++){
+                for($c=0; $c<$line['chars']; $c++) {
                     $rect = $flatRects[$lineOffset + $c];
-                    if(isset($rect['linefeed'])) continue;
-                    //die("imagecopy(,,$x,$lineOffsetY,{$rect['x']},{$rect['y']},{$rect['width']},{$rect['height']});");
-                    
-                    if($rect['gd'] !== null){
-                        imagecopy($gd,$rect['gd'],$x,$lineOffsetY+$rect['y'],$rect['x'],$rect['y'],$rect['width'],$rect['height']);
+                    if(isset($rect['linefeed'])) {
+                        continue;
                     }
-                    if(!isset($this->resultRects[$rect['nodeId']])) 
-                        $this->resultRects[$rect['nodeId']]=['gdResult'=>$gd,'rect'=>[]];
-                    
-                    //echo "NID={$rect['nodeId']} LOF=$lineOffsetY; ";
+
+                    if($rect['gd'] !== null) {
+                        imagecopy(
+                            $gd, $rect['gd'],
+                            $x, $lineOffsetY+$rect['y'],
+                            $rect['x'] ,$rect['y'],
+                            $rect['width'], $rect['height']
+                        );
+                    }
+                    if(!isset($this->resultRects[$rect['nodeId']])) {
+                        $this->resultRects[$rect['nodeId']] = ['gdResult'=>$gd,'rect'=>[]];
+                    }
+
                     $this->resultRects[$rect['nodeId']]['rect'][$rect['rectId']] = [
-                        'x'=>$x,'y'=>$lineOffsetY+$rect['y'],
-                        'layerX'=>$x+$docSize['x'],'layerY'=>$lineOffsetY+$rect['y']+$docSize['y'],
-                        'width'=>$rect['width'],'height'=>$rect['height']
+                        'x'=>$x,
+                        'y'=>$lineOffsetY+$rect['y'],
+                        'layerX'=>$x+$docSize['x'],
+                        'layerY'=>$lineOffsetY+$rect['y']+$docSize['y'],
+                        'width'=>$rect['width'],
+                        'height'=>$rect['height']
                     ];
                     $x += $rect['width'];
                 }
@@ -531,10 +559,10 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
             return $gd;
         }
         
-        public function notifyRendered(){
+        public function notifyRendered() {
             //notify
-            foreach($this->resultRects as $nodeId=>$rectInfo){
-                foreach($rectInfo['rect'] as $rectId=>$rect){
+            foreach($this->resultRects as $nodeId=>$rectInfo) {
+                foreach($rectInfo['rect'] as $rectId=>$rect) {
                     $rectInfo['rect'][$rectId]['y']+=$this->documentPosY;
                     $rectInfo['rect'][$rectId]['layerY']+=$this->documentPosY;
                 }
@@ -545,13 +573,18 @@ namespace Naomai\PHPLayers\Renderers\RichTextNodes{
 
     class ImageNode extends Node{
         public ?\GdImage $gdContainer;
-        public function render(){
-            if($this->gdContainer!==false){
+        public function render() {
+            if($this->gdContainer!==false) {
                 $rect = [
                     'gd'=>$this->gdContainer, 
                     'rect'=>[
-                        ['x'=>0,'y'=>0,'width'=>imagesx($this->gdContainer),'height'=>imagesy($this->gdContainer)]
-                    ]
+                            [
+                                'x'=>0,
+                                'y'=>0,
+                                'width'=>imagesx($this->gdContainer),
+                                'height'=>imagesy($this->gdContainer)
+                            ]
+                        ]
                     ];
                 return $rect;
             } else {
