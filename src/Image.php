@@ -180,8 +180,9 @@ class Image {
      */
     
     public function getDataUrlPNG() : string {
+        $gdResult = $this->getMergedGD();
         ob_start();
-        imagepng($this->getMergedGD());
+        imagepng($gdResult);
         $imgd=base64_encode(ob_get_clean());
         return "data:image/png;base64,".$imgd;
     }
@@ -192,8 +193,9 @@ class Image {
      * @return string URL containing resulting image
      */
     public function getDataUrlJPEG() : string {
+        $gdResult = $this->getMergedGD();
         ob_start();
-        imagejpeg($this->getMergedGD());
+        imagejpeg($gdResult);
         $imgd=base64_encode(ob_get_clean());
         return "data:image/jpeg;base64,".$imgd;
     }
