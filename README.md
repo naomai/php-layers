@@ -1,10 +1,16 @@
 # PHP Layers
 
-This library allows to easily create layered images using PHP and GD library. 
-Previously developed as GDWrapper, was powering a rendering engine for
-Map Previews in Unreal Tournament Stats Tracker:
+PHP-Layers is a OOP library for creating images in PHP. 
 
-![Wireframe rendering of a game map](example/UTTDemo.jpg)
+It adds powerful layering functionality known from image editors, while staying intuitive and simple to use. 
+
+The library supports:
+- Creating layers, positioning and reordering
+- Importing images from common formats (JPG, PNG)
+- Exporting with transparency out-of-box
+- Generating Data URL for embedding in HTML file
+- Convinience functions for drawing
+- Rendering of rich text with word wrapping
 
 **The project should be considered unstable for now, as I'm refactoring the code from an unhinged mess I made 10 years ago.**
 
@@ -14,7 +20,6 @@ Create a heavily outdated meme with just a few lines of code.
 ![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
 
 ```php
-use Naomai\PHPLayers;
 use Naomai\PHPLayers\Image;
 
 // import image as background
@@ -56,6 +61,13 @@ $layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
 $dataUrl = $layersImg->getDataUrlPNG();
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
+
+## Use cases
+
+Previously developed as GDWrapper, was powering a rendering engine for
+Map Previews in Unreal Tournament Stats Tracker:
+
+![Wireframe rendering of a game map](example/UTTDemo.jpg)
 
 ![Tiled view of indivitual layers making the Einstein thug life meme](example/LayeringDemoTiles.png)
 
