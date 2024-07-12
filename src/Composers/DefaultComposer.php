@@ -3,31 +3,11 @@ namespace Naomai\PHPLayers\Composers;
 
 use Naomai\PHPLayers;
 use Naomai\PHPLayers\Layer;
-use Naomai\PHPLayers\LayerStack;
-use Naomai\PHPLayers\Image;
-use Naomai\PHPLayers\Renderers\ILayerRenderer;
 
-class DefaultComposer{
-    protected LayerStack $layers;
-    protected Image $image;
-    
-    public function __construct() {
+class DefaultComposer extends LayerComposerBase {
 
-    }
-    
-    public function setLayerStack(LayerStack $layers) {
-        $this->layers = $layers;
-    }
-    
-    public function preprocessLayer(Layer $layerObj) {
-        $layerObj->render();
-    }
 
-    public function setImage(Image $image) {
-        $this->image = $image;
-    }
-
-    public function mergeAll() {
+    public function mergeAll() : Layer {
         $layers = $this->layers->getAll();
         foreach($layers as $layer){
             $this->preprocessLayer($layer);
@@ -64,7 +44,7 @@ class DefaultComposer{
         return $layerResult;
     }
 
-    public function mergeDown(Layer $layerTop, Layer $layerBottom) : Layer {
+    protected function mergeDown(Layer $layerTop, Layer $layerBottom) : Layer {
         $gdTop = $layerTop->getGDHandle();
         $gdBottom = $layerBottom->getGDHandle();
         

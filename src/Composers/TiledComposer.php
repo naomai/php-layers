@@ -1,10 +1,10 @@
 <?php
 namespace Naomai\PHPLayers\Composers;
 
-use Naomai\PHPLayers as GDW;
+use Naomai\PHPLayers\Layer;
 
-class TiledComposer extends DefaultComposer{
-    public function mergeAll() {
+class TiledComposer extends LayerComposerBase {
+    public function mergeAll() : Layer {
         $layers = $this->layers->getAll();
         foreach($layers as $layer) {
             $this->preprocessLayer($layer);
