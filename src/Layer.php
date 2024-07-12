@@ -74,7 +74,7 @@ class Layer {
     /** 
      * Image preprocessor used before merging with other layers
      * */
-    public ?Renderers\ILayerRenderer $renderer = null;
+    protected ?Renderers\ILayerRenderer $renderer = null;
 
     /**
      * Image object the layer is attached to
@@ -287,6 +287,12 @@ class Layer {
     public function setRenderer(Renderers\ILayerRenderer $rend) : void {
         $rend->attachLayer($this);
         $this->renderer = $rend;
+    }
+
+    public function render() : void {
+        if($this->renderer !== null) {
+            $this->renderer->apply();
+        }
     }
 
     public function importFromGD(\GdImage $gdSource) : Layer {

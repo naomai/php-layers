@@ -20,9 +20,7 @@ class DefaultComposer{
     }
     
     public function preprocessLayer(Layer $layerObj) {
-        if($layerObj->renderer !== null) {
-            $layerObj->renderer->apply();
-        }
+        $layerObj->render();
     }
 
     public function setImage(Image $image) {
