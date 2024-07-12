@@ -8,84 +8,55 @@ final class ReorderTest extends TestCase {
     public function testLayerCreationOrder() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
         $this->assertEquals(3, count($layers));
-        
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(["_Test0", "_Test1", "_Test2"], $names);
+        $this->assertLayerOrder($imageObj, ["0", "1", "2"]);
     }
 
     public function testLayerReorderTopBottom() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $index = $layers[0]->reorder()->putTop();
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(2, $index);
-        $this->assertEquals(["_Test1", "_Test2", "_Test0"], $names);
+        $indexReturned = $layers[0]->reorder()->putTop();
+        $this->assertEquals(2, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
-        $index = $layers[2]->reorder()->putBottom();
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(0, $index);
-        $this->assertEquals(["_Test2", "_Test1", "_Test0"], $names);
+        $indexReturned = $layers[2]->reorder()->putBottom();
+        $this->assertEquals(0, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
 
-        $index = $imageObj->reorder($layers[1])->putTop();
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(2, $index);
-        $this->assertEquals(["_Test2", "_Test0", "_Test1"], $names);
-
-        $index = $imageObj->reorder($layers[0])->putBottom();
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(0, $index);
-        $this->assertEquals(["_Test0", "_Test2", "_Test1"], $names);
     }
 
     public function testLayerReorderRelative() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $index = $layers[0]->reorder()->putOver($layers[2]);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(2, $index);
-        $this->assertEquals(["_Test1", "_Test2", "_Test0"], $names);
+        $indexReturned = $layers[0]->reorder()->putOver($layers[2]);
+        $this->assertEquals(2, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
-        $index = $layers[0]->reorder()->putBehind($layers[2]);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(1, $index);
-        $this->assertEquals(["_Test1", "_Test0", "_Test2"], $names);
-
-        $index = $imageObj->reorder($layers[1])->putOver($layers[2]);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(2, $index);
-        $this->assertEquals(["_Test0", "_Test2", "_Test1"], $names);
-
-        $index = $imageObj->reorder($layers[2])->putBehind($layers[0]);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(0, $index);
-        $this->assertEquals(["_Test2", "_Test0", "_Test1"], $names);
+        $indexReturned = $layers[0]->reorder()->putBehind($layers[2]);
+        $this->assertEquals(1, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
     }
 
 
     public function testLayerReorderAbsolute() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $index = $layers[0]->reorder()->putAt(2);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(2, $index);
-        $this->assertEquals(["_Test1", "_Test2", "_Test0"], $names);
+        $indexReturned = $layers[0]->reorder()->putAt(2);
+        $this->assertEquals(2, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
-        $index = $layers[1]->reorder()->putAt(1);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(1, $index);
-        $this->assertEquals(["_Test2", "_Test1", "_Test0"], $names);
+        $indexReturned = $layers[1]->reorder()->putAt(1);
+        $this->assertEquals(1, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
 
         //index beyond stack size - should be placed as last
-        $index = $layers[2]->reorder()->putAt(5);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(2, $index);
-        $this->assertEquals(["_Test1", "_Test0", "_Test2"], $names);
+        $indexReturned = $layers[2]->reorder()->putAt(5);
+        $this->assertEquals(2, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
 
         //negative index - count from the end of stack
-        $index = $layers[1]->reorder()->putAt(-1);
-        $names = self::extractNames($imageObj);
-        $this->assertEquals(2, $index);
-        $this->assertEquals(["_Test0", "_Test2", "_Test1"], $names);
+        $indexReturned = $layers[1]->reorder()->putAt(-1);
+        $this->assertEquals(2, $indexReturned);
+        $this->assertLayerOrder($imageObj, ["0", "2", "1"]);
 
         //negative index beyond stack size - exception
         $this->expectException(\InvalidArgumentException::class);
@@ -93,14 +64,26 @@ final class ReorderTest extends TestCase {
 
     }
 
+
+    static public function assertLayerOrder(PHPLayers\Image  $imageObj, array $layerOrder) {
+        $names = static::extractNames($imageObj);
+        static::assertEquals($layerOrder, $names);
+    }
+
+    static public function assertLayerAt(PHPLayers\Layer $layer, int $expectedIndex, PHPLayers\Image $imageObj) {
+        $layerAtIndex = $imageObj->getLayerByIndex($expectedIndex);
+        static::assertSame($layer, $layerAtIndex);
+
+    }
+
     private function createTestImageObj() : array {
         $imageObj = PHPLayers\Image::createFromFile(__DIR__ . "/BasicSquares.png");
         $layers = [];
         $background = $imageObj->getLayerByIndex(0);
-        $background->name = "_Test0";
+        $background->name = "0";
         $layers[] = $background;
-        $layers[] = $imageObj->newLayer("_Test1");
-        $layers[] = $imageObj->newLayer("_Test2");
+        $layers[] = $imageObj->newLayer("1");
+        $layers[] = $imageObj->newLayer("2");
 
         return [$imageObj, $layers];
     }
