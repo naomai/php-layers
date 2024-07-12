@@ -86,7 +86,7 @@ class Image {
         return $newLayer;
     }
 
-    public function reorder(Layer $layerToMove) {
+    public function reorder(Layer $layerToMove) : Helpers\LayerReorderCall {
         $reorderCall = new Helpers\LayerReorderCall($this->layers);
         $reorderCall->setLayerToMove($layerToMove);
         return $reorderCall;
@@ -109,7 +109,7 @@ class Image {
      *          'w': image width, 'h': image height
      *  @since 0.1.0
      */
-    public function getSize() {
+    public function getSize() : array {
         return [
             'w'=>$this->sizeX,
             'h'=>$this->sizeY
@@ -126,7 +126,7 @@ class Image {
      *  @param int $h New image height
      *  @since 0.1.0
      */
-    public function setSize(int $w, int $h) {
+    public function setSize(int $w, int $h) : void{
         if($w<=0 || $h<=0) {
             throw new \InvalidArgumentException("Invalid image size, dimensions should be > 0");
         }
@@ -226,10 +226,10 @@ class Image {
     }
 }
 
-function clamp_byte($v) {
+function clamp_byte($v) : int {
     return min(max((int)$v, 0), 255);
 }
 
-function clamp_int($v, $min, $max) {
+function clamp_int($v, $min, $max) : int {
     return min(max((int)$v, $min), $max);
 }
