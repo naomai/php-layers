@@ -14,12 +14,12 @@ final class ReorderTest extends TestCase {
     public function testLayerReorderTopBottom() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $indexReturned = $layers[0]->reorder()->putTop();
-        $this->assertEquals(2, $indexReturned);
+        $index = $layers[0]->reorder()->putTop();
+        $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
-        $indexReturned = $layers[2]->reorder()->putBottom();
-        $this->assertEquals(0, $indexReturned);
+        $index = $layers[2]->reorder()->putBottom();
+        $this->assertEquals(0, $index);
         $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
 
     }
@@ -27,12 +27,12 @@ final class ReorderTest extends TestCase {
     public function testLayerReorderRelative() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $indexReturned = $layers[0]->reorder()->putOver($layers[2]);
-        $this->assertEquals(2, $indexReturned);
+        $index = $layers[0]->reorder()->putOver($layers[2]);
+        $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
-        $indexReturned = $layers[0]->reorder()->putBehind($layers[2]);
-        $this->assertEquals(1, $indexReturned);
+        $index = $layers[0]->reorder()->putBehind($layers[2]);
+        $this->assertEquals(1, $index);
         $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
     }
 
@@ -40,22 +40,22 @@ final class ReorderTest extends TestCase {
     public function testLayerReorderAbsolute() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
-        $indexReturned = $layers[0]->reorder()->putAt(2);
-        $this->assertEquals(2, $indexReturned);
+        $index = $layers[0]->reorder()->putAt(2);
+        $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
-        $indexReturned = $layers[1]->reorder()->putAt(1);
-        $this->assertEquals(1, $indexReturned);
+        $index = $layers[1]->reorder()->putAt(1);
+        $this->assertEquals(1, $index);
         $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
 
         //index beyond stack size - should be placed as last
-        $indexReturned = $layers[2]->reorder()->putAt(5);
-        $this->assertEquals(2, $indexReturned);
+        $index = $layers[2]->reorder()->putAt(5);
+        $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
 
         //negative index - count from the end of stack
-        $indexReturned = $layers[1]->reorder()->putAt(-1);
-        $this->assertEquals(2, $indexReturned);
+        $index = $layers[1]->reorder()->putAt(-1);
+        $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["0", "2", "1"]);
 
         //negative index beyond stack size - exception
