@@ -13,7 +13,7 @@ class Image {
     protected LayerStack $layers; 
     protected $sizeX;
     protected $sizeY;
-    protected $composer;
+    protected Composers\DefaultComposer $composer;
 
     const IMAGE_RIGHT = -1;
     const IMAGE_BOTTOM = -1;
@@ -97,7 +97,7 @@ class Image {
      *  
      *  @since 0.1.0
      */
-    public function setComposer($composerObj) {
+    public function setComposer(Composers\DefaultComposer $composerObj) {
         $composerObj->setImage($this);
         $this->composer = $composerObj;
     }
