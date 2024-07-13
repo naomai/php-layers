@@ -62,14 +62,15 @@ $dataUrl = $layersImg->getDataUrlPNG();
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
 
+![Tiled view of indivitual layers making the Einstein thug life meme](example/LayeringDemoTiles.png)
+
+
 ## Use cases
 
 Previously developed as GDWrapper, was powering a rendering engine for
 Map Previews in Unreal Tournament Stats Tracker:
 
 ![Wireframe rendering of a game map](example/UTTDemo.jpg)
-
-![Tiled view of indivitual layers making the Einstein thug life meme](example/LayeringDemoTiles.png)
 
 ## Example: rich text
 The library has capability to render formatted blocks of text, and also non-overlapping text. This will be documented in future.
