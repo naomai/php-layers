@@ -134,8 +134,10 @@ class DefaultComposer extends LayerComposerBase {
             
         for($y = 0; $y<$src_height; $y++) {
             for($x = 0; $x<$src_width; $x++) {
-                $srcPixX = $x; $srcPixY = $y;
-                $dstPixX = $dst_x + $x; $dstPixY = $dst_y + $y;
+                $srcPixX = $x; 
+                $srcPixY = $y;
+                $dstPixX = $dst_x + $x; 
+                $dstPixY = $dst_y + $y;
                 $pixSrc = imagecolorat($src_im, $srcPixX, $srcPixY);
                 
                 $opacitySrc = (($pixSrc>>24)&0x7F);
@@ -165,8 +167,10 @@ class DefaultComposer extends LayerComposerBase {
             
         for($y = 0; $y<$src_height; $y++) {
             for($x = 0; $x<$src_width; $x++) {
-                $srcPixX = $x; $srcPixY = $y;
-                $dstPixX = $dst_x + $x; $dstPixY = $dst_y + $y;
+                $srcPixX = $x; 
+                $srcPixY = $y;
+                $dstPixX = $dst_x + $x; 
+                $dstPixY = $dst_y + $y;
                 $pixSrc = imagecolorat($src_im, $srcPixX, $srcPixY);
                 $pixDst = imagecolorat($src_im, $dstPixX, $dstPixY);
                 
