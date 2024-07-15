@@ -101,6 +101,14 @@ class Image {
         $composerObj->setImage($this);
         $this->composer = $composerObj;
     }
+
+    /**
+     *  Get the image's layer composer object.
+     *  
+     */
+    public function getComposer() : Composers\LayerComposerBase {
+        return $this->composer;
+    }
     
     /**
      *  Gets the size of image object
