@@ -5,7 +5,7 @@ use Naomai\PHPLayers;
 use Naomai\PHPLayers\Layer;
 
 class DefaultComposer extends LayerComposerBase {
-
+    public bool $gammaBlending = false;
 
     public function mergeAll() : Layer {
         $layers = $this->layers->getAll();
@@ -69,7 +69,8 @@ class DefaultComposer extends LayerComposerBase {
             0, 0,
             0, 0,
             $topDimensions['w'], $topDimensions['h'],
-            $layerTop->getOpacity()
+            $layerTop->getOpacity(),
+            $this->gammaBlending
         );
             
         imagesavealpha($newLayerGD, true);
@@ -172,43 +173,65 @@ class DefaultComposer extends LayerComposerBase {
                 $dstPixX = $dst_x + $x; 
                 $dstPixY = $dst_y + $y;
                 $pixSrc = imagecolorat($src_im, $srcPixX, $srcPixY);
-                $pixDst = imagecolorat($src_im, $dstPixX, $dstPixY);
+                $pixDst = imagecolorat($dst_im, $dstPixX, $dstPixY);
                 
-                $opacitySrc = 127-(($pixSrc>>24)&0x7F);
-                $opacityDst = 127-(($pixDst>>24)&0x7F);
-
-                if($opacitySrc == 0 || $opacityDst == 0) {
-                    continue;
-                }
-
-                $opacityAdjusted = (int)(127 - ($opacitySrc * $opFrac));
-
+                $colorBlended = self::blendColorsWithGamma($pixSrc, $pixDst, $opFrac);
+                
+                
                 imagesetpixel(
                     $imageIntermediate, 
                     $dstPixX, $dstPixY, 
-                    ($pixSrc & 0xFFFFFF) | ($opacityAdjusted << 24)
+                    $colorBlended
                 );
             }
         }
         return $imageIntermediate;
     }
     
-    protected static function blendColorsWithGamma(int $color1, int $color2, float $blend){
+    protected static function blendColorsWithGamma(int $color1, int $color2, float $blend) : int {
+        if($blend==0 || ($color2 & 0x7F000000) == 0x7F000000) {
+            return $color1;
+        }
         $color1Linear = self::convertSRGBColorToLinearArray($color1);
         $color2Linear = self::convertSRGBColorToLinearArray($color2);
-        //TODO
+
+        $opacity1 = (127 - $color1Linear[3])/127;
+        $opacity2 = (127 - $color2Linear[3])/127;
+
+        $opacityTotal = $opacity1 + $opacity2;
+
+        $blendInv = 1 - $blend;
+
+        $alphaBlend1 = $opacity1 / $opacityTotal;
+        $alphaBlend2 = $opacity2 / $opacityTotal;
+
+        $opacity3 = $opacity1;
+        $opacity3 += (1-$opacity1) * $opacity2 * $blendInv;
+
+        $color3Linear = [
+            $color1Linear[0] * $alphaBlend1 + $color2Linear[0] * $alphaBlend2,
+            $color1Linear[1] * $alphaBlend1 + $color2Linear[1] * $alphaBlend2,
+            $color1Linear[2] * $alphaBlend1 + $color2Linear[2] * $alphaBlend2,
+            127-round($opacity3 * 127)
+        ];
+        
+        // not yet done, alpha is not calculated properly
+
+        $colorResult = self::convertLinearColorArrayToSRGB($color3Linear);
+
+        return $colorResult;
     }
 
     /* implementation based on VrExtensionsJni.cpp from Android Open Source Project */
 
-    private static function convertSRGBChannelToLinear(float $cs) {
+    private static function convertSRGBChannelToLinear(float $cs) : float {
         if ($cs <= 0.04045) {
             return $cs / 12.92;
         } else{
             return pow(($cs + 0.055) / 1.055, 2.4);
         }
     }
-    private static function convertLinearChannelToSRGB(float $cs) {
+    private static function convertLinearChannelToSRGB(float $cs) : float {
         if($cs <= 0.0) {
             return 0.0;
         } elseif ($cs < 0.0031308) {
@@ -219,13 +242,13 @@ class DefaultComposer extends LayerComposerBase {
             return 1.0;
         }
     }
-    private static function convertSRGBColorToLinearArray(int $color) {
+    private static function convertSRGBColorToLinearArray(int $color) : array {
         $r = self::convertSRGBChannelToLinear(($color & 0xff) / 255.0);
         $g = self::convertSRGBChannelToLinear((($color >> 8) & 0xff) / 255.0);
         $b = self::convertSRGBChannelToLinear((($color >> 16) & 0xff) / 255.0);
         return [$r, $g, $b, $color>>24];
     }
-    private static function convertLinearColorArrayToSRGB(array $colorArr) {
+    private static function convertLinearColorArrayToSRGB(array $colorArr) : int {
         $r = self::convertLinearChannelToSRGB($colorArr[0]);
         $g = self::convertLinearChannelToSRGB($colorArr[1]);
         $b = self::convertLinearChannelToSRGB($colorArr[2]);
