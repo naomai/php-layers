@@ -103,29 +103,38 @@ class DefaultComposer extends LayerComposerBase {
         imagealphablending($dst_im, true);
 
         $imageToCopy = $src_im;
+        
         if($opacityPct!=100) {
 
             if($gammaBlending) {
-                $imageToCopy = self::intermediateForMergeGammaBlend($src_im, $dst_im, $dst_x, $dst_y, $src_width, $src_height, $opacityPct);
+                self::imageMergeGammaBlend($dst_im, $src_im, $dst_x, $dst_y, $src_width, $src_height, $opacityPct);
+                $imageToCopy = null;
             }else{
                 $imageToCopy = self::intermediateForMerge($src_im, $dst_x, $dst_y, $src_width, $src_height, $opacityPct);
             }
             
         }
 
-        imagecopy(
-            $dst_im, $imageToCopy,
-            $dst_x, $dst_y,
-            $src_x, $src_y,
-            $src_width, $src_height
-        );
+        if($imageToCopy !==null) {
+            imagecopy(
+                $dst_im, $imageToCopy,
+                $dst_x, $dst_y,
+                $src_x, $src_y,
+                $src_width, $src_height
+            );
+        }
     }
-
+    
+    /**
+     * Create new GdImage, and put a fragment of source while applying opacity
+     *
+     * @return void
+     */
     protected static function intermediateForMerge(
-        $src_im, 
-        $dst_x, $dst_y, 
-        $src_width, $src_height, 
-        $opacityPct
+        \GdImage $src_im, 
+        int $dst_x, int $dst_y, 
+        int $src_width, int $src_height, 
+        int $opacityPct
     ) : \GdImage {
         $opFrac = $opacityPct / 100;
 
@@ -154,17 +163,15 @@ class DefaultComposer extends LayerComposerBase {
         return $imageIntermediate;
     }
 
-    protected static function intermediateForMergeGammaBlend(
-        $src_im, $dst_im,
+    protected static function imageMergeGammaBlend(
+        $bottom_im, $top_im,
         $dst_x, $dst_y, 
         $src_width, $src_height, 
         $opacityPct
-    ) : \GdImage {
+    ) : void {
         $opFrac = $opacityPct / 100;
 
-        $imageIntermediate = imagecreatetruecolor($src_width, $src_height);
-        imagealphablending($imageIntermediate, false);
-        imagefill($imageIntermediate, 0, 0, 0x7F000000);
+        imagealphablending($bottom_im, false);
             
         for($y = 0; $y<$src_height; $y++) {
             for($x = 0; $x<$src_width; $x++) {
@@ -172,20 +179,19 @@ class DefaultComposer extends LayerComposerBase {
                 $srcPixY = $y;
                 $dstPixX = $dst_x + $x; 
                 $dstPixY = $dst_y + $y;
-                $pixSrc = imagecolorat($src_im, $srcPixX, $srcPixY);
-                $pixDst = imagecolorat($dst_im, $dstPixX, $dstPixY);
+                $pixTop = imagecolorat($top_im, $srcPixX, $srcPixY);
+                $pixBottom = imagecolorat($bottom_im, $dstPixX, $dstPixY);
                 
-                $colorBlended = self::blendColorsWithGamma($pixSrc, $pixDst, $opFrac);
+                $colorBlended = self::blendColorsWithGamma($pixBottom, $pixTop, $opFrac);
                 
                 
                 imagesetpixel(
-                    $imageIntermediate, 
+                    $bottom_im, 
                     $dstPixX, $dstPixY, 
                     $colorBlended
                 );
             }
         }
-        return $imageIntermediate;
     }
     
     protected static function blendColorsWithGamma(int $color1, int $color2, float $blend) : int {
@@ -196,17 +202,13 @@ class DefaultComposer extends LayerComposerBase {
         $color2Linear = self::convertSRGBColorToLinearArray($color2);
 
         $opacity1 = (127 - $color1Linear[3])/127;
-        $opacity2 = (127 - $color2Linear[3])/127;
+        $opacity2 = (127 - $color2Linear[3])/127 * $blend;
 
-        $opacityTotal = $opacity1 + $opacity2;
+        $opacity3 = $opacity1 * (1-$opacity2);
+        $opacity3 += $opacity2;
 
-        $blendInv = 1 - $blend;
-
-        $alphaBlend1 = $opacity1 / $opacityTotal;
-        $alphaBlend2 = $opacity2 / $opacityTotal;
-
-        $opacity3 = $opacity1;
-        $opacity3 += (1-$opacity1) * $opacity2 * $blendInv;
+        $alphaBlend1 = $opacity1 * (1-$opacity2) / $opacity3;
+        $alphaBlend2 = $opacity2 / $opacity3;
 
         $color3Linear = [
             $color1Linear[0] * $alphaBlend1 + $color2Linear[0] * $alphaBlend2,
@@ -214,8 +216,6 @@ class DefaultComposer extends LayerComposerBase {
             $color1Linear[2] * $alphaBlend1 + $color2Linear[2] * $alphaBlend2,
             127-round($opacity3 * 127)
         ];
-        
-        // not yet done, alpha is not calculated properly
 
         $colorResult = self::convertLinearColorArrayToSRGB($color3Linear);
 
@@ -224,38 +224,76 @@ class DefaultComposer extends LayerComposerBase {
 
     /* implementation based on VrExtensionsJni.cpp from Android Open Source Project */
 
-    private static function convertSRGBChannelToLinear(float $cs) : float {
-        if ($cs <= 0.04045) {
-            return $cs / 12.92;
-        } else{
-            return pow(($cs + 0.055) / 1.055, 2.4);
+    private static function convertSRGBChannelToLinear(int $cs) : float {
+        static $linearLUT = null;
+        if($linearLUT===null) {
+            $linearLUT = self::generateConversionLutLinear();
         }
+        return $linearLUT[$cs];
+        
     }
-    private static function convertLinearChannelToSRGB(float $cs) : float {
-        if($cs <= 0.0) {
-            return 0.0;
-        } elseif ($cs < 0.0031308) {
-            return 12.92 * $cs;
-        } elseif ($cs < 1.0) {
-            return 1.055 * pow($cs, 0.41666) - 0.055;
-        } else {
-            return 1.0;
+    private static function convertLinearChannelToSRGB(float $cs) : int {
+        static $srgbLUT = null;
+        if($srgbLUT===null) { 
+            $srgbLUT = self::generateConversionLutSrgb();
         }
+        $idx = min(round($cs*10000), 10000);
+        return $srgbLUT[$idx];
     }
     private static function convertSRGBColorToLinearArray(int $color) : array {
-        $r = self::convertSRGBChannelToLinear(($color & 0xff) / 255.0);
-        $g = self::convertSRGBChannelToLinear((($color >> 8) & 0xff) / 255.0);
-        $b = self::convertSRGBChannelToLinear((($color >> 16) & 0xff) / 255.0);
-        return [$r, $g, $b, $color>>24];
+        $r = self::convertSRGBChannelToLinear($color & 0xff);
+        $g = self::convertSRGBChannelToLinear(($color >> 8) & 0xff);
+        $b = self::convertSRGBChannelToLinear(($color >> 16) & 0xff);
+        $a = (($color >> 24) & 0x7f);
+        return [$r, $g, $b, $a];
     }
     private static function convertLinearColorArrayToSRGB(array $colorArr) : int {
         $r = self::convertLinearChannelToSRGB($colorArr[0]);
         $g = self::convertLinearChannelToSRGB($colorArr[1]);
         $b = self::convertLinearChannelToSRGB($colorArr[2]);
-        $r8 = round($r * 255.0);
-        $g8 = round($g * 255.0);
-        $b8 = round($b * 255.0);
-        $a8 = $colorArr[3];
-        return ($a8 << 24) | ($b8 << 16) | ($g8 << 8) | $r8;
+        $a = $colorArr[3];
+        return ($a << 24) | ($b << 16) | ($g << 8) | $r;
     }
+
+    /* lookup tables for gamma correction */
+
+    private static function generateConversionLutLinear() : \ArrayAccess {
+        $lutLinear = new \SplFixedArray(256);
+        for(
+            $c=0, $cs=0; 
+            $c<256; 
+            $c++, $cs=$c/255
+        ) {
+            if ($cs <= 0.04045) {
+                $lutLinear[$c] = $cs / 12.92;
+            } else {
+                $lutLinear[$c] = pow(($cs + 0.055) / 1.055, 2.4);
+            }
+        }
+        return $lutLinear;
+    }
+
+    private static function generateConversionLutSrgb() : \ArrayAccess {
+        $lutSrgb = new \SplFixedArray(10001);
+        for(
+            $c=0, $cs=0; 
+            $cs<=1; 
+            $c++, $cs+=0.0001
+        ) {
+            $valueFloat = null;
+            if($cs <= 0.0) {
+                $valueFloat = 0.0;
+            } elseif ($cs < 0.0031308) {
+                $valueFloat = 12.92 * $cs;
+            } elseif ($cs < 1.0) {
+                $valueFloat = 1.055 * pow($cs, 0.41666) - 0.055;
+            } else {
+                $valueFloat = 1.0;
+            }
+            $lutSrgb[$c] = round($valueFloat * 255);
+        }
+        return $lutSrgb;
+    }
+
+
 }
