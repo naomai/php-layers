@@ -198,8 +198,8 @@ class DefaultComposer extends LayerComposerBase {
         if($blend==0 || ($color2 & 0x7F000000) == 0x7F000000) {
             return $color1;
         }
-        $color1Linear = self::convertSRGBColorToLinearArray($color1);
-        $color2Linear = self::convertSRGBColorToLinearArray($color2);
+        $color1Linear = self::convertSrgbColorToLinearArray($color1);
+        $color2Linear = self::convertSrgbColorToLinearArray($color2);
 
         $opacity1 = (127 - $color1Linear[3])/127;
         $opacity2 = (127 - $color2Linear[3])/127 * $blend;
@@ -217,14 +217,14 @@ class DefaultComposer extends LayerComposerBase {
             127-round($opacity3 * 127)
         ];
 
-        $colorResult = self::convertLinearColorArrayToSRGB($color3Linear);
+        $colorResult = self::convertLinearColorArrayToSrgb($color3Linear);
 
         return $colorResult;
     }
 
     /* implementation based on VrExtensionsJni.cpp from Android Open Source Project */
 
-    private static function convertSRGBChannelToLinear(int $cs) : float {
+    private static function convertSrgbChannelToLinear(int $cs) : float {
         static $linearLUT = null;
         if($linearLUT===null) {
             $linearLUT = self::generateConversionLutLinear();
@@ -232,7 +232,7 @@ class DefaultComposer extends LayerComposerBase {
         return $linearLUT[$cs];
         
     }
-    private static function convertLinearChannelToSRGB(float $cs) : int {
+    private static function convertLinearChannelToSrgb(float $cs) : int {
         static $srgbLUT = null;
         if($srgbLUT===null) { 
             $srgbLUT = self::generateConversionLutSrgb();
@@ -240,17 +240,17 @@ class DefaultComposer extends LayerComposerBase {
         $idx = min(round($cs*10000), 10000);
         return $srgbLUT[$idx];
     }
-    private static function convertSRGBColorToLinearArray(int $color) : array {
-        $r = self::convertSRGBChannelToLinear($color & 0xff);
-        $g = self::convertSRGBChannelToLinear(($color >> 8) & 0xff);
-        $b = self::convertSRGBChannelToLinear(($color >> 16) & 0xff);
+    private static function convertSrgbColorToLinearArray(int $color) : array {
+        $r = self::convertSrgbChannelToLinear($color & 0xff);
+        $g = self::convertSrgbChannelToLinear(($color >> 8) & 0xff);
+        $b = self::convertSrgbChannelToLinear(($color >> 16) & 0xff);
         $a = (($color >> 24) & 0x7f);
         return [$r, $g, $b, $a];
     }
-    private static function convertLinearColorArrayToSRGB(array $colorArr) : int {
-        $r = self::convertLinearChannelToSRGB($colorArr[0]);
-        $g = self::convertLinearChannelToSRGB($colorArr[1]);
-        $b = self::convertLinearChannelToSRGB($colorArr[2]);
+    private static function convertLinearColorArrayToSrgb(array $colorArr) : int {
+        $r = self::convertLinearChannelToSrgb($colorArr[0]);
+        $g = self::convertLinearChannelToSrgb($colorArr[1]);
+        $b = self::convertLinearChannelToSrgb($colorArr[2]);
         $a = $colorArr[3];
         return ($a << 24) | ($b << 16) | ($g << 8) | $r;
     }
