@@ -77,7 +77,7 @@ final class ReorderTest extends TestCase {
     }
 
     private function createTestImageObj() : array {
-        $imageObj = PHPLayers\Image::createFromFile(__DIR__ . "/BasicSquares.png");
+        $imageObj = PHPLayers\Image::createFromFile(__DIR__ . "/../TestImages/BasicSquares.png");
         $layers = [];
         $background = $imageObj->getLayerByIndex(0);
         $background->name = "0";
