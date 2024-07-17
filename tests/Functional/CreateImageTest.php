@@ -7,6 +7,9 @@ use Naomai\PHPLayers\Layer;
 
 require_once 'src/Image.php';
 
+/**
+ * @coversNothing
+ */
 final class CreateImageTest extends TestCase {
     const TESTFILE_WIDTH = 50;
     const TESTFILE_HEIGHT = 55;
