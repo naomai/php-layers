@@ -4,23 +4,31 @@ use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 use Naomai\PHPLayers;
 
+
+/**
+ * @covers Naomai\PHPLayers\Helpers\LayerReorderCall
+ */
 final class ReorderTest extends TestCase {
-    public function testLayerCreationOrder() : void {
+    public function testSelfCreateTestImageObj() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
         $this->assertEquals(3, count($layers));
         $this->assertLayerOrder($imageObj, ["0", "1", "2"]);
     }
 
-    public function testLayerReorderTopBottom() : void {
+    public function testPutTop() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
         $index = $layers[0]->reorder()->putTop();
         $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
+    }
+
+    public function testPutBottom() : void {
+        [$imageObj, $layers] = $this->createTestImageObj();
 
         $index = $layers[2]->reorder()->putBottom();
         $this->assertEquals(0, $index);
-        $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
+        $this->assertLayerOrder($imageObj, ["2", "0", "1"]);
 
     }
 
