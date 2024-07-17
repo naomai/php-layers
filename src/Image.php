@@ -145,7 +145,8 @@ class Image {
     /**
      *  Gets the Layer object from layer set using unique layer ID
      *  
-     *  @param int $id Index of the layer in Layer Stack
+     *  @param int $id Index of the layer in Layer Stack.
+     *                 If negative, count from the last layer.
      *  @return ?Layer object matching the index provided, or null if invalid.
      */
     public function getLayerByIndex(int $id) : ?Layer {

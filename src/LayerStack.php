@@ -62,7 +62,8 @@ class LayerStack {
     /**
      * Retrieves layer of given index from Layer Stack
      *
-     * @param  int $index  Index of layer; if negative, count from the last layer 
+     * @param  int $index  Index of layer.
+     *                     If negative, count from the last layer.
      * @retyrb ?Layer      Layer matching given index, or null if not found
      */
     public function getLayerByIndex(int $index) : ?Layer {
@@ -71,7 +72,7 @@ class LayerStack {
             $index = $layersCount + $index;
         }
         if($index < 0) {
-            throw new \InvalidArgumentException("Negative index out of bound");
+            return null;
         }
 
         if(!isset($this->layers[$index])) {
