@@ -208,6 +208,14 @@ class Image {
         $imgd=base64_encode(ob_get_clean());
         return "data:image/jpeg;base64,".$imgd;
     }
+
+    public function getLayerStack() : LayerStack {
+        return $this->layers;
+    }
+
+    public function getLayerCount() : int {
+        return $this->layers->getCount();
+    }
     
     /**
      * Wrap existing GD image into new PHP Layers Image object
