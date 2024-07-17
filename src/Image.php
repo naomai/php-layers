@@ -37,7 +37,8 @@ class Image {
     
     
     /**
-     *  Puts a layer object to the top of image's layer set.
+     *  Puts a layer object to the top of image's layer stack.
+     *  If the layer is already on the stack, it will be moved.
      *  
      *  Inserted layer is drawn over the existing image.
      *  
@@ -52,7 +53,8 @@ class Image {
     }
     
     /**
-     *  Puts a layer object to the bottom of image's layer set.
+     *  Puts a layer object to the bottom of image's layer stack.
+     *  If the layer is already on the stack, it will be moved.
      *  
      *  Inserted layer is drawn behind the existing image.
      *  
