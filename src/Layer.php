@@ -3,7 +3,7 @@
 namespace Naomai\PHPLayers;
 
 class Layer {
-    protected $gdImage = null;
+    protected ?\GdImage $gdImage = null;
     
     /** 
      * Width of the layer buffer 
@@ -94,17 +94,17 @@ class Layer {
 
         
         $this->setSurfaceDimensions(1, 1);
-
         $this->gdImage = imagecreatetruecolor(1, 1);
             
         $this->filter = new Filters\PHPFilters($this);
-        
         $this->paint = new PaintTools\DefaultTools($this);
 
     }
     
     public function __destruct() {
-        imagedestroy($this->gdImage);
+        if($this->gdImage!==null) {
+            imagedestroy($this->gdImage);
+        }
     }
         
     /**
