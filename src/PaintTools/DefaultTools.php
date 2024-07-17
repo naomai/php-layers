@@ -27,7 +27,7 @@ class DefaultTools extends ToolsBase{
         if($type & GDRECT_FILLED){
             $crop = 0; //ceil($this->lineSize/2);
             
-            imagefilledrectangle ($this->destGD, $x1+$crop, $y1+$crop, $x2-$crop-1, $y2-$crop-1, $this->c($colorFill));
+            imagefilledrectangle($this->destGD, $x1+$crop, $y1+$crop, $x2-$crop, $y2-$crop, $this->c($colorFill));
         }
         if($type & GDRECT_BORDER){
             imagerectangle ($this->destGD, $x1, $y1, $x2, $y2, $this->b($colorBorder));
