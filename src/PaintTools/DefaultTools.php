@@ -12,33 +12,61 @@ class DefaultTools extends ToolsBase{
 
         
     // PAINT FUNCTIONS
-    public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT){
+    public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT) {
         $this->setDrawingConfig();
-        imagesetpixel($this->destGD, $x, $y, $this->c($color));
+        imagesetpixel($this->destGD, $x, $y, $this->getLineColor($color));
     }
-    public function line(int $x1, int $y1, int $x2, int $y2, $color=GDCOLOR_DEFAULT){
+    public function line(int $x1, int $y1, int $x2, int $y2, $color=GDCOLOR_DEFAULT) {
         $this->setDrawingConfig();
         
-        imageline ($this->destGD, $x1, $y1, $x2, $y2, $this->c($color));
+        imageline($this->destGD, $x1, $y1, $x2, $y2, $this->getLineColor($color));
     }
 
-    public function rectangle(int $x1, int $y1, int $x2, int $y2, int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT){
+    public function rectangle(
+        int $x1, int $y1, 
+        int $x2, int $y2, 
+        int $type=GDRECT_BORDER, 
+        int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT
+    ) {
         $this->setDrawingConfig();
-        if($type & GDRECT_FILLED){
+        if($type & GDRECT_FILLED) {
             $crop = 0; //ceil($this->lineSize/2);
             
-            imagefilledrectangle($this->destGD, $x1+$crop, $y1+$crop, $x2-$crop, $y2-$crop, $this->c($colorFill));
+            imagefilledrectangle(
+                $this->destGD, 
+                $x1+$crop, $y1+$crop, 
+                $x2-$crop, $y2-$crop, 
+                $this->getLineColor($colorFill)
+            );
         }
-        if($type & GDRECT_BORDER){
-            imagerectangle ($this->destGD, $x1, $y1, $x2, $y2, $this->b($colorBorder));
+        if($type & GDRECT_BORDER) {
+            imagerectangle(
+                $this->destGD, 
+                $x1, $y1, 
+                $x2, $y2, 
+                $this->getBorderColor($colorBorder)
+            );
         }
     }
 
-    public function rectangleBox(array $box, int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT){
-        $this->rectangle($box['x'], $box['y'], $box['x']+$box['w'], $box['y']+$box['h'], $type, $colorBorder, $colorFill);
+    public function rectangleBox(
+        array $box, 
+        int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, 
+        int $colorFill=GDCOLOR_DEFAULT
+    ) {
+        $this->rectangle(
+            $box['x'], $box['y'], 
+            $box['x']+$box['w'], $box['y']+$box['h'], 
+            $type, 
+            $colorBorder, $colorFill
+        );
     }
 
-    public function polygon(array $verts, int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT){
+    public function polygon(
+        array $verts, 
+        int $type=GDRECT_BORDER, 
+        int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT
+    ) {
         $this->setDrawingConfig();
         $gdVerts=[];
         foreach($verts as $v){
@@ -47,25 +75,37 @@ class DefaultTools extends ToolsBase{
         }
         $gdVertsCount = count($verts);
         
-        if($type & GDRECT_FILLED){
-            imagefilledpolygon ($this->destGD, $gdVerts, $gdVertsCount, $this->c($colorFill));
+        if($type & GDRECT_FILLED) {
+            imagefilledpolygon(
+                $this->destGD, 
+                $gdVerts, $gdVertsCount, 
+                $this->getLineColor($colorFill)
+            );
         }
-        if($type & GDRECT_BORDER){
-            imagepolygon ($this->destGD, $gdVerts, $gdVertsCount, $this->b($colorBorder));
+        if($type & GDRECT_BORDER) {
+            imagepolygon(
+                $this->destGD, 
+                $gdVerts, $gdVertsCount, 
+                $this->getBorderColor($colorBorder)
+            );
         }
     }
 
 
-    public function textBM(int $x,int $y, string $text, int $font=3,int $color=GDCOLOR_DEFAULT){
+    public function textBM(
+        int $x, int $y, 
+        string $text, 
+        int $font=3, int $color=GDCOLOR_DEFAULT
+    ) {
         $this->setDrawingConfig();
-        imagestring($this->destGD,$font,$x,$y,$text,$this->c($color));
+        imagestring($this->destGD, $font, $x, $y, $text, $this->getLineColor($color));
     }
 
-    public function loadBMFont(string $fontFile){
+    public function loadBMFont(string $fontFile) {
         return imageloadfont($fontFile);
     }
 
-    public function textGetBox(int $x, int $y, string $text, array $params=[]){
+    public function textGetBox(int $x, int $y, string $text, array $params=[]) {
         $angle = isset($params['angle']) ? $params['angle'] : 0;
         $font = isset($params['font']) ? $params['font'] : __DIR__."/../Fonts/Lato-Regular.ttf";
         $align = isset($params['align']) ? $params['align'] : GDALIGN_LEFT;
@@ -83,7 +123,7 @@ class DefaultTools extends ToolsBase{
         ];
     }
 
-    public function text(int $x, int $y, string $text, array $params=[]){
+    public function text(int $x, int $y, string $text, array $params=[]) {
         $this->setDrawingConfig();
         $angle = isset($params['angle']) ? $params['angle'] : 0;
         $font = isset($params['font']) ? $params['font'] : __DIR__."/../Fonts/Lato-Regular.ttf";
@@ -96,23 +136,36 @@ class DefaultTools extends ToolsBase{
         $newY = $y - $box[7];
         $this->setDrawingConfig();
         
-        if(isset($params['shadow']) && $params['shadow']==true){
-            imagettftext($this->destGD,$size,$angle,$newX+1,$newY+1,0x000000,$font,$text);
+        if(isset($params['shadow']) && $params['shadow']==true) {
+            imagettftext($this->destGD, $size, $angle, $newX+1, $newY+1, 0x000000, $font, $text);
         }
-        imagettftext($this->destGD,$size,$angle,$newX,$newY,$this->c($color),$font,$text);
+        imagettftext(
+            $this->destGD, 
+            $size, $angle, 
+            $newX, $newY, 
+            $this->getLineColor($color), 
+            $font, 
+            $text
+        );
         
     }
 
     // MISC
-    protected function setDrawingConfig(){
-        imagealphablending ($this->destGD,$this->alphaBlend);
-        imageantialias ($this->destGD, $this->lineSize > 1 ? false : $this->antiAlias);
-        imagesetthickness ($this->destGD,$this->lineSize);
+    protected function setDrawingConfig() {
+        imagealphablending($this->destGD, $this->alphaBlend);
+        imageantialias($this->destGD, $this->lineSize > 1 ? false : $this->antiAlias);
+        imagesetthickness($this->destGD, $this->lineSize);
     }
-    protected function c($color){
-        return $color===GDCOLOR_DEFAULT?$this->lineColor:$color;
+    protected function getLineColor($color) {
+        if($color===GDCOLOR_DEFAULT) {
+            return $this->lineColor;
+        }
+        return $color;
     }
-    protected function b($color){
-        return $color===GDCOLOR_DEFAULT?$this->borderColor:$color;
+    protected function getBorderColor($color) {
+        if($color===GDCOLOR_DEFAULT) {
+            return $this->borderColor;
+        }
+        return $color;
     }
 }
