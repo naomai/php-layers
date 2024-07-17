@@ -90,7 +90,7 @@ class DefaultComposer extends LayerComposerBase {
         int $opacityPct,
         bool $gammaBlending=false
     ) {
-        $opacityPct=PHPLayers\clamp_int($opacityPct, 0, 100);
+        $opacityPct=self::clamp($opacityPct, 0, 100);
 
         if($opacityPct==0) {
             // fully transparent, skip
@@ -293,6 +293,14 @@ class DefaultComposer extends LayerComposerBase {
             $lutSrgb[$c] = round($valueFloat * 255);
         }
         return $lutSrgb;
+    }
+
+    protected static function clampByte($v) : int {
+        return min(max((int)$v, 0), 255);
+    }
+    
+    protected static function clamp($v, $min, $max) : int {
+        return min(max((int)$v, $min), $max);
     }
 
 

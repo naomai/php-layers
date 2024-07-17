@@ -245,10 +245,4 @@ class Image {
     }
 }
 
-function clamp_byte($v) : int {
-    return min(max((int)$v, 0), 255);
-}
 
-function clamp_int($v, $min, $max) : int {
-    return min(max((int)$v, $min), $max);
-}
