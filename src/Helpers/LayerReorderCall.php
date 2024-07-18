@@ -84,7 +84,7 @@ class LayerReorderCall {
             );
         }
         $indexNew = $indexOfTarget;
-        return $this->putAt($indexNew);
+        return $this->layerStack->putBehind($indexNew, $this->layerToMove);
     }
 
     public function getLayerStack() : LayerStack {
