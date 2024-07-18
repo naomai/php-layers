@@ -34,10 +34,16 @@ final class ReorderTest extends TestCase {
     public function testPutOver() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
+        //upwards
         $index = $layers[0]->reorder()->putOver($layers[2]);
         $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
+        //downwards
+        $index = $layers[0]->reorder()->putOver($layers[1]);
+        $this->assertEquals(1, $index);
+        $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
+        
         $layerDetached = new PHPLayers\Layer();
         $this->expectException(\InvalidArgumentException::class);
         $layers[0]->reorder()->putOver($layerDetached);
@@ -46,9 +52,15 @@ final class ReorderTest extends TestCase {
     public function testPutBehind() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
+        //upwards
         $index = $layers[0]->reorder()->putBehind($layers[2]);
         $this->assertEquals(1, $index);
         $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
+
+        //downwards
+        $index = $layers[2]->reorder()->putBehind($layers[1]);
+        $this->assertEquals(0, $index);
+        $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
 
         $layerDetached = new PHPLayers\Layer();
         $this->expectException(\InvalidArgumentException::class);
