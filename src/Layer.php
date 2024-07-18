@@ -79,7 +79,7 @@ class Layer {
     /**
      * Image object the layer is attached to
      */
-    protected Image $parentImg;
+    protected ?Image $parentImg = null;
     
     /** TODO Enumeration */
     const GDLAYER_BLEND_NORMAL=0;
@@ -169,6 +169,9 @@ class Layer {
      * @return Helpers\LayerReorderCall  Helper object with reorder operations
      */
     public function reorder() : Helpers\LayerReorderCall {
+        if($this->parentImg===null) {
+            throw new \RuntimeException("Cannot reorder a layer not attached to image");
+        }
         return $this->parentImg->reorder($this);
     }
     
@@ -250,8 +253,12 @@ class Layer {
     }
     
     public function transformPermanently() : void {
-        $imgSize = $this->parentImg->getSize();
-        $newLayerGD = imagecreatetruecolor($imgSize['w'], $imgSize['h']);
+        if($this->parentImg===null) {
+            $newSize = $this->getDimensions();
+        }else{
+            $newSize = $this->parentImg->getSize();
+        }
+        $newLayerGD = imagecreatetruecolor($newSize['w'], $newSize['h']);
         imagealphablending($newLayerGD, false);
         imagefill($newLayerGD, 0, 0, 0x7F000000);
         imagecopy(
@@ -264,8 +271,8 @@ class Layer {
         imagedestroy($this->gdImage);
         $this->gdImage = $newLayerGD;
         //$this->offsetX = $this->offsetY = 0;
-        $this->sizeX = $imgSize['w'];
-        $this->sizeY = $imgSize['h'];
+        $this->sizeX = $newSize['w'];
+        $this->sizeY = $newSize['h'];
         $this->paint->attachToLayer($this);
         $this->filter->attachToLayer($this);
     }
