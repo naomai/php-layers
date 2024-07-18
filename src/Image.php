@@ -47,8 +47,10 @@ class Image {
      *  @since 0.1.0
      */
     public function layerPutTop(Layer $layerObj) {
+        if($this->layers->getIndexOf($layerObj)===false) {
+            $layerObj->setParentImg($this);
+        }
         $index = $this->reorder($layerObj)->putTop();
-        $layerObj->setParentImg($this);
         return $index;
     }
     
@@ -63,8 +65,10 @@ class Image {
      *  @since 0.1.0
      */
     public function layerPutBottom(Layer $layerObj) {
+        if($this->layers->getIndexOf($layerObj)===false) {
+            $layerObj->setParentImg($this);
+        }
         $index = $this->reorder($layerObj)->putBottom();
-        $layerObj->setParentImg($this);
         return $index;
     }
     
@@ -76,9 +80,8 @@ class Image {
      */
     public function newLayer(string $name=null) : Layer {
         $newLayer = new Layer();
-        $newLayer->setParentImg($this);
         $newLayer->setSurfaceDimensions($this->sizeX, $this->sizeY);
-        $newLayer->transformPermanently();
+        $newLayer->setParentImg($this);
         $newLayer->clear();
         if(is_null($name)) {
             $name = "Layer ".$this->layers->getCount();

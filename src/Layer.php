@@ -279,6 +279,7 @@ class Layer {
     
     public function setParentImg(Image $parentImg) : void {
         $this->parentImg = $parentImg;
+        $this->transformPermanently();
     }
     
     
