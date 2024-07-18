@@ -65,7 +65,7 @@ class LayerReorderCall {
             );
         }
         $indexNew = $indexOfTarget + 1;
-        return $this->putAt($indexNew);
+        return $this->layerStack->putBehind($indexNew, $this->layerToMove);
     }
 
     /**
