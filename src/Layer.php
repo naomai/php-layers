@@ -8,12 +8,12 @@ class Layer {
     /** 
      * Width of the layer buffer 
      * */
-    protected int $sizeX;
+    protected ?int $sizeX = null;
 
     /** 
      * Height of the layer buffer 
      * */
-    protected int $sizeY;
+    protected ?int $sizeY = null;
 
     /** 
      * Width of the layer surface
@@ -204,11 +204,14 @@ class Layer {
     
     /* SELECT */    
     /**
-     * Select entire layer buffer surface
+     * Select entire area of layer buffer
      *
      * @return Selection Helper object for transforming selection
      */
     public function selectWhole() : Selection {
+        if($this->sizeX===null) {
+            throw new \RuntimeException("Layer surface does not exist yet");
+        }
         $x=0;
         $y=0;
         $w=$this->sizeX;
