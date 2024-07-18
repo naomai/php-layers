@@ -71,6 +71,7 @@ final class ReorderTest extends TestCase {
     public function testPutAt() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
+        //upwards
         $index = $layers[0]->reorder()->putAt(2);
         $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
@@ -79,10 +80,15 @@ final class ReorderTest extends TestCase {
         $this->assertEquals(1, $index);
         $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
 
+        //downwards
+        $index = $layers[0]->reorder()->putAt(0);
+        $this->assertEquals(0, $index);
+        $this->assertLayerOrder($imageObj, ["0", "2", "1"]);
+
         //index beyond stack size - should be placed as last
         $index = $layers[2]->reorder()->putAt(5);
         $this->assertEquals(2, $index);
-        $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
+        $this->assertLayerOrder($imageObj, ["0", "1", "2"]);
 
         //negative index - count from the end of stack
         $index = $layers[1]->reorder()->putAt(-1);
