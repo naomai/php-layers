@@ -29,23 +29,34 @@ final class ReorderTest extends TestCase {
         $index = $layers[2]->reorder()->putBottom();
         $this->assertEquals(0, $index);
         $this->assertLayerOrder($imageObj, ["2", "0", "1"]);
-
     }
 
-    public function testLayerReorderRelative() : void {
+    public function testPutOver() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
         $index = $layers[0]->reorder()->putOver($layers[2]);
         $this->assertEquals(2, $index);
         $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
 
+        $layerDetached = new PHPLayers\Layer();
+        $this->expectException(\InvalidArgumentException::class);
+        $layers[0]->reorder()->putOver($layerDetached);
+    }
+
+    public function testPutBehind() : void {
+        [$imageObj, $layers] = $this->createTestImageObj();
+
         $index = $layers[0]->reorder()->putBehind($layers[2]);
         $this->assertEquals(1, $index);
         $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
+
+        $layerDetached = new PHPLayers\Layer();
+        $this->expectException(\InvalidArgumentException::class);
+        $layers[0]->reorder()->putBehind($layerDetached);
     }
 
 
-    public function testLayerReorderAbsolute() : void {
+    public function testPutAt() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
 
         $index = $layers[0]->reorder()->putAt(2);
@@ -75,7 +86,9 @@ final class ReorderTest extends TestCase {
 
     static public function assertLayerOrder(PHPLayers\Image  $imageObj, array $layerOrder) {
         $names = static::extractNames($imageObj);
-        static::assertEquals($layerOrder, $names);
+
+        static::assertSame($layerOrder, $names);
+
     }
 
     static public function assertLayerAt(PHPLayers\Layer $layer, int $expectedIndex, PHPLayers\Image $imageObj) {
@@ -85,11 +98,9 @@ final class ReorderTest extends TestCase {
     }
 
     private function createTestImageObj() : array {
-        $imageObj = PHPLayers\Image::createFromFile(__DIR__ . "/../TestImages/BasicSquares.png");
+        $imageObj = new PHPLayers\Image(10, 10, false);
         $layers = [];
-        $background = $imageObj->getLayerByIndex(0);
-        $background->name = "0";
-        $layers[] = $background;
+        $layers[] = $imageObj->newLayer("0");
         $layers[] = $imageObj->newLayer("1");
         $layers[] = $imageObj->newLayer("2");
 
