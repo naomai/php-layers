@@ -60,7 +60,9 @@ class LayerReorderCall {
     public function putOver(Layer $layerTarget) : ?int {
         $indexOfTarget = $this->layerStack->getIndexOf($layerTarget);
         if($indexOfTarget === false) {
-            return null; // TODO decide on handling this case
+            throw new \InvalidArgumentException(
+                "Target layer not attached to the same image as layer to move"
+            );
         }
         $indexNew = $indexOfTarget + 1;
         return $this->putAt($indexNew);
@@ -77,7 +79,9 @@ class LayerReorderCall {
     public function putBehind(Layer $layerTarget) : ?int {
         $indexOfTarget = $this->layerStack->getIndexOf($layerTarget);
         if($indexOfTarget === false) {
-            return null; // TODO decide on handling this case
+            throw new \InvalidArgumentException(
+                "Target layer not attached to the same image as layer to move"
+            );
         }
         $indexNew = $indexOfTarget;
         return $this->putAt($indexNew);
