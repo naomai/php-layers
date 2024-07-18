@@ -85,20 +85,11 @@ class Layer {
     const GDLAYER_BLEND_NORMAL=0;
         
     public function __construct() {
-        $args = func_get_args();
-        if(count($args) !== 0) {
-            throw new \BadFunctionCallException(
-                "Layer::__construct with arguments is deprecated"
-            );
-        }
-
-        
         $this->setSurfaceDimensions(1, 1);
         $this->gdImage = imagecreatetruecolor(1, 1);
             
         $this->filter = new Filters\PHPFilters($this);
         $this->paint = new PaintTools\DefaultTools($this);
-
     }
     
     public function __destruct() {
