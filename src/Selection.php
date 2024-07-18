@@ -58,6 +58,13 @@ class Selection{
         $this->paintX->attachToGD($this->subImage);
     }
 
+    public function getCurrentRect() : array {
+        return [
+            'w'=>$this->sizeX, 'h'=>$this->sizeY,
+            'x'=>$this->offsetX, 'y'=>$this->offsetY
+        ];
+    }
+
     protected function blankSourceSelectionRect() {
         $layerGD = $this->layer->getGDHandle();
         imagealphablending($layerGD, false);
