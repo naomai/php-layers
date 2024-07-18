@@ -35,14 +35,23 @@ final class ReorderTest extends TestCase {
         [$imageObj, $layers] = $this->createTestImageObj();
 
         //upwards
-        $index = $layers[0]->reorder()->putOver($layers[2]);
-        $this->assertEquals(2, $index);
-        $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
-
-        //downwards
         $index = $layers[0]->reorder()->putOver($layers[1]);
         $this->assertEquals(1, $index);
         $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
+
+        $index = $layers[1]->reorder()->putOver($layers[2]);
+        $this->assertEquals(2, $index);
+        $this->assertLayerOrder($imageObj, ["0", "2", "1"]);
+
+        //same
+        $index = $layers[1]->reorder()->putOver($layers[2]);
+        $this->assertEquals(2, $index);
+        $this->assertLayerOrder($imageObj, ["0", "2", "1"]);
+
+        //downwards
+        $index = $layers[1]->reorder()->putOver($layers[0]);
+        $this->assertEquals(1, $index);
+        $this->assertLayerOrder($imageObj, ["0", "1", "2"]);
         
         $layerDetached = new PHPLayers\Layer();
         $this->expectException(\InvalidArgumentException::class);
@@ -57,7 +66,16 @@ final class ReorderTest extends TestCase {
         $this->assertEquals(1, $index);
         $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
 
+        //same
+        $index = $layers[1]->reorder()->putBehind($layers[0]);
+        $this->assertEquals(0, $index);
+        $this->assertLayerOrder($imageObj, ["1", "0", "2"]);
+
         //downwards
+        $index = $layers[2]->reorder()->putBehind($layers[0]);
+        $this->assertEquals(1, $index);
+        $this->assertLayerOrder($imageObj, ["1", "2", "0"]);
+        
         $index = $layers[2]->reorder()->putBehind($layers[1]);
         $this->assertEquals(0, $index);
         $this->assertLayerOrder($imageObj, ["2", "1", "0"]);
