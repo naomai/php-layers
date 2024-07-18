@@ -6,9 +6,11 @@ class LayerStack {
     protected $layers = []; // 0=bottom
 
     /**
-     * Inserts layerToPut into given position on the Layer Stack.
+     * Moves layerToPut into given position on the Layer Stack.
      * If the layerToPut is already on the stack, 
-     * it's pulled from its place beforehand.
+     * it's pulled from its place beforehand. 
+     * The layer is inserted into the position AFTER stack collapsing.
+     * Actual index of inserted layer is the same as provided.
      *
      * @param  mixed $indexNew   Zero-based position 
      * @param  Layer $layerToPut Layer to be inserted
@@ -24,6 +26,45 @@ class LayerStack {
         }
 
         $this->remove($layerToPut);
+        array_splice($this->layers, $indexNew, 0, [$layerToPut]);
+
+        $indexActual = $this->getIndexOf($layerToPut);
+
+        return $indexActual;
+    }
+
+    /**
+     * Inserts layerToPut behind element at given position
+     * on the Layer Stack.
+     * If the layerToPut is already on the stack, 
+     * it's pulled from its place beforehand. 
+     * The layer is inserted into the position BEFORE stack collapsing.
+     * As a result, the actual index of layerToPut might be different.
+     *
+     * @param  mixed $indexNew   Zero-based position 
+     * @param  Layer $layerToPut Layer to be inserted
+     * @return int Actual index of inserted layer on LayerStack
+     */
+    public function putBehind(int $indexNew, Layer $layerToPut) : int {
+        $layersCount = $this->getCount();
+        if($indexNew < 0) {
+            $indexNew = $layersCount + $indexNew;
+        }
+        if($indexNew < 0) {
+            throw new \InvalidArgumentException("Negative index out of bound");
+        }
+
+        $indexCurrent = $this->getIndexOf($layerToPut);
+        if($indexCurrent == $indexNew) {
+            return $indexNew;
+        }
+        $isStackCollapingBeforeDestination 
+            = $indexCurrent!==false && $indexNew > $indexCurrent;
+
+        $this->remove($layerToPut);
+        if($isStackCollapingBeforeDestination) {
+            $indexNew -= 1;
+        }
         array_splice($this->layers, $indexNew, 0, [$layerToPut]);
 
         $indexActual = $this->getIndexOf($layerToPut);
