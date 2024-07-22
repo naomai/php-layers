@@ -179,7 +179,7 @@ class Image {
      *  Merges all layers in image layer set using current layer composer.
      *  The result is a GD2 image handle accessible by native PHP functions.
      *  The original layer set is left intact.
-     *  
+     * 
      *  @return \GdImage GD2 handle containing merged content of image
      *  @since 0.1.0
      */
@@ -190,28 +190,35 @@ class Image {
     /**
      * Output image into Data URL, as lossless PNG format
      * 
+     * @param int $quality Quality of the result image
      * @return string URL containing resulting image
      */
     
-    public function getDataUrlPNG() : string {
-        $gdResult = $this->getMergedGD();
-        ob_start();
-        imagepng($gdResult);
-        $imgd=base64_encode(ob_get_clean());
-        return "data:image/png;base64,".$imgd;
+    public function getDataUrlPNG(int $quality=-1) : string {
+
+        return $this->export()->asDataUrl(
+            format: "png",
+            quality: $quality
+        );
     }
 
     /**
      * Output image into Data URL, as lossy JPEG
      * 
+     * @param int $quality Quality of the result image
      * @return string URL containing resulting image
      */
-    public function getDataUrlJPEG() : string {
+    public function getDataUrlJPEG(int $quality=-1) : string {
+        return $this->export()->asDataUrl(
+            format: "jpeg",
+            quality: $quality
+        );
+    }
+
+    public function export() : Helpers\ImageExporter{
         $gdResult = $this->getMergedGD();
-        ob_start();
-        imagejpeg($gdResult);
-        $imgd=base64_encode(ob_get_clean());
-        return "data:image/jpeg;base64,".$imgd;
+        $exporter = new Helpers\ImageExporter($gdResult);
+        return $exporter;
     }
 
     public function getLayerStack() : LayerStack {
