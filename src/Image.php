@@ -90,12 +90,6 @@ class Image {
         $this->layerPutTop($newLayer);
         return $newLayer;
     }
-
-    public function reorder(Layer $layerToMove) : Helpers\LayerReorderCall {
-        $reorderCall = new Helpers\LayerReorderCall($this->layers);
-        $reorderCall->setLayerToMove($layerToMove);
-        return $reorderCall;
-    }
     
     /**
      *  Change the image's layer composer object.
@@ -215,18 +209,18 @@ class Image {
         );
     }
 
-    public function export() : Helpers\ImageExporter{
+    // method chaining ... methods
+
+    public function export() : Helpers\ImageExporter {
         $gdResult = $this->getMergedGD();
         $exporter = new Helpers\ImageExporter($gdResult);
         return $exporter;
     }
 
-    public function getLayerStack() : LayerStack {
-        return $this->layers;
-    }
-
-    public function getLayerCount() : int {
-        return $this->layers->getCount();
+    public function reorder(Layer $layerToMove) : Helpers\LayerReorderCall {
+        $reorderCall = new Helpers\LayerReorderCall($this->layers);
+        $reorderCall->setLayerToMove($layerToMove);
+        return $reorderCall;
     }
     
     /**
@@ -252,6 +246,14 @@ class Image {
         }
         $gdHandle = imagecreatefromstring(file_get_contents($fileName));
         return self::createFromGD($gdHandle);
+    }
+
+    public function getLayerStack() : LayerStack {
+        return $this->layers;
+    }
+
+    public function getLayerCount() : int {
+        return $this->layers->getCount();
     }
 }
 
