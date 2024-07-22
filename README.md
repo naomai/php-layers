@@ -48,7 +48,7 @@ $thugLayer
     ->apply();
 
 // export the image as data URL
-$dataUrl = $layersImg->getDataUrlPNG();
+$dataUrl = $layersImg->export()->asDataUrl("png");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
 The image is made of 3 layers, including the background. If we add an extra line, we can show all the layers as a split view:
@@ -58,7 +58,7 @@ The image is made of 3 layers, including the background. If we add an extra line
 $layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
 
 // export the image as data URL
-$dataUrl = $layersImg->getDataUrlPNG();
+$dataUrl = $layersImg->export()->asDataUrl("png");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
 

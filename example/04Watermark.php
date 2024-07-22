@@ -31,13 +31,13 @@ $thugLayer
     ->apply();
 
 // export the image as data URL
-$dataUrl = $layersImg->getDataUrlPNG();
+$dataUrl = $layersImg->export()->asDataUrl("png");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 
 // tiled view of layers
 echo "Separate view of different layers:<br/>";
 $layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
-$dataUrl = $layersImg->getDataUrlPNG();
+$dataUrl = $layersImg->export()->asDataUrl("png");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 
 unset($watermarkLayer, $layersImg);
