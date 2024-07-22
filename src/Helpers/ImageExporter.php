@@ -15,7 +15,7 @@ class ImageExporter {
         file_put_contents($fileName, $binary);
     }
 
-    public function asDataUrl(string $format="png", int $quality) {
+    public function asDataUrl(string $format="png", int $quality=-1) {
         $binary = $this->asBinaryData(
             format: $format,
             quality: $quality
