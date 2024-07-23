@@ -66,13 +66,15 @@ Map Previews in Unreal Tournament Stats Tracker:
 PHP Layers includes two additional methods for adding text to your images. 
 
 **Those features need heavy refactoring, and will be documented when they become stable.**
-![Example of text rendering using the library](example/TextDemo.jpg)
 
 ### Rich text
+![Paragraphs of text, as rendered by library](example/TextDemoRT.png)
+
 Capability to render formatted blocks of text. Change font, make it bold, mark it red in the middle of paragraph. 
 We take care of the text flow. 
 
 ### Non-overlapping text
+![Comparison of word "clutter" over illegible overpainted text vs spaced out words "space", as rendered by library](example/TextDemoNOText.png)
 Spread different text labels, so they don't overlap. Useful for auto-generated images with tooltips.
 
 
