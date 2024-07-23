@@ -16,8 +16,6 @@ Features:
 ## Example
 Create a heavily outdated meme with just a few lines of code.
 
-![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
-
 ```php
 use Naomai\PHPLayers\Image;
 
@@ -42,6 +40,10 @@ $thugLayer
 $dataUrl = $layersImg->export()->asDataUrl("webp");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
+
+![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
+
+
 The image is made of 3 layers, including the background. If we add an extra line, we can show all the layers as a split view:
 
 ```php
@@ -68,13 +70,13 @@ PHP Layers includes two additional methods for adding text to your images.
 **Those features need heavy refactoring, and will be documented when they become stable.**
 
 ### Rich text
-![Paragraphs of text, as rendered by library](example/TextDemoRT.png)
-
 Capability to render formatted blocks of text. Change font, make it bold, mark it red in the middle of paragraph. 
 We take care of the text flow. 
 
+![Paragraphs of text, as rendered by library](example/TextDemoRT.png)
+
 ### Non-overlapping text
-![Comparison of word "clutter" over illegible overpainted text vs spaced out words "space", as rendered by library](example/TextDemoNOText.png)
 Spread different text labels, so they don't overlap. Useful for auto-generated images with tooltips.
 
+![Comparison of word "clutter" over illegible overpainted text vs spaced out words "space", as rendered by library](example/TextDemoNOText.png)
 
