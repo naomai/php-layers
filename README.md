@@ -1,15 +1,16 @@
 # PHP Layers
-
+## About
 PHP-Layers is a OOP library for creating images in PHP. 
 
 It adds powerful layering functionality known from image editors, while staying intuitive and simple to use. 
 
-Features:
-- Stacking of images with transparency 
-- Importing and exporting images, supports classic and modern formats (PNG, JPEG, WebP, AVIF)
-- Generating Data URL for embedding in HTML file
+- PHP 8.0+
+- GD2 extension
+- Stacking of images, with transparency
+- Importing and exporting images - supports classic and modern formats (PNG, JPEG, WebP, AVIF). 
+  - Also, allows generating Data URL for embedding in HTML file
 - Convinience functions for drawing
-- Rendering of rich text with word wrapping
+- Rich text
 
 **The project should be considered unstable for now, as I'm refactoring the code from an unhinged mess I made 10 years ago.**
 
