@@ -74,11 +74,9 @@ Capability to render formatted blocks of text. Change font, make it bold, mark i
 We take care of the text flow. 
 
 ![Paragraphs of text, as rendered by library](example/TextDemoRT.png)
-![Legend for a game map](example/TextDemoRT_Legend.png)
 
 ### Non-overlapping text
 Spread different text labels, so they don't overlap. Useful for auto-generated images with tooltips.
 
-![Comparison of word "clutter" over illegible overpainted text vs spaced out words "space", as rendered by library](example/TextDemoNOText.png)
 ![Tooltips with names of enemies](example/TextDemoNOText_Monsters.png)
 
