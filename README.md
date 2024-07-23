@@ -13,7 +13,7 @@ Features:
 
 **The project should be considered unstable for now, as I'm refactoring the code from an unhinged mess I made 10 years ago.**
 
-## Example 1: a meme
+## Example
 Create a heavily outdated meme with just a few lines of code.
 
 ![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
@@ -47,7 +47,8 @@ The image is made of 3 layers, including the background. If we add an extra line
 ```php
 // TiledComposer is putting all layers in a grid, instead of merging them
 $layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
-$dataUrl = $layersImg->export()->asDataUrl("png");
+
+$dataUrl = $layersImg->export()->asDataUrl("webp");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
 
@@ -61,8 +62,17 @@ Map Previews in Unreal Tournament Stats Tracker:
 
 ![Wireframe rendering of a game map](example/UTTDemo.jpg)
 
-## Example: rich text
-The library has capability to render formatted blocks of text, and also non-overlapping text. This will be documented in future.
+## Text features
+PHP Layers includes two additional methods for adding text to your images. 
 
+**Those features need heavy refactoring, and will be documented when they become stable.**
 ![Example of text rendering using the library](example/TextDemo.jpg)
+
+### Rich text
+Capability to render formatted blocks of text. Change font, make it bold, mark it red in the middle of paragraph. 
+We take care of the text flow. 
+
+### Non-overlapping text
+Spread different text labels, so they don't overlap. Useful for auto-generated images with tooltips.
+
 
