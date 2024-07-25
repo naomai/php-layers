@@ -19,7 +19,7 @@ class NonOverlappingText implements ILayerGenerator {
         $this->layer = $layerObj;
     }
     public function apply() {
-        $layerPainter = $this->layer->paint;
+        $layerPainter = $this->layer->paint(oneShot: true);
         foreach($this->labelsList as $labelId=>$label){
             $rect = $layerPainter->textGetBox(
                 $label['x'], $label['y'],

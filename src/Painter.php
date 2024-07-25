@@ -34,6 +34,20 @@ class Painter {
     public function attachToGD(\GdImage $gdResource) {
         $this->destGD = $gdResource;
     }
+
+    public function setPaintOptions(...$options) {
+        foreach($options as $prop=>$value) {
+            if(!property_exists($this, $prop)) {
+                throw new \InvalidArgumentException("Trying to set invalid paint option '{$prop}'");
+            }
+            $propReflection = new \ReflectionProperty(get_class($this), $prop);
+            if(!$propReflection->isPublic()) {
+                throw new \InvalidArgumentException("Trying to set invalid paint option '{$prop}'");
+            }
+
+            $this->{$prop} = $value;
+        }
+    }
         
     // PAINT FUNCTIONS
     public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT) {

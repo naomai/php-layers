@@ -69,7 +69,7 @@ class Layer {
     /** 
      * Object providing drawing functions
      */
-    public Painter $paint;
+    protected Painter $painter;
 
     /** 
      * Content generator attached to the layer
@@ -89,7 +89,7 @@ class Layer {
         $this->gdImage = imagecreatetruecolor(1, 1);
             
         $this->filter = new Filters\PHPFilters($this);
-        $this->paint = new Painter($this);
+        $this->painter = new Painter($this);
     }
     
     public function __destruct() {
@@ -176,6 +176,25 @@ class Layer {
     }
     
     /* PAINT */    
+
+    /**
+     * Return Painter object attached to the layer
+     *
+     * @return \Painter
+     */
+    public function paint(bool $oneShot=false, ...$options) : Painter {
+        $painter = $this->painter;
+        if($oneShot) {
+            $painter = new Painter($this);
+        }
+
+        if(count($options)) {
+            $painter->setPaintOptions(...$options);
+        }
+        return $painter;
+        
+    }
+
     /**
      * Cover entire layer buffer with $color, discarding previous content.
      * Effectively, replaces every pixel of layer.
@@ -276,7 +295,7 @@ class Layer {
         //$this->offsetX = $this->offsetY = 0;
         $this->sizeX = $newSize['w'];
         $this->sizeY = $newSize['h'];
-        $this->paint->attachToLayer($this);
+        $this->painter->attachToLayer($this);
         $this->filter->attachToLayer($this);
     }
     

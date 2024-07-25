@@ -192,8 +192,11 @@
                 $docHeight = $posOuter['height'];
             }
             //$this->layer->fill($this->backgroundColor);
-            $this->layer->paint->alphaBlend = true;
-            $this->layer->paint->rectangle(
+            $painter = $this->layer->paint(
+                oneShot: true,
+                alphaBlend: true
+            );
+            $painter->rectangle(
                 $posOuter['x'], $posOuter['y'],
                 $posOuter['x']+$posOuter['width'], $posOuter['y']+$docHeight,
                 GDRECT_FILLED,
