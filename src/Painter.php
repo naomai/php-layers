@@ -1,15 +1,39 @@
 <?php
-namespace Naomai\PHPLayers\PaintTools;
+namespace Naomai\PHPLayers;
 
-class DefaultTools extends ToolsBase{
-        
+define('GDRECT_BORDER', 1);
+define('GDRECT_FILLED', 2);
+define('GDRECT_FILLEDBORDER', GDRECT_BORDER|GDRECT_FILLED);
+define('GDALIGN_LEFT', 0);
+define('GDALIGN_CENTER', 1);
+define('GDALIGN_RIGHT', 2);
+
+define('GDCOLOR_DEFAULT', -1);
+
+class Painter {
     public $alphaBlend = false;
     public $antiAlias = false;
     public $lineColor = 0xFFFFFF;
     public $borderColor = 0xFF0000;
     public $lineSize = 1;
 
+    protected $destLayer;
+    protected $destGD;
 
+    public function __construct(?Layer $layerObj=null) {
+        if($layerObj !== null) {
+            $this->attachToLayer($layerObj);
+        }
+    }
+    
+    public function attachToLayer($layerObj) {
+        $this->destLayer = $layerObj;
+        $this->destGD = $layerObj->getGDHandle();
+    }
+
+    public function attachToGD(\GdImage $gdResource) {
+        $this->destGD = $gdResource;
+    }
         
     // PAINT FUNCTIONS
     public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT) {
@@ -107,7 +131,7 @@ class DefaultTools extends ToolsBase{
 
     public function textGetBox(int $x, int $y, string $text, array $params=[]) {
         $angle = isset($params['angle']) ? $params['angle'] : 0;
-        $font = isset($params['font']) ? $params['font'] : __DIR__."/../Fonts/Lato-Regular.ttf";
+        $font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";
         $align = isset($params['align']) ? $params['align'] : GDALIGN_LEFT;
         $size = isset($params['size']) ? $params['size'] : 12;
         $box = imagettfbbox($size, $angle, $font, $text);
@@ -126,7 +150,7 @@ class DefaultTools extends ToolsBase{
     public function text(int $x, int $y, string $text, array $params=[]) {
         $this->setDrawingConfig();
         $angle = isset($params['angle']) ? $params['angle'] : 0;
-        $font = isset($params['font']) ? $params['font'] : __DIR__."/../Fonts/Lato-Regular.ttf";
+        $font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";
         $align = isset($params['align']) ? $params['align'] : GDALIGN_LEFT;
         $size = isset($params['size']) ? $params['size'] : 12;
         $color = isset($params['color']) ? $params['color'] : 0x808080;

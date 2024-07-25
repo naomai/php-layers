@@ -69,7 +69,7 @@ class Layer {
     /** 
      * Object providing drawing functions
      */
-    public PaintTools\ToolsBase $paint;
+    public Painter $paint;
 
     /** 
      * Content generator attached to the layer
@@ -89,7 +89,7 @@ class Layer {
         $this->gdImage = imagecreatetruecolor(1, 1);
             
         $this->filter = new Filters\PHPFilters($this);
-        $this->paint = new PaintTools\DefaultTools($this);
+        $this->paint = new Painter($this);
     }
     
     public function __destruct() {
