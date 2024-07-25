@@ -14,7 +14,7 @@ class Selection{
     protected int $sizeXorig;
     protected int $sizeYorig;
     protected Filters\FilterBase $filterX;
-    protected PaintTools\ToolsBase $paintX;
+    protected Painter $painter;
 
     public function __construct(Layer $layer, int $x, int $y, int $w, int $h) {
         $this->layer = $layer;
@@ -25,7 +25,7 @@ class Selection{
         $this->copyOriginalSelectionDimensions();
 
         $this->filterX = new Filters\PHPFilters();
-        $this->paintX = new PaintTools\DefaultTools();
+        $this->painter = new Painter();
     }
     
     public function __destruct() {
@@ -39,9 +39,6 @@ class Selection{
         if($v=="filter") {
             $this->transformationStart();
             return $this->filterX;
-        } elseif($v=="paint") {
-            $this->transformationStart();
-            return $this->paintX;
         }
     }
     
@@ -55,7 +52,7 @@ class Selection{
             $this->sizeX, $this->sizeY
         );
         $this->filterX->attachToGD($this->subImage);
-        $this->paintX->attachToGD($this->subImage);
+        $this->painter->attachToGD($this->subImage);
     }
 
     public function getCurrentRect() : array {
@@ -214,6 +211,28 @@ class Selection{
             0, 0,
             imagesx($clipImg), imagesy($clipImg)
         );
+    }
+
+    /**
+     * Return Painter object attached to the selection
+     *
+     * @return \Painter
+     */
+    public function paint(bool $oneShot=false, ...$options) : Painter {
+        $this->transformationStart();
+        $painter = $this->painter;
+        if($oneShot) {
+            $painter = new Painter();
+            
+        }
+
+        if(count($options)) {
+            $painter->setPaintOptions(...$options);
+        }
+
+        $painter->attachToGD($this->subImage);
+        return $painter;
+        
     }
     
     public function apply() {
