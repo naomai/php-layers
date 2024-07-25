@@ -2,7 +2,7 @@
  
 require_once __DIR__ . "/../Console.class.php";
  
-class GDConsole extends Naomai\ANSIConsole implements GDLayerRenderer {
+class Console extends Naomai\ANSIConsole implements ILayerGenerator {
     protected $layer;
     protected $fontId = 0, $fontW,$fontH;
     protected $loadedFonts = array();

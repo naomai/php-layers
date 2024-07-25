@@ -9,8 +9,8 @@ $exampleImg = new GDW\Image(400, 200);
 $mainLayer = $exampleImg->getLayerByIndex(0);
 $mainLayer->clear();
 
-$textRenderer = new GDW\Renderers\NonOverlappingText();
-$mainLayer->setRenderer($textRenderer);
+$textRenderer = new GDW\Generators\NonOverlappingText();
+$mainLayer->setGenerator($textRenderer);
 
 $mainLayer->paint->alphaBlend = true;
 $mainLayer->paint->text(101, 9, "clutter", ['color'=>0x000000]);
@@ -22,6 +22,7 @@ $textRenderer->write(101, 69,"space", ['color'=>0x000000]);
 $textRenderer->write(99, 73,"space", ['color'=>0x000000]);
 $textRenderer->write(103, 72,"space", ['color'=>0x000000]);
 $textRenderer->write(103, 71,"space", ['color'=>0x000000]);
+$textRenderer->write(102, 69,"space", ['color'=>0xFF0000, 'size'=>18]);
 $textRenderer->write(103, 71,"space", ['color'=>0x000000]);
 $textRenderer->write(103, 71,"space", ['color'=>0x000000]);
 $textRenderer->write(103, 72,"space", ['color'=>0x000000]);
@@ -29,7 +30,6 @@ $textRenderer->write(103, 71,"space", ['color'=>0x000000]);
 $textRenderer->write(103, 71,"space", ['color'=>0x000000]);
 $textRenderer->write(103, 72,"space", ['color'=>0x000000]);
 
-$textRenderer->write(100, 69,"space", ['color'=>0xFF0000, 'size'=>18]);
 
 $dataUrl = $exampleImg->getDataUrlPNG();
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
@@ -42,8 +42,8 @@ $exampleImg = new GDW\Image(500, 200);
 $mainLayer = $exampleImg->getLayerByIndex(0);
 $mainLayer->clear();
 
-$text = new GDW\Renderers\RichText();
-$mainLayer->setRenderer($text);
+$text = new GDW\Generators\RichText();
+$mainLayer->setGenerator($text);
 
 $text->textColor = 0x002290;
 $text->fontSize = 12;

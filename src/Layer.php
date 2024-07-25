@@ -72,9 +72,9 @@ class Layer {
     public PaintTools\ToolsBase $paint;
 
     /** 
-     * Image preprocessor used before merging with other layers
+     * Content generator attached to the layer
      * */
-    protected ?Renderers\ILayerRenderer $renderer = null;
+    protected ?Generators\ILayerGenerator $generator = null;
 
     /**
      * Image object the layer is attached to
@@ -286,14 +286,14 @@ class Layer {
     }
     
     
-    public function setRenderer(Renderers\ILayerRenderer $rend) : void {
-        $rend->attachLayer($this);
-        $this->renderer = $rend;
+    public function setGenerator(Generators\ILayerGenerator $generator) : void {
+        $generator->attachLayer($this);
+        $this->generator = $generator;
     }
 
     public function render() : void {
-        if($this->renderer !== null) {
-            $this->renderer->apply();
+        if($this->generator !== null) {
+            $this->generator->apply();
         }
     }
 

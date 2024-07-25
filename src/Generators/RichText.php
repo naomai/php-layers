@@ -1,10 +1,10 @@
 <?php
 
-    namespace Naomai\PHPLayers\Renderers;
+    namespace Naomai\PHPLayers\Generators;
 
     require_once __DIR__ .  "/../Utils/FontCache.php";
 
-    class RichText implements ILayerRenderer {
+    class RichText implements ILayerGenerator {
         protected $layer;
         
         protected $document = [];

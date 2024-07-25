@@ -1,10 +1,10 @@
 <?php
 
-namespace Naomai\PHPLayers\Renderers;
+namespace Naomai\PHPLayers\Generators;
 
 use Naomai\PHPLayers\Layer;
 
-class NonOverlappingText implements ILayerRenderer {
+class NonOverlappingText implements ILayerGenerator {
     public int $color = 0xFF0000;
     public int $spacing = 1;
     protected Layer $layer;

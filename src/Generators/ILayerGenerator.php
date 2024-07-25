@@ -1,7 +1,7 @@
 <?php
-namespace Naomai\PHPLayers\Renderers;
+namespace Naomai\PHPLayers\Generators;
 
-interface ILayerRenderer{
+interface ILayerGenerator{
     public function attachLayer($layerObj);
     public function apply();
 
