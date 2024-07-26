@@ -42,17 +42,20 @@ $mainLayer->paint(lineSize: 2);
 $mainLayer->paint()->rectangle(80, 60, 130, 110, GDRECT_BORDER | GDRECT_FILLED, 0xFF0000, 0xCCFF00);
 
 // TEXT
-$mainLayer->paint()->text(180, 110, "An example of text with default font", ['color'=>0xFF8080]);
+$mainLayer->paint()->text(180, 110, "An example of text with default font", color: 0xFF8080);
 // aligning AKA anchoring
-$mainLayer->paint()->text(250, 130, "aligned left", ['color'=>0x808080, 'align' => GDALIGN_LEFT]);
-$mainLayer->paint()->text(250, 140, "aligned center", ['color'=>0x808080, 'align' => GDALIGN_CENTER]);
-$mainLayer->paint()->text(250, 150, "aligned right", ['color'=>0x808080, 'align' => GDALIGN_RIGHT]);
+$mainLayer->paint()->text(250, 130, "aligned left", color: 0x808080, align: GDALIGN_LEFT);
+$mainLayer->paint()->text(250, 140, "aligned center", color: 0x808080, align: GDALIGN_CENTER);
+$mainLayer->paint()->text(250, 150, "aligned right", color: 0x808080, align: GDALIGN_RIGHT);
 
 // alpha blending
 $mainLayer->paint()->rectangle(180, 180, 320, 240, GDRECT_FILLED, GDCOLOR_DEFAULT, 0x994400);
-$mainLayer->paint()->text(250, 190, "Without alpha blending, the text is not composed prettily", ['color'=>0xAAAA00, 'align' => GDALIGN_CENTER]);
+$mainLayer->paint()->text(
+    250, 190, "Without alpha blending, the text is not composed prettily", 
+    color: 0xAAAA00, align: GDALIGN_CENTER
+);
 $mainLayer->paint(alphaBlend: true);
-$mainLayer->paint()->text(250, 210, "Let's turn it on", ['color'=>0xAAAA00, 'align' => GDALIGN_CENTER, 'size' => 16]);
+$mainLayer->paint()->text(250, 210, "Let's turn it on", color: 0xAAAA00, align: GDALIGN_CENTER, size: 16);
 
 // guide text (bitmap font)
 $mainLayer->paint()->textBM(260, 5, "Everything is drawn on a");

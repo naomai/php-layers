@@ -2,6 +2,7 @@
 
 namespace Naomai\PHPLayers\Generators;
 
+use Naomai\PHPLayers;
 use Naomai\PHPLayers\Layer;
 
 class NonOverlappingText implements ILayerGenerator {
@@ -10,7 +11,7 @@ class NonOverlappingText implements ILayerGenerator {
     protected Layer $layer;
     protected array $labelsList = [];
     
-    public function write($x,$y,$text,$params=[]) {
+    public function write($x,$y,$text,...$params) {
         $newLabel = ['x'=>$x, 'y'=>$y, 'text'=>$text, 'params'=>$params];
         $this->labelsList[]=$newLabel;
     }
@@ -21,9 +22,10 @@ class NonOverlappingText implements ILayerGenerator {
     public function apply() {
         $layerPainter = $this->layer->paint()->once();
         foreach($this->labelsList as $labelId=>$label){
+            $params = self::filterParamsForMethod(PHPLayers\Painter::class, 'textGetBox', $label['params']);
             $rect = $layerPainter->textGetBox(
                 $label['x'], $label['y'],
-                $label['text'], $label['params']
+                $label['text'], ...$params
             );
             $this->labelsList[$labelId]['w'] = $rect['w']+$this->spacing;
             $this->labelsList[$labelId]['h'] = $rect['h']+$this->spacing;
@@ -32,10 +34,11 @@ class NonOverlappingText implements ILayerGenerator {
         $this->spaceOutLabels();
         $layerPainter->borderColor = 0x808080;
         
-        foreach($this->labelsList as $labelId=>$label){
+        foreach($this->labelsList as $labelId=>$label) {
+            $params = self::filterParamsForMethod(PHPLayers\Painter::class, 'text', $label['params']);
             $layerPainter->text(
                 $label['x'], $label['y'],
-                $label['text'], $label['params']
+                $label['text'], ...$params
             );
             /*$layerPainter->rectangle(
                 $label['x'], $label['y'],
@@ -173,5 +176,21 @@ class NonOverlappingText implements ILayerGenerator {
     protected static function checkIntersection($r1, $r2) {
         return max($r1['x'], $r2['x'])<min($r1['x']+$r1['w'], $r2['x']+$r2['w'])
             && max($r1['y'], $r2['y'])<min($r1['y']+$r1['h'], $r2['y']+$r2['h']);
+    }
+
+    
+    static function filterParamsForMethod($class, $method, $params) {
+        $reflection = new \ReflectionMethod($class, $method);
+        $allowedParams = $reflection->getParameters();
+
+        $result = [];
+        foreach($allowedParams as $paramReflection){
+            $paramName = $paramReflection->name;
+            if(isset($params[$paramName])) {
+                $result[$paramName] = $params[$paramName];
+            }
+        }
+        return $result;
+
     }
 }

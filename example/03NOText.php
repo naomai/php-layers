@@ -13,22 +13,22 @@ $textRenderer = new GDW\Generators\NonOverlappingText();
 $mainLayer->setGenerator($textRenderer);
 
 $mainLayer->paint()->alphaBlend = true;
-$mainLayer->paint()->text(101, 9, "clutter", ['color'=>0x000000]);
-$mainLayer->paint()->text(99, 13, "clutter", ['color'=>0x000000]);
-$mainLayer->paint()->text(103, 12, "clutter", ['color'=>0x000000]);
-$mainLayer->paint()->text(100, 9, "clutter", ['color'=>0xFF0000, 'size'=>18]);
+$mainLayer->paint()->text(101, 9, "clutter", color: 0x000000);
+$mainLayer->paint()->text(99, 13, "clutter", color: 0x000000);
+$mainLayer->paint()->text(103, 12, "clutter", color: 0x000000);
+$mainLayer->paint()->text(100, 9, "clutter", color: 0xFF0000, size: 18);
 
-$textRenderer->write(101, 69,"space", ['color'=>0x000000]);
-$textRenderer->write(99, 73,"space", ['color'=>0x000000]);
-$textRenderer->write(103, 72,"space", ['color'=>0x000000]);
-$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
-$textRenderer->write(102, 69,"space", ['color'=>0xFF0000, 'size'=>18]);
-$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
-$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
-$textRenderer->write(103, 72,"space", ['color'=>0x000000]);
-$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
-$textRenderer->write(103, 71,"space", ['color'=>0x000000]);
-$textRenderer->write(103, 72,"space", ['color'=>0x000000]);
+$textRenderer->write(101, 69, "space", color: 0x000000);
+$textRenderer->write(99,  73, "space", color: 0x000000);
+$textRenderer->write(103, 72, "space", color: 0x000000);
+$textRenderer->write(103, 71, "space", color: 0x000000);
+$textRenderer->write(102, 69, "space", color: 0xFF0000, size: 18);
+$textRenderer->write(103, 71, "space", color: 0x000000);
+$textRenderer->write(103, 71, "space", color: 0x000000);
+$textRenderer->write(103, 72, "space", color: 0x000000);
+$textRenderer->write(103, 71, "space", color: 0x000000);
+$textRenderer->write(103, 71, "space", color: 0x000000);
+$textRenderer->write(103, 72, "space", color: 0x000000);
 
 
 $dataUrl = $exampleImg->getDataUrlPNG();

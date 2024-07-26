@@ -20,6 +20,8 @@ class Painter {
     protected $destLayer;
     protected $destGD;
 
+    const FONT_DEFAULT = __DIR__."/Fonts/Lato-Regular.ttf";
+
     public function __construct(?Layer $layerObj=null) {
         if($layerObj !== null) {
             $this->attachToLayer($layerObj);
@@ -154,11 +156,14 @@ class Painter {
         return imageloadfont($fontFile);
     }
 
-    public function textGetBox(int $x, int $y, string $text, array $params=[]) {
-        $angle = isset($params['angle']) ? $params['angle'] : 0;
-        $font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";
-        $align = isset($params['align']) ? $params['align'] : GDALIGN_LEFT;
-        $size = isset($params['size']) ? $params['size'] : 12;
+    public function textGetBox(
+        int $x, int $y, 
+        string $text, 
+        float $angle=0,
+        string $font=self::FONT_DEFAULT,
+        int $align = GDALIGN_LEFT,
+        float $size=12
+    ) {
         $box = imagettfbbox($size, $angle, $font, $text);
         $w = $box[2] - $box[0];
         $h = $box[1] - $box[7];
@@ -172,20 +177,24 @@ class Painter {
         ];
     }
 
-    public function text(int $x, int $y, string $text, array $params=[]) {
+    public function text(
+        int $x, int $y, 
+        string $text,
+        float $angle=0,
+        string $font=self::FONT_DEFAULT,
+        int $align = GDALIGN_LEFT,
+        float $size=12,
+        int $color = 0x808080,
+        bool $shadow=false
+    ) {
         $this->setDrawingConfig();
-        $angle = isset($params['angle']) ? $params['angle'] : 0;
-        $font = isset($params['font']) ? $params['font'] : __DIR__."/Fonts/Lato-Regular.ttf";
-        $align = isset($params['align']) ? $params['align'] : GDALIGN_LEFT;
-        $size = isset($params['size']) ? $params['size'] : 12;
-        $color = isset($params['color']) ? $params['color'] : 0x808080;
         $box = imagettfbbox($size, $angle, $font, $text);
         $w = $box[2] - $box[0];
         $newX = round($x - $box[6] - $w * $align / 2);
         $newY = $y - $box[7];
         $this->setDrawingConfig();
         
-        if(isset($params['shadow']) && $params['shadow']==true) {
+        if($shadow) {
             imagettftext($this->destGD, $size, $angle, $newX+1, $newY+1, 0x000000, $font, $text);
         }
         imagettftext(
@@ -217,4 +226,5 @@ class Painter {
         }
         return $color;
     }
+
 }
