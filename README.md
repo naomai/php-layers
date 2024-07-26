@@ -1,6 +1,6 @@
 # Phancake
 ## About
-Phancake is a OOP library for creating images in PHP. 
+Phancake (PHP-Layers) is a OOP library for creating images in PHP. 
 
 It adds powerful layering functionality known from image editors, while staying intuitive and simple to use. 
 
@@ -23,7 +23,7 @@ The image is a pancake of different layers. And Phan, because PHP is an *Elephan
 Create a heavily outdated meme with just a few lines of code.
 
 ```php
-use Naomai\Phancake\Image;
+use Naomai\PHPLayers\Image;
 
 // import image as background
 $layersImg = Image::createFromFile("eins.jpg");
@@ -54,7 +54,7 @@ The image is made of 3 layers, including the background. If we add an extra line
 
 ```php
 // TiledComposer is putting all layers in a grid, instead of merging them
-$layersImg->setComposer(new Phancake\Composers\TiledComposer());
+$layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
 
 $dataUrl = $layersImg->export()->asDataUrl("webp");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
