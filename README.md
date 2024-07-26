@@ -32,7 +32,7 @@ $layersImg = Image::createFromFile("eins.jpg");
 $watermarkLayer = $layersImg->newLayer()->importFromFile("cheesymemz.png");
 $watermarkLayer
     ->selectSurface()
-    ->move(x: 0, y: Image::IMAGE_BOTTOM)
+    ->move(anchor: "bottom left")
     ->apply();
 
 // make things more THUG

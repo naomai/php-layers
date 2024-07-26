@@ -140,15 +140,21 @@ class Selection{
     }
 
     /* transformations */
-    public function move(int $x, int $y) : Selection {
+    public function move(
+        ?int $x=0, ?int $y=0, 
+        string $anchor="top left"
+    ) : Selection {
         $this->transformationStart();
+
         $layerDimensions = $this->layer->getDimensions();
-        if($x==Image::IMAGE_RIGHT) {
-            $x = $layerDimensions['w'] - $this->sizeX;
+        $anchorDefs = explode(" ", $anchor);
+        if(in_array("right", $anchorDefs)) {
+            $x += $layerDimensions['w'] - $this->sizeX;
         }
-        if($y==Image::IMAGE_BOTTOM) {
-            $y = $layerDimensions['h'] - $this->sizeY;
+        if(in_array("bottom", $anchorDefs)) {
+            $y += $layerDimensions['h'] - $this->sizeY;
         }
+
         $this->offsetX = $x;
         $this->offsetY = $y;
         return $this;
@@ -227,7 +233,7 @@ class Selection{
         }
 
         if(count($options)) {
-            $painter->setPaintOptions(...$options);
+            $painter->setOptions(...$options);
         }
 
         $painter->attachToGD($this->subImage);

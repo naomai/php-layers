@@ -15,9 +15,6 @@ class Image {
     protected $sizeY;
     protected Composers\LayerComposerBase $composer;
 
-    const IMAGE_RIGHT = -1;
-    const IMAGE_BOTTOM = -1;
-    
     /**
      *  Creates new Image object.
      *  

@@ -12,7 +12,7 @@ $layersImg = Image::createFromFile(__DIR__ . "/eins.jpg");
 $watermarkLayer = $layersImg->newLayer()->importFromFile(__DIR__ . "/cheesymemz.png");
 $watermarkLayer
     ->selectSurface()
-    ->move(x: 0, y: Image::IMAGE_BOTTOM)
+    ->move(anchor: "bottom left")
     ->apply();
 
 // make things more THUG
@@ -29,7 +29,7 @@ echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 // tiled view of layers
 echo "Separate view of different layers:<br/>";
 $layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
-$dataUrl = $layersImg->export()->asDataUrl("png");
+$dataUrl = $layersImg->export()->asDataUrl("webp");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 
 unset($watermarkLayer, $layersImg);
