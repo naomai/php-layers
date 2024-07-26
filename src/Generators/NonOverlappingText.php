@@ -29,6 +29,7 @@ class NonOverlappingText implements ILayerGenerator {
             );
             $this->labelsList[$labelId]['w'] = $rect['w']+$this->spacing;
             $this->labelsList[$labelId]['h'] = $rect['h']+$this->spacing;
+            $this->labelsList[$labelId]['area'] = $rect['w'] * $rect['h'];
         }
         
         $this->spaceOutLabels();
