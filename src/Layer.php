@@ -182,14 +182,11 @@ class Layer {
      *
      * @return \Painter
      */
-    public function paint(bool $oneShot=false, ...$options) : Painter {
+    public function paint(...$options) : Painter {
         $painter = $this->painter;
-        if($oneShot) {
-            $painter = new Painter($this);
-        }
 
         if(count($options)) {
-            $painter->setPaintOptions(...$options);
+            $painter->setOptions(...$options);
         }
         return $painter;
         

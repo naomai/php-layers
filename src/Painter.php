@@ -13,8 +13,8 @@ define('GDCOLOR_DEFAULT', -1);
 class Painter {
     public $alphaBlend = false;
     public $antiAlias = false;
-    public $lineColor = 0xFFFFFF;
-    public $borderColor = 0xFF0000;
+    public $color = 0xFFFFFF;
+    public $fill = 0xFF0000;
     public $lineSize = 1;
 
     protected $destLayer;
@@ -35,7 +35,7 @@ class Painter {
         $this->destGD = $gdResource;
     }
 
-    public function setPaintOptions(...$options) {
+    public function setOptions(...$options) {
         foreach($options as $prop=>$value) {
             if(!property_exists($this, $prop)) {
                 throw new \InvalidArgumentException("Trying to set invalid paint option '{$prop}'");
@@ -45,19 +45,30 @@ class Painter {
                 throw new \InvalidArgumentException("Trying to set invalid paint option '{$prop}'");
             }
 
-            $this->{$prop} = $value;
+            $this->{$prop}  = $value;
         }
+    }
+
+
+    public function with(...$options) : Painter {
+        $painterClone = clone $this;
+        $painterClone->setOptions(...$options);
+        return $painterClone;
+    }
+
+    public function once() : Painter {
+        return $this->with();
     }
         
     // PAINT FUNCTIONS
     public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT) {
         $this->setDrawingConfig();
-        imagesetpixel($this->destGD, $x, $y, $this->getLineColor($color));
+        imagesetpixel($this->destGD, $x, $y, $this->getForegroundColor($color));
     }
     public function line(int $x1, int $y1, int $x2, int $y2, $color=GDCOLOR_DEFAULT) {
         $this->setDrawingConfig();
         
-        imageline($this->destGD, $x1, $y1, $x2, $y2, $this->getLineColor($color));
+        imageline($this->destGD, $x1, $y1, $x2, $y2, $this->getForegroundColor($color));
     }
 
     public function rectangle(
@@ -74,7 +85,7 @@ class Painter {
                 $this->destGD, 
                 $x1+$crop, $y1+$crop, 
                 $x2-$crop, $y2-$crop, 
-                $this->getLineColor($colorFill)
+                $this->getForegroundColor($colorFill)
             );
         }
         if($type & GDRECT_BORDER) {
@@ -82,7 +93,7 @@ class Painter {
                 $this->destGD, 
                 $x1, $y1, 
                 $x2, $y2, 
-                $this->getBorderColor($colorBorder)
+                $this->getFillColor($colorBorder)
             );
         }
     }
@@ -117,14 +128,14 @@ class Painter {
             imagefilledpolygon(
                 $this->destGD, 
                 $gdVerts, $gdVertsCount, 
-                $this->getLineColor($colorFill)
+                $this->getForegroundColor($colorFill)
             );
         }
         if($type & GDRECT_BORDER) {
             imagepolygon(
                 $this->destGD, 
                 $gdVerts, $gdVertsCount, 
-                $this->getBorderColor($colorBorder)
+                $this->getFillColor($colorBorder)
             );
         }
     }
@@ -136,7 +147,7 @@ class Painter {
         int $font=3, int $color=GDCOLOR_DEFAULT
     ) {
         $this->setDrawingConfig();
-        imagestring($this->destGD, $font, $x, $y, $text, $this->getLineColor($color));
+        imagestring($this->destGD, $font, $x, $y, $text, $this->getForegroundColor($color));
     }
 
     public function loadBMFont(string $fontFile) {
@@ -181,7 +192,7 @@ class Painter {
             $this->destGD, 
             $size, $angle, 
             $newX, $newY, 
-            $this->getLineColor($color), 
+            $this->getForegroundColor($color), 
             $font, 
             $text
         );
@@ -194,15 +205,15 @@ class Painter {
         imageantialias($this->destGD, $this->lineSize > 1 ? false : $this->antiAlias);
         imagesetthickness($this->destGD, $this->lineSize);
     }
-    protected function getLineColor($color) {
+    protected function getForegroundColor($color) {
         if($color===GDCOLOR_DEFAULT) {
-            return $this->lineColor;
+            return $this->color;
         }
         return $color;
     }
-    protected function getBorderColor($color) {
+    protected function getFillColor($color) {
         if($color===GDCOLOR_DEFAULT) {
-            return $this->borderColor;
+            return $this->fill;
         }
         return $color;
     }

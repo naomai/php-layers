@@ -29,7 +29,7 @@ $mainLayer->paint(lineSize: 3);
 // draw line from point(10,10) to point(200,10) with red color
 $mainLayer->paint()->line(10, 10, 200, 10, 0xFF0000);
 // set all further lines to green
-$mainLayer->paint(lineColor: 0x008000);
+$mainLayer->paint(color: 0x008000);
 $mainLayer->paint()->line(10, 30, 200, 30);
 $mainLayer->paint()->line(10, 40, 180, 40);
 // this one is still blue

@@ -133,7 +133,7 @@ class Image {
      *  @param int $h New image height
      *  @since 0.1.0
      */
-    public function setSize(int $w, int $h) : void{
+    public function setSize(int $w, int $h) : void {
         if($w<=0 || $h<=0) {
             throw new \InvalidArgumentException("Invalid image size, dimensions should be > 0");
         }

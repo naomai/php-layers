@@ -192,10 +192,7 @@
                 $docHeight = $posOuter['height'];
             }
             //$this->layer->fill($this->backgroundColor);
-            $painter = $this->layer->paint(
-                oneShot: true,
-                alphaBlend: true
-            );
+            $painter = $this->layer->paint()->with(alphaBlend: true);
             $painter->rectangle(
                 $posOuter['x'], $posOuter['y'],
                 $posOuter['x']+$posOuter['width'], $posOuter['y']+$docHeight,
