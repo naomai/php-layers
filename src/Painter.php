@@ -85,7 +85,7 @@ class Painter {
                 $this->destGD, 
                 $x1+$crop, $y1+$crop, 
                 $x2-$crop, $y2-$crop, 
-                $this->getForegroundColor($colorFill)
+                $this->getFillColor($colorFill)
             );
         }
         if($type & GDRECT_BORDER) {
@@ -93,7 +93,7 @@ class Painter {
                 $this->destGD, 
                 $x1, $y1, 
                 $x2, $y2, 
-                $this->getFillColor($colorBorder)
+                $this->getForegroundColor($colorBorder)
             );
         }
     }
@@ -128,14 +128,14 @@ class Painter {
             imagefilledpolygon(
                 $this->destGD, 
                 $gdVerts, $gdVertsCount, 
-                $this->getForegroundColor($colorFill)
+                $this->getFillColor($colorFill)
             );
         }
         if($type & GDRECT_BORDER) {
             imagepolygon(
                 $this->destGD, 
                 $gdVerts, $gdVertsCount, 
-                $this->getFillColor($colorBorder)
+                $this->getForegroundColor($colorBorder)
             );
         }
     }
