@@ -1,6 +1,6 @@
-# Phancake
+# PHP-Layers
 ## About
-Phancake (PHP-Layers) is a OOP library for creating images in PHP. 
+PHP-Layers is a OOP library for creating images in PHP. 
 
 It adds powerful layering functionality known from image editors, while staying intuitive and simple to use. 
 
@@ -8,16 +8,10 @@ It adds powerful layering functionality known from image editors, while staying 
 - GD2 extension
 - Stacking of images, with transparency
 - Importing and exporting images - supports classic and modern formats (PNG, JPEG, WebP, AVIF). 
-  - Also, allows generating Data URL for embedding in HTML file
 - Convinience functions for drawing
 - Rich text
 
 **The project should be considered unstable for now, as I'm refactoring the code from an unhinged mess I made 10 years ago.**
-
-## Phan-wha?!
-This is a dev branch for PHP-Layers, where all the refactoring will take place. As this might involve some major-breaking-changes, the stable version of thie library will be renamed to Phancake.
-
-The image is a pancake of different layers. And Phan, because PHP is an *Elephant language*.
 
 ## Example
 Create a heavily outdated meme with just a few lines of code.
