@@ -7,6 +7,16 @@ class ImageExporter {
         $this->gdSource = $image;
     }
 
+    public function toBrowser(string $format="png", int $quality=-1) {
+        $mimeType = static::getMimeType($format);
+        header("Content-Type: ".$mimeType);
+        $binary = $this->asBinaryData(
+            format: $format,
+            quality: $quality
+        );
+        echo $binary;
+    }
+
     public function asFile(string $fileName, string $format="png", int $quality=-1) {
         $binary = $this->asBinaryData(
             format: $format,
