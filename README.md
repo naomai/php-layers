@@ -13,49 +13,29 @@ It adds powerful layering functionality known from image editors, while staying 
 
 **The project should be considered unstable for now, as I'm refactoring the code from an unhinged mess I made 10 years ago.**
 
+- [Getting started](docs/GettingStarted.md)
+- [Documentation](docs/Documentation.md)
+
 ## Example
-Create a heavily outdated meme with just a few lines of code.
+Here is a code adding watermark to an image:
 
 ```php
 use Naomai\PHPLayers\Image;
 
 // import image as background
-$layersImg = Image::createFromFile("eins.jpg");
+$layersImg = Image::createFromFile("stroller.jpg");
 
 // create a watermark layer from file, and move it to bottom left corner
-$watermarkLayer = $layersImg->newLayer()->importFromFile("cheesymemz.png");
+$watermarkLayer = $layersImg->newLayer()->importFromFile("lg_watermark.png");
 $watermarkLayer
     ->selectSurface()
     ->move(anchor: "bottom left")
-    ->apply();
-
-// make things more THUG
-$thugLayer = $layersImg->newLayer()->importFromFile("thug.png");
-$thugLayer
-    ->selectSurface()
-    ->move(x: 290, y: 95)
     ->apply();
 
 // export the image, and include it in the HTML file
 $dataUrl = $layersImg->export()->asDataUrl("webp");
 echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ```
-
-![Einstein with thug life glasses, watermarked](example/LayeringDemoResult.jpg)
-
-
-The image is made of 3 layers, including the background. If we add an extra line, we can show all the layers as a split view:
-
-```php
-// TiledComposer is putting all layers in a grid, instead of merging them
-$layersImg->setComposer(new PHPLayers\Composers\TiledComposer());
-
-$dataUrl = $layersImg->export()->asDataUrl("webp");
-echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
-```
-
-![Tiled view of indivitual layers making the Einstein thug life meme](example/LayeringDemoTiles.png)
-
 
 ## Use cases
 
