@@ -133,7 +133,7 @@ not the order of creating layers.
 
 Create new layer and put it on top of layer stack. 
 
-- `name` (optional) - label shown when image is rendered using ![Tiled Composer](`#composers`).
+- `name` (optional) - label shown when image is rendered using ![Tiled Composer](#composers).
 
 **Returns** New `Layer` object attached to the `Image`
 
