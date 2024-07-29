@@ -131,14 +131,54 @@ $layerOutOfBounds = $image->getLayerByIndex(3); // null
 ```
 
 ### reorder
-`reorder(Layer $layerToMove) : Helpers\LayerReorderCall`
+`Image::reorder(Layer $layerToMove) : Helpers\LayerReorderCall`
 
 Access helper object for changing layer order on stack.
 
 - `layerToMove` - a `Layer` to be relocated, **must** be attached to the `Image`
 
-**Returns** helper object providing reordering methods.
+**Returns** helper object providing reordering methods. The available methods
+of such object can be found in 
+[Helpers\LayerReorderCall](#helpers-layerreordercall) class.
 
 ```php
 $image->reorder($layerBottom)->putOver($layerTop);
+```
+
+### layerPutTop
+`Image::layerPutTop(Layer $layerObj) : int`
+Puts a layer object to the top of image's Layer Stack.
+
+*Inserted layer is drawn over the existing image.*
+
+This method also *attaches* layer to the image.
+If the layer is already on the stack, it will be moved from its
+previous place.
+
+
+- `layerObj` - `Layer` to be put
+
+**Returns** New *Layer index* of the layer in Stack
+
+```php
+$image->layerPutTop($layerOne);
+```
+
+### layerPutBottom
+`Image::layerPutBottom(Layer $layerObj) : int`
+Puts a layer object to the bottom of image's Layer Stack.
+
+*Inserted layer is drawn behind the existing image.*
+
+This method also *attaches* layer to the image.
+If the layer is already on the stack, it will be moved from its
+previous place.
+
+
+- `layerObj` - `Layer` to be put
+
+**Returns** New *Layer index* of the layer in Stack
+
+```php
+$image->layerPutBottom($layerOne);
 ```
