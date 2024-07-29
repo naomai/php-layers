@@ -26,7 +26,7 @@ The evolution of built-in GD library is out of scope here. Instead, we're trying
 ```
 
 ```shell
-    composer require twilio/sdk
+composer require naomai/php-layers
 ```
 
 Standalone and Packagist methods will be added in the future.
