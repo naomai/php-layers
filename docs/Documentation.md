@@ -1,6 +1,6 @@
 # Documentation
-For readability, every class under PHPLayers namespace is referred using only its name. 
-This is equivalent to placing `use Naomai\PHPLayers;` in the code.
+For readability, every class under PHPLayers namespace is referred using only its short name. 
+This is equivalent to placing `namespace Naomai\PHPLayers;` in the code.
 
 For example:
 

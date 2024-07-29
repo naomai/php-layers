@@ -7,7 +7,7 @@ It adds powerful layering functionality known from image editors, while staying 
 - PHP 8.0+
 - GD2 extension
 - Stacking of images, with transparency
-- Importing and exporting images - supports classic and modern formats (PNG, JPEG, WebP, AVIF). 
+- Importing and exporting images - supports classic and modern formats (PNG, JPEG, WebP, AVIF)
 - Convinience functions for drawing
 - Rich text
 
@@ -17,7 +17,7 @@ It adds powerful layering functionality known from image editors, while staying 
 - [Documentation](docs/Documentation.md)
 
 ## Example
-Here is a code adding watermark to an image:
+Here is a code for adding watermark to an image:
 
 ```php
 use Naomai\PHPLayers\Image;
