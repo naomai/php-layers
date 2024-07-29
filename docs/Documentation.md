@@ -103,8 +103,8 @@ Gets the Layer object from layer set using its index.
 - `id` - a zero-based index of the layer in Layer Stack, counting from the bottom. 
 If negative, count from the last layer.
 
-!(Negative indexes are like a copy of the positive part, where the imaginary last layer is 
-ending on -1 position)[getLayerByIndex.webp]
+![Negative indexes are like a copy of the positive part, where the imaginary last layer is 
+ending on -1 position](images/getLayerByIndex.webp)
 
 **Returns** `Layer` object matching the index provided, or `null` if invalid.
 
