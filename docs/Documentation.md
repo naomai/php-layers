@@ -100,6 +100,18 @@ $layerOne = $image->newLayer();
 
 Gets the Layer object from layer set using its index.
 
-- `id` - an index of the layer in Layer Stack. If negative, count from the last layer.
+- `id` - a zero-based index of the layer in Layer Stack, counting from the bottom. 
+If negative, count from the last layer.
+
+!(Negative indexes are like a copy of the positive part, where the imaginary last layer is 
+ending on -1 position)[getLayerByIndex.webp]
 
 **Returns** `Layer` object matching the index provided, or `null` if invalid.
+
+```php
+// $image has 3 layers
+$layerBottom = $image->getLayerByIndex(0);
+$layerTop = $image->getLayerByIndex(2);
+$layerTop = $image->getLayerByIndex(-1); // same layer as above
+$layerOutOfBounds = $image->getLayerByIndex(3); // null
+```
