@@ -16,9 +16,8 @@ settings on how to compose the final image.
 `Image` can be instantiated using three ways:
 
 ### Constructor with size
-```php
-Image::__construct(int $width, int $height, $createLayer = true)
-```
+`Image::__construct(int $width, int $height, $createLayer = true)` 
+
 Create new image with given dimensions.
 - `width` and `height` are in pixels
 - If `createLayer` is true, a background layer is automatically created. 
@@ -30,9 +29,8 @@ $background = $image->getLayerByIndex(0);
 ```
 
 ### createFromFile
-```php
-Image::createFromFile(string $fileName) : Image
-```
+`Image::createFromFile(string $fileName) : Image`
+
 Import image file into new PHP Layers Image object. The new image contains
 one layer with imported image as its content.
 
@@ -46,9 +44,8 @@ $background = $image->getLayerByIndex(0);
 ```
 
 ### createFromGD
-```php
-Image::createFromGD(\GdImage $gdHandle) : Image
-```
+`Image::createFromGD(\GdImage $gdHandle) : Image`
+
 Wrap existing GD2 image into new PHP Layers Image object. The new image contains
 one layer with its content **copied** from original image.
 
@@ -84,9 +81,8 @@ $data = $image->export()->asBinaryData(format: 'webp');
 
 ## Managing layers
 ### newLayer
-```php
-Image::newLayer(string $name=null) : Layer
-```
+`Image::newLayer(string $name=null) : Layer`
+
 Create new layer and put it on top of layer set. 
 
 Optional `name` is passed to internal `Layer::name` property that can be used 
@@ -99,9 +95,7 @@ $layerOne = $image->newLayer();
 ```
 
 ### getLayerByIndex
-```php
-Image::getLayerByIndex(int $id) : ?Layer
-```
+`Image::getLayerByIndex(int $id) : ?Layer`
 
 Gets the Layer object from layer set using its index.
 
