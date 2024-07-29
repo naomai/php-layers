@@ -147,6 +147,7 @@ $image->reorder($layerBottom)->putOver($layerTop);
 
 ### layerPutTop
 `Image::layerPutTop(Layer $layerObj) : int`
+
 Puts a layer object to the top of image's Layer Stack.
 
 *Inserted layer is drawn over the existing image.*
@@ -166,6 +167,7 @@ $image->layerPutTop($layerOne);
 
 ### layerPutBottom
 `Image::layerPutBottom(Layer $layerObj) : int`
+
 Puts a layer object to the bottom of image's Layer Stack.
 
 *Inserted layer is drawn behind the existing image.*
@@ -182,3 +184,25 @@ previous place.
 ```php
 $image->layerPutBottom($layerOne);
 ```
+
+### getLayerCount
+`Image::getLayerCount() : int`
+
+Get number of layers attached to the image.
+
+**Returns** number of layers
+
+```php
+$image = new Image(width: 100, height: 100);
+$countLayers = $image->getLayerCount(); 
+// $countLayers == 1
+```
+
+
+### getLayerStack
+`Image::getLayerStack() : LayerStack`
+
+Access the `LayerStack` of the image.
+
+**Returns** `LayerStack` object containing all the layers of image
+
