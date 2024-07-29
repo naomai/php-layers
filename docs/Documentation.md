@@ -64,7 +64,7 @@ Saving the result is possible through method `export()`. The method exposes
 most common ways of delivering images. More detailed info can be found
 in [Helpers\ImageExporter](#helpers-imageexporter) class.
 
-### Examples
+### export - examples
 ```php
 // send the image to browser directly, as JPEG
 $image->export()->toBrowser(format: 'jpg'); 
@@ -78,6 +78,39 @@ $url = $image->export()->asDataUrl();
 
 // raw binary data of image in WEBP format
 $data = $image->export()->asBinaryData(format: 'webp');
+```
+
+### getMerged
+`Image::getMerged() : Layer`
+
+Finalize image into Layer object.
+
+Merges all layers in image layer set using current layer composer.
+The result is a new `Layer` object. The original layer set is left intact.
+
+The new layer **is not attached** to the image. This means
+you cannot use reordering functions on it.
+
+**Returns** Layer object containing merged content of image.
+
+ 
+```php
+$layerTwo = $image->getMerged();
+```
+
+### getMergedGD
+`Image::getMerged() : \GdImage`
+
+Finalize image into GD2 image handle.
+
+Merges all layers in image layer set using current layer composer.
+The result is a GD2 image handle accessible by native PHP functions.
+The original layer set is left intact.
+
+**Returns** `\GdImage` handle containing merged content of image
+ 
+```php
+$layerTwo = $image->getMerged();
 ```
 
 ## Managing layers
@@ -162,7 +195,7 @@ previous place.
 **Returns** New *Layer index* of the layer in Stack
 
 ```php
-$image->layerPutTop($layerOne);
+$image->layerPutTop($layerTwo);
 ```
 
 ### layerPutBottom
@@ -182,7 +215,7 @@ previous place.
 **Returns** New *Layer index* of the layer in Stack
 
 ```php
-$image->layerPutBottom($layerOne);
+$image->layerPutBottom($layerTwo);
 ```
 
 ### getLayerCount
