@@ -12,10 +12,10 @@ For example:
 `Image` is the main class, containing all layers, properties and 
 settings on how to compose the final image.
 
-## Creating/opening
+## Create new image
 `Image` can be instantiated using three ways:
 
-### Constructor with size
+### Empty image with dimensions
 `Image::__construct(int $width, int $height, $createLayer = true)` 
 
 Create new image with given dimensions.
@@ -28,7 +28,7 @@ $image = new Image(width: 50, height: 50, createLayer: true);
 $background = $image->getLayerByIndex(0);
 ```
 
-### createFromFile
+### createFromFile - import from file
 `Image::createFromFile(string $fileName) : Image`
 
 Import image file into new PHP Layers Image object. The new image contains
@@ -44,7 +44,7 @@ one layer with imported image as its content.
 $image = Image::createFromFile("olympic.jpg");
 ```
 
-### createFromGD
+### createFromGD - import from PHP
 `Image::createFromGD(\GdImage $gdHandle) : Image`
 
 Wrap existing GD2 image into new PHP Layers Image object. The new image contains
@@ -133,8 +133,7 @@ not the order of creating layers.
 
 Create new layer and put it on top of layer stack. 
 
-- `name` (optional) - passed to internal `Layer::name` property that can be used
-in alternate layer composers, such as `Composers\TiledComposer`.
+- `name` (optional) - label shown when image is rendered using ![Tiled Composer](`#composers`).
 
 **Returns** New `Layer` object attached to the `Image`
 
