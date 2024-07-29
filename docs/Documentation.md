@@ -81,10 +81,24 @@ $data = $image->export()->asBinaryData(format: 'webp');
 ```
 
 ## Managing layers
+PHPLayers makes use of a *Layer Stack*. This structure gives flexibility on
+which layer goes on top of other. Now, the things going on the top
+don't have to be drawn at the very end of script.
+
+![Bottom layer is the lowest number](images/layerIndex.webp)
+
+`LayerStack` is a sequence of layers, beginning at index 0 (bottom), 
+then going up to the top. PHPLayers allows *reordering* of layers
+after their creation. The *Layer index* is referring to order of the stack,
+not the order of creating layers.
+
+`Layer` is *attached* to the `Image`, when it is present on its Layer Stack.
+
+
 ### newLayer
 `Image::newLayer(string $name=null) : Layer`
 
-Create new layer and put it on top of layer set. 
+Create new layer and put it on top of layer stack. 
 
 - `name` (optional) - passed to internal `Layer::name` property that can be used
 in alternate layer composers, such as `Composers\TiledComposer`.
@@ -114,4 +128,17 @@ $layerBottom = $image->getLayerByIndex(0);
 $layerTop = $image->getLayerByIndex(2);
 $layerTop = $image->getLayerByIndex(-1); // same layer as above
 $layerOutOfBounds = $image->getLayerByIndex(3); // null
+```
+
+### reorder
+`reorder(Layer $layerToMove) : Helpers\LayerReorderCall`
+
+Access helper object for changing layer order on stack.
+
+- `layerToMove` - a `Layer` to be relocated, **must** be attached to the `Image`
+
+**Returns** helper object providing reordering methods.
+
+```php
+$image->reorder($layerBottom)->putOver($layerTop);
 ```
