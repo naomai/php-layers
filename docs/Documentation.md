@@ -19,8 +19,8 @@ settings on how to compose the final image.
 `Image::__construct(int $width, int $height, $createLayer = true)` 
 
 Create new image with given dimensions.
-- `width` and `height` are in pixels
-- If `createLayer` is true, a background layer is automatically created. 
+- `width`, `height` - dimensions in pixels
+- `createLayer` - if true, a background layer is automatically created. 
 This layer is fully transparent.
 
 ```php
@@ -34,13 +34,14 @@ $background = $image->getLayerByIndex(0);
 Import image file into new PHP Layers Image object. The new image contains
 one layer with imported image as its content.
 
+- `fileName` - path of existing image file
+
 `\RuntimeException` is thrown, if the file is not existing, or is not a valid image.
 
 **Returns** `Image` imported from file
 
 ```php
 $image = Image::createFromFile("olympic.jpg");
-$background = $image->getLayerByIndex(0);
 ```
 
 ### createFromGD
@@ -49,7 +50,7 @@ $background = $image->getLayerByIndex(0);
 Wrap existing GD2 image into new PHP Layers Image object. The new image contains
 one layer with its content **copied** from original image.
 
-- `gdHandle` is the handle of source GD2 Image.
+- `gdHandle` - the handle of source GD2 Image.
 
 **Returns** `Image` with contents of source `\GdImage`
 
@@ -85,7 +86,7 @@ $data = $image->export()->asBinaryData(format: 'webp');
 
 Create new layer and put it on top of layer set. 
 
-Optional `name` is passed to internal `Layer::name` property that can be used 
+- `name` (optional) - passed to internal `Layer::name` property that can be used
 in alternate layer composers, such as `Composers\TiledComposer`.
 
 **Returns** New `Layer` object attached to the `Image`
@@ -99,6 +100,6 @@ $layerOne = $image->newLayer();
 
 Gets the Layer object from layer set using its index.
 
-`id` is an index of the layer in Layer Stack. If negative, count from the last layer.
+- `id` - an index of the layer in Layer Stack. If negative, count from the last layer.
 
-**Returns** `Layer` object matching the index provided, or null if invalid.
+**Returns** `Layer` object matching the index provided, or `null` if invalid.
