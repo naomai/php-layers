@@ -43,7 +43,7 @@ class Image {
      *  @return int Index of the layer in Layer Stack
      *  @since 0.1.0
      */
-    public function layerPutTop(Layer $layerObj) {
+    public function layerPutTop(Layer $layerObj) : int {
         if($this->layers->getIndexOf($layerObj)===false) {
             $layerObj->setParentImg($this);
         }
@@ -61,7 +61,7 @@ class Image {
      *  @return int Unique layer ID
      *  @since 0.1.0
      */
-    public function layerPutBottom(Layer $layerObj) {
+    public function layerPutBottom(Layer $layerObj) : int {
         if($this->layers->getIndexOf($layerObj)===false) {
             $layerObj->setParentImg($this);
         }
@@ -93,7 +93,7 @@ class Image {
      *  
      *  @since 0.1.0
      */
-    public function setComposer(Composers\LayerComposerBase $composerObj) {
+    public function setComposer(Composers\LayerComposerBase $composerObj) : void {
         $composerObj->setImage($this);
         $this->composer = $composerObj;
     }

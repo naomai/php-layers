@@ -28,16 +28,16 @@ class Painter {
         }
     }
     
-    public function attachToLayer($layerObj) {
+    public function attachToLayer($layerObj) : void {
         $this->destLayer = $layerObj;
         $this->destGD = $layerObj->getGDHandle();
     }
 
-    public function attachToGD(\GdImage $gdResource) {
+    public function attachToGD(\GdImage $gdResource) : void {
         $this->destGD = $gdResource;
     }
 
-    public function setOptions(...$options) {
+    public function setOptions(...$options) : void {
         foreach($options as $prop=>$value) {
             if(!property_exists($this, $prop)) {
                 throw new \InvalidArgumentException("Trying to set invalid paint option '{$prop}'");
@@ -63,7 +63,7 @@ class Painter {
     }
         
     // PAINT FUNCTIONS
-    public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT) {
+    public function pixel(int $x, int $y, $color=GDCOLOR_DEFAULT) : void {
         $this->setDrawingConfig();
         imagesetpixel($this->destGD, $x, $y, $this->getForegroundColor($color));
     }
@@ -78,7 +78,7 @@ class Painter {
         int $x2, int $y2, 
         int $type=GDRECT_BORDER, 
         int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT
-    ) {
+    ) : void {
         $this->setDrawingConfig();
         if($type & GDRECT_FILLED) {
             $crop = 0; //ceil($this->lineSize/2);
@@ -104,7 +104,7 @@ class Painter {
         array $box, 
         int $type=GDRECT_BORDER, int $colorBorder=GDCOLOR_DEFAULT, 
         int $colorFill=GDCOLOR_DEFAULT
-    ) {
+    ) : void {
         $this->rectangle(
             $box['x'], $box['y'], 
             $box['x']+$box['w'], $box['y']+$box['h'], 
@@ -117,7 +117,7 @@ class Painter {
         array $verts, 
         int $type=GDRECT_BORDER, 
         int $colorBorder=GDCOLOR_DEFAULT, int $colorFill=GDCOLOR_DEFAULT
-    ) {
+    ) : void {
         $this->setDrawingConfig();
         $gdVerts=[];
         foreach($verts as $v){
@@ -146,13 +146,13 @@ class Painter {
     public function textBM(
         int $x, int $y, 
         string $text, 
-        int $font=3, int $color=GDCOLOR_DEFAULT
-    ) {
+        \GdFont|int $font=3, int $color=GDCOLOR_DEFAULT
+    ) : void {
         $this->setDrawingConfig();
         imagestring($this->destGD, $font, $x, $y, $text, $this->getForegroundColor($color));
     }
 
-    public function loadBMFont(string $fontFile) {
+    public function loadBMFont(string $fontFile) : \GdFont {
         return imageloadfont($fontFile);
     }
 
@@ -163,7 +163,7 @@ class Painter {
         string $font=self::FONT_DEFAULT,
         int $align = GDALIGN_LEFT,
         float $size=12
-    ) {
+    ) : array {
         $box = imagettfbbox($size, $angle, $font, $text);
         $w = $box[2] - $box[0];
         $h = $box[1] - $box[7];
@@ -186,7 +186,7 @@ class Painter {
         float $size=12,
         int $color = 0x808080,
         bool $shadow=false
-    ) {
+    ) : void {
         $this->setDrawingConfig();
         $box = imagettfbbox($size, $angle, $font, $text);
         $w = $box[2] - $box[0];
@@ -209,18 +209,18 @@ class Painter {
     }
 
     // MISC
-    protected function setDrawingConfig() {
+    protected function setDrawingConfig()  : void {
         imagealphablending($this->destGD, $this->alphaBlend);
         imageantialias($this->destGD, $this->lineSize > 1 ? false : $this->antiAlias);
         imagesetthickness($this->destGD, $this->lineSize);
     }
-    protected function getForegroundColor($color) {
+    protected function getForegroundColor($color) : int {
         if($color===GDCOLOR_DEFAULT) {
             return $this->color;
         }
         return $color;
     }
-    protected function getFillColor($color) {
+    protected function getFillColor($color) : int {
         if($color===GDCOLOR_DEFAULT) {
             return $this->fill;
         }

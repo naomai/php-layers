@@ -7,7 +7,7 @@ class ImageExporter {
         $this->gdSource = $image;
     }
 
-    public function toBrowser(string $format="png", int $quality=-1) {
+    public function toBrowser(string $format="png", int $quality=-1) : void {
         $mimeType = static::getMimeType($format);
         header("Content-Type: ".$mimeType);
         $binary = $this->asBinaryData(
@@ -17,7 +17,7 @@ class ImageExporter {
         echo $binary;
     }
 
-    public function asFile(string $fileName, string $format="png", int $quality=-1) {
+    public function asFile(string $fileName, string $format="png", int $quality=-1) : void {
         $binary = $this->asBinaryData(
             format: $format,
             quality: $quality
@@ -25,7 +25,7 @@ class ImageExporter {
         file_put_contents($fileName, $binary);
     }
 
-    public function asDataUrl(string $format="png", int $quality=-1) {
+    public function asDataUrl(string $format="png", int $quality=-1) : string {
         $binary = $this->asBinaryData(
             format: $format,
             quality: $quality
@@ -79,7 +79,7 @@ class ImageExporter {
         return $binary;
     }
 
-    static function getMimeType(string $format) {
+    static function getMimeType(string $format) : string {
         $formatLC = strtolower($format);
         switch($formatLC){
             case "gif":

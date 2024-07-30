@@ -42,7 +42,7 @@ class Selection{
         }
     }
     
-    protected function createSubImage() {
+    protected function createSubImage() : void {
         $this->subImage = imagecreatetruecolor($this->sizeX, $this->sizeY);
         imagealphablending($this->subImage, false);
         imagecopy(
@@ -62,7 +62,7 @@ class Selection{
         ];
     }
 
-    protected function blankSourceSelectionRect() {
+    protected function blankSourceSelectionRect() : void {
         $layerGD = $this->layer->getGDHandle();
         imagealphablending($layerGD, false);
         imagefilledrectangle(
@@ -74,7 +74,7 @@ class Selection{
         imagealphablending($layerGD, true);
     }
 
-    protected function applySubImage() {
+    protected function applySubImage() : void {
         $layerGD = $this->layer->getGDHandle();
         imagecopy(
             $layerGD, $this->subImage, 
@@ -89,12 +89,12 @@ class Selection{
         $this->layer->setSurfaceDimensions($imageDimensions['w'], $imageDimensions['h'], 0, 0);
     }
     
-    protected function transformationStart() {
+    protected function transformationStart() : void {
         if($this->subImage === null) {
             $this->createSubImage();
         }
     }
-    protected function transformationEnd() {
+    protected function transformationEnd() : void {
         if($this->subImage !== null) {
             $this->blankSourceSelectionRect();
             $this->applySubImage();
@@ -103,14 +103,14 @@ class Selection{
             $this->copyOriginalSelectionDimensions();
         }
     }
-    protected function copyOriginalSelectionDimensions() {
+    protected function copyOriginalSelectionDimensions() : void {
         $this->offsetXorig = $this->offsetX;
         $this->offsetYorig = $this->offsetY;
         $this->sizeXorig   = $this->sizeX;
         $this->sizeYorig   = $this->sizeY;
     }
     
-    public function fill(int $color) {
+    public function fill(int $color) : void {
         imagealphablending($this->subImage, true);
         imagefilledrectangle(
             $this->subImage,
@@ -119,7 +119,7 @@ class Selection{
             $color
         );
     }
-    public function fillOverwrite(int $color) {
+    public function fillOverwrite(int $color) : void {
         imagealphablending($this->subImage, false);
         imagefilledrectangle(
             $this->subImage,
@@ -129,11 +129,11 @@ class Selection{
         );
         imagealphablending($this->subImage, true);
     }
-    public function floodFill(int $x, int $y, int $color) {
+    public function floodFill(int $x, int $y, int $color) : void {
         imagealphablending($this->subImage, true);
         imagefill($this->subImage, $x, $y, $color);
     }	
-    public function floodFillOverwrite($x,$y,$color) {
+    public function floodFillOverwrite($x,$y,$color) : void {
         imagealphablending($this->subImage, false);
         imagefill($this->subImage, $x, $y, $color);
         imagealphablending($this->subImage, true);
@@ -208,7 +208,7 @@ class Selection{
         
     }
     
-    public function pasteClip(Clip $clip, int $x=0, int $y=0) {
+    public function pasteClip(Clip $clip, int $x=0, int $y=0) : void {
         $clipImg = $clip->getContents();
         $this->transformationStart();
         imagecopy(
@@ -241,7 +241,7 @@ class Selection{
         
     }
     
-    public function apply() {
+    public function apply() : void {
         $this->transformationEnd();
     }
 }
