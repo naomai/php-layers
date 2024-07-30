@@ -35,10 +35,10 @@ Import image file into new PHP Layers Image object. The new image contains
 one layer with imported image as its content.
 
 - `fileName` - path of existing image file
+- **Returns** `Image` imported from file
 
 `\RuntimeException` is thrown, if the file is not existing, or is not a valid image.
 
-**Returns** `Image` imported from file
 
 ```php
 $image = Image::createFromFile("olympic.jpg");
@@ -51,8 +51,7 @@ Wrap existing GD2 image into new PHP Layers Image object. The new image contains
 one layer with its content **copied** from original image.
 
 - `gdHandle` - the handle of source GD2 Image.
-
-**Returns** `Image` with contents of source `\GdImage`
+- **Returns** `Image` with contents of source `\GdImage`
 
 ```php
 $gdImage = imagecreatefromjpeg("olympic.jpg");
@@ -91,7 +90,7 @@ The result is a new `Layer` object. The original layer set is left intact.
 The new layer **is not attached** to the image. This means
 you cannot use reordering functions on it.
 
-**Returns** Layer object containing merged content of image.
+- **Returns** Layer object containing merged content of image.
 
  
 ```php
@@ -107,7 +106,7 @@ Merges all layers in image layer set using current layer composer.
 The result is a GD2 image handle accessible by native PHP functions.
 The original layer set is left intact.
 
-**Returns** `\GdImage` handle containing merged content of image
+- **Returns** `\GdImage` handle containing merged content of image
  
 ```php
 $layerTwo = $image->getMerged();
@@ -134,8 +133,7 @@ not the order of creating layers.
 Create new layer and put it on top of layer stack. 
 
 - `name` (optional) - label shown when image is rendered using ![Tiled Composer](#composers).
-
-**Returns** New `Layer` object attached to the `Image`
+- **Returns** New `Layer` object attached to the `Image`
 
 ```php
 $layerOne = $image->newLayer();
@@ -149,10 +147,9 @@ Gets the Layer object from layer set using its index.
 - `id` - a zero-based index of the layer in Layer Stack, counting from the bottom. 
 If negative, count from the last layer.
 
-![Negative indexes are like a copy of the positive part, where the imaginary last layer is 
+  ![Negative indexes are like a copy of the positive part, where the imaginary last layer is 
 ending on -1 position](images/getLayerByIndex.webp)
-
-**Returns** `Layer` object matching the index provided, or `null` if invalid.
+- **Returns** `Layer` object matching the index provided, or `null` if invalid.
 
 ```php
 // $image has 3 layers
@@ -168,8 +165,7 @@ $layerOutOfBounds = $image->getLayerByIndex(3); // null
 Access helper object for changing layer order on stack.
 
 - `layerToMove` - a `Layer` to be relocated, **must** be attached to the `Image`
-
-**Returns** helper object providing reordering methods. The available methods
+- **Returns** helper object providing reordering methods. The available methods
 of such object can be found in 
 [Helpers\LayerReorderCall](#helpers-layerreordercall) class.
 
@@ -190,8 +186,7 @@ previous place.
 
 
 - `layerObj` - `Layer` to be put
-
-**Returns** New *Layer index* of the layer in Stack
+- **Returns** New *Layer index* of the layer in Stack
 
 ```php
 $image->layerPutTop($layerTwo);
@@ -210,8 +205,7 @@ previous place.
 
 
 - `layerObj` - `Layer` to be put
-
-**Returns** New *Layer index* of the layer in Stack
+- **Returns** New *Layer index* of the layer in Stack
 
 ```php
 $image->layerPutBottom($layerTwo);
@@ -222,7 +216,7 @@ $image->layerPutBottom($layerTwo);
 
 Get number of layers attached to the image.
 
-**Returns** number of layers
+- **Returns** number of layers
 
 ```php
 $image = new Image(width: 100, height: 100);
@@ -236,5 +230,5 @@ $countLayers = $image->getLayerCount();
 
 Access the `LayerStack` of the image.
 
-**Returns** `LayerStack` object containing all the layers of image
+- **Returns** `LayerStack` object containing all the layers of image
 
