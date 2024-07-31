@@ -30,17 +30,30 @@ class ImageExporter {
             format: $format,
             quality: $quality
         );
-        $binaryEncoded=base64_encode($binary);
         $mime = static::getMimeType($format);
-        return "data:".$mime.";base64,".$binaryEncoded;
+        return static::encodeDataUrl(
+            binary: $binary, 
+            mimeType: $mime
+        );
     }
 
     public function asBinaryData(string $format="png", int $quality=-1) : string {
+        $image = $this->gdSource;
+        $binary = static::getImageBinaryData(
+            image: $image, 
+            format: $format, 
+            quality: $quality
+        );
+        return $binary;
+    }
+
+    static public function getImageBinaryData(
+        \GdImage $image, 
+        string $format="png", int $quality=-1
+    ) : string {
         $mime = static::getMimeType($format);
 
         $binary = "";
-        $image = $this->gdSource;
-
         ob_start();
         switch($mime){
             case "image/gif":
@@ -79,7 +92,12 @@ class ImageExporter {
         return $binary;
     }
 
-    static function getMimeType(string $format) : string {
+    static public function encodeDataUrl(string $binary, string $mimeType) : string {
+        $binaryEncoded=base64_encode($binary);
+        return "data:".$mimeType.";base64,".$binaryEncoded;
+    }
+
+    static public function getMimeType(string $format) : string {
         $formatLC = strtolower($format);
         switch($formatLC){
             case "gif":
