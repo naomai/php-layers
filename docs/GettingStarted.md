@@ -1,12 +1,32 @@
 # Creating images
 ## Overview
-The way we handle images in PHP is, honestly, really dated. Since the time of PHP/FI 2.0, which introduced GD image library in 1997, the language received support for objective programming. The support has matured quite a lot with recent PHP8 additions. Still, we're working on images using functions with long names, which at some point of time, became all-lowercase. Remember how we used to write ImageSetPixel instead of imagesetpixel?
+The way we handle images in PHP is, honestly, really dated. Since the time of 
+PHP/FI 2.0, which introduced GD image library in 1997, the language received 
+support for objective programming. The support has matured quite a lot with 
+recent PHP8 additions. Still, we're working on images using functions with 
+long names, which at some point of time, became all-lowercase. 
+Remember how we used to write ImageSetPixel instead of imagesetpixel?
 
-The evolution of built-in GD library is out of scope here. Instead, we're trying to reduce the boilerplate to minimum, and tackle some common pitfalls:
+The evolution of built-in GD library is out of scope here. Instead, 
+we're trying to reduce the boilerplate to minimum, and tackle some common 
+pitfalls:
 
-- Why is my transparent background gone?
-- Is my semi-transparent rectangle going to paint over an image, or maybe punch a hole in it because it overwrites pixels?
-- I tried to merge two PNGs with 50% opacity. I used imagecopymerge, but now my transparency is gone.
+- Why is my transparency gone?
+  - We've enabled saving alpha channel by default. 
+- Is my semi-transparent rectangle going to smoothly blend with an image, 
+or maybe punch a hole in it because it overwrites pixels?
+  - If you often need to switch between alpha blending modes 
+  with `imagealphablending()`, there is a cleaner solution. You can use 
+  two separate `paint()` sessions, with each one having separate setting 
+  for `alphaBlending`.
+- I tried to paste one PNG over other with 50% opacity. 
+I used imagecopymerge, because they said it supports setting opacity, 
+but now the pasted part has ugly black background.
+  - True opacity control is a must in any image editor with layers. 
+  We've implemented proper merging, it's just a matter of saying 
+  `$layer->setOpacity(50)` in your code.
+
+![Three emojis on a checkerboard background. A blueberry in black square, showing missing alpha channel. A hat that was pasted on top of persons's head, but its rectangle corrupted the image of head. A motion illusion of a unicorn, made by two fading copies of unicorn, background behind the effect is corrupted.](images/pitfalls.webp)
 
 ## Installation
 
@@ -14,7 +34,8 @@ The evolution of built-in GD library is out of scope here. Instead, we're trying
 
 ### Composer
 
-`php-layers` is currently only installable from Git, adding repository to your composer.json file:
+`php-layers` is currently only installable from Git, adding repository 
+to your composer.json file:
 
 ```json
     "repositories": [
@@ -79,7 +100,8 @@ echo "<img src=\"".htmlspecialchars($dataUrl)."\"/><br/>";
 ![Einstein with thug life glasses, watermarked](../example/LayeringDemoResult.jpg)
 
 
-The image is made of 3 layers, including the background. If we add an extra line, we can show all the layers as a split view:
+The image is made of 3 layers, including the background. If we add an 
+extra line, we can show all the layers as a split view:
 
 ```php
 // TiledComposer is putting all layers in a grid, instead of merging them
