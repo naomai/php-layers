@@ -87,7 +87,7 @@ class DefaultComposer extends LayerComposerBase {
         int $dst_x, int $dst_y, 
         int $src_x, int $src_y, 
         int $src_width, int $src_height, 
-        int $opacityPct,
+        float $opacityPct,
         bool $gammaBlending=false
     ) {
         $opacityPct=self::clamp($opacityPct, 0, 100);
@@ -134,7 +134,7 @@ class DefaultComposer extends LayerComposerBase {
         \GdImage $src_im, 
         int $dst_x, int $dst_y, 
         int $src_width, int $src_height, 
-        int $opacityPct
+        float $opacityPct
     ) : \GdImage {
         $opFrac = $opacityPct / 100;
 

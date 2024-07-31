@@ -59,7 +59,7 @@ class Layer {
      *  Layer opacity in percent
      * 0=transparent, 100=fully opaque
      * */
-    protected int $opacity = 100;
+    protected float $opacity = 100;
 
     /** 
      * Object providing image filters
@@ -148,18 +148,18 @@ class Layer {
     /**
      * Set opacity of layer in percent
      *
-     * @param  int $opacity Opacity (0=transparent, 100=fully opaque
+     * @param  float $opacity Opacity (0=transparent, 100=fully opaque)
      */
-    public function setOpacity(int $opacity) : void {
+    public function setOpacity(float $opacity) : void {
         $this->opacity = $opacity;
     }
 
     /**
      * Get opacity of layer in percent
      *
-     * @return  int $opacity Opacity (0=transparent, 100=fully opaque)
+     * @return  float $opacity Opacity (0=transparent, 100=fully opaque)
      */
-    public function getOpacity() : int {
+    public function getOpacity() : float {
         return $this->opacity;
     }
 
