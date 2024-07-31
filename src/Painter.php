@@ -11,7 +11,7 @@ define('GDALIGN_RIGHT', 2);
 define('GDCOLOR_DEFAULT', -1);
 
 class Painter {
-    public $alphaBlend = false;
+    public $alphaBlend = true;
     public $antiAlias = false;
     public $color = 0xFFFFFF;
     public $fill = 0xFF0000;
