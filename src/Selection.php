@@ -148,15 +148,25 @@ class Selection{
 
         $layerDimensions = $this->layer->getDimensions();
         $anchorDefs = explode(" ", $anchor);
-        if(in_array("right", $anchorDefs)) {
-            $x += $layerDimensions['w'] - $this->sizeX;
-        }
-        if(in_array("bottom", $anchorDefs)) {
-            $y += $layerDimensions['h'] - $this->sizeY;
+
+        $anchorOffsetX = 0;
+        $AnchorOffsetY = 0;
+
+        // horizontal
+        if(in_array("center", $anchorDefs)) {
+            $anchorOffsetX = ($layerDimensions['w'] - $this->sizeX) / 2;
+        } else if(in_array("right", $anchorDefs)) {
+            $anchorOffsetX = $layerDimensions['w'] - $this->sizeX;
         }
 
-        $this->offsetX = $x;
-        $this->offsetY = $y;
+        if(in_array("middle", $anchorDefs)) {
+            $AnchorOffsetY = ($layerDimensions['h'] - $this->sizeY) / 2;
+        } else if(in_array("bottom", $anchorDefs)) {
+            $AnchorOffsetY = $layerDimensions['h'] - $this->sizeY;
+        }
+
+        $this->offsetX = $x + $AnchorOffsetX;
+        $this->offsetY = $y + $AnchorOffsetY;
         return $this;
     }
     public function moveOffset(int $ox, int $oy) : Selection {
