@@ -7,15 +7,18 @@ use \PHPUnit\Framework\Assert as PHPUnitAssert;
 final class Assert {
     
     public static function assertCallableThrows(string $className, callable $function){
-        $exceptionClass="";
+        $exceptionClass = "(none)";
+        $exceptionMsg = "(none)";
         try {
             call_user_func($function);
         } catch(\Exception $e){
             $exceptionClass = get_class($e);
+            $exceptionMsg = $e->getMessage();
         }
+
         PHPUnitAssert::assertEquals(
             $exceptionClass, $className, 
-            "Failed asserting that call throws {$className}"
+            "Failed asserting that call throws `{$className}`, got `{$exceptionClass}` with message \"{$exceptionMsg}\""
         );
 
     }
