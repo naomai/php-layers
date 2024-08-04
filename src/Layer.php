@@ -326,7 +326,10 @@ class Layer {
         if(!file_exists($fileName)) {
             throw new \RuntimeException("File not found: ".$fileName);
         }
-        $gdSource = imagecreatefromstring(file_get_contents($fileName));
+        $gdSource = @imagecreatefromstring(file_get_contents($fileName));
+        if($gdSource===false){
+            throw new \RuntimeException("Invalid or malformed image file: ".$fileName);
+        }
         $this->importFromGD($gdSource);
         $this->name = basename($fileName);
         return $this;

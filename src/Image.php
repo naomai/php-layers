@@ -262,7 +262,10 @@ class Image {
         if(!file_exists($fileName)) {
             throw new \RuntimeException("File not found: ".$fileName);
         }
-        $gdHandle = imagecreatefromstring(file_get_contents($fileName));
+        $gdHandle = @imagecreatefromstring(file_get_contents($fileName));
+        if($gdHandle===false){
+            throw new \RuntimeException("Invalid or malformed image file: ".$fileName);
+        }
         return self::createFromGD($gdHandle);
     }
 
