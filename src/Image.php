@@ -16,13 +16,15 @@ class Image {
     protected Composers\LayerComposerBase $composer;
 
     /**
-     *  Creates new Image object.
+     *  Create new image with given dimensions.
      *  
-     *  @param int 	$width 	  width of a new image
-     *  @param int 	$height   height of a new image
+     *  @param int 	$width 	      width of a new image
+     *  @param int 	$height       height of a new image
+     *  @param bool $createLayer  if true, a background layer is automatically created. 
+     *         This layer is fully transparent.
      *  @since 0.1.0
      */	
-    public function __construct(int $width, int $height, $createLayer = true) {
+    public function __construct(int $width, int $height, bool $createLayer = true) {
         $this->layers = new LayerStack();
         $this->setSize($width, $height);
         if($createLayer) {
@@ -34,13 +36,16 @@ class Image {
     
     
     /**
-     *  Puts a layer object to the top of image's layer stack.
-     *  If the layer is already on the stack, it will be moved.
+     *  Puts a layer object to the top of image's Layer Stack.
+     * 
+     *  *Inserted layer is drawn over the existing image.*
      *  
-     *  Inserted layer is drawn over the existing image.
+     *  This method also *attaches* layer to the image.
+     *  If the layer is already on the stack, it will be moved from 
+     *  its previous place.
      *  
-     *  @param Layer $layerObj layer to be put
-     *  @return int Index of the layer in Layer Stack
+     *  @param Layer $layerObj  Layer to be put
+     *  @return int New *Layer index* of the layer in Stack
      *  @since 0.1.0
      */
     public function layerPutTop(Layer $layerObj) : int {
@@ -52,13 +57,16 @@ class Image {
     }
     
     /**
-     *  Puts a layer object to the bottom of image's layer stack.
-     *  If the layer is already on the stack, it will be moved.
+     *  Puts a layer object to the bottom of image's Layer Stack.
      *  
-     *  Inserted layer is drawn behind the existing image.
+     *  *Inserted layer is drawn behind the existing image.*
      *  
-     *  @param Layer $layerObj layer to be put
-     *  @return int Unique layer ID
+     *  This method also *attaches* layer to the image.
+     *  If the layer is already on the stack, it will be moved from its
+     *  previous place.
+     *  
+     *  @param Layer $layerObj  Layer to be put
+     *  @return int New *Layer index* of the layer in Stack
      *  @since 0.1.0
      */
     public function layerPutBottom(Layer $layerObj) : int {
@@ -155,6 +163,9 @@ class Image {
      *  Merges all layers in image layer set using current layer composer.
      *  The result is a new Layer object. The original layer set is left intact.
      *  
+     *  The new layer **is not attached** to the image. This means
+     *  you cannot use reordering functions on it.
+     * 
      *  @return Layer object containing merged content of image
      *  @since 0.1.0
      */
@@ -181,6 +192,7 @@ class Image {
     /**
      * Output image into Data URL, as lossless PNG format
      * 
+     * @deprecated use export() instead
      * @param int $quality Quality of the result image
      * @return string URL containing resulting image
      */
@@ -196,6 +208,7 @@ class Image {
     /**
      * Output image into Data URL, as lossy JPEG
      * 
+     * @deprecated use export() instead
      * @param int $quality Quality of the result image
      * @return string URL containing resulting image
      */
@@ -214,6 +227,14 @@ class Image {
         return $exporter;
     }
 
+    /**
+     * Access helper object for changing layer order on stack.
+     * 
+     * @param Layer $layerToMove  a `Layer` to be relocated, 
+     *        **must** be attached to the `Image`
+     * @return Helpers\LayerReorderCall helper object providing 
+     *         reordering methods. 
+     */
     public function reorder(Layer $layerToMove) : Helpers\LayerReorderCall {
         $reorderCall = new Helpers\LayerReorderCall($this->layers);
         $reorderCall->setLayerToMove($layerToMove);
@@ -245,10 +266,20 @@ class Image {
         return self::createFromGD($gdHandle);
     }
 
+    /**
+     * Access the LayerStack of the image
+     * 
+     * @return LayerStack object containing all the layers of image
+     */
     public function getLayerStack() : LayerStack {
         return $this->layers;
     }
 
+    /**
+     * Get number of layers attached to the image
+     * 
+     * @return int number of layers
+     */
     public function getLayerCount() : int {
         return $this->layers->getCount();
     }

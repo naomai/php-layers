@@ -1,4 +1,32 @@
 # Documentation
+## Classes
+The functionality of PHPLayers is split between various classes. Here is a brief explaination of their responsibilites.
+
+- [Image](#image) - represents canvas of given dimensions, contains a stack of layers
+  and recipe for preparing the result.
+- Layer - like a transparent sheet, can be painted and 
+  overlaid on top of other sheets. 
+- LayerStack - a collection of layers that can be freely reordered
+- Selection - fragment of a layer, limited by given dimensions, that
+  can be moved or modified independently of the layer.
+- Clip - a piece of layer, created (copied) from Selection, that can be
+  freely pasted on the layer.
+- Painter - provides basic tools for painting on the layer
+- Composers - perform actual composing of layers. The extensive nature
+  of this class allows to freely describe how to create an image
+  from the layers.
+- Generators - create more complex content, exposing simpler API to the user. The generation is done during the final composing.
+  - Generators\RichText - formatted block of text
+  - Generators\NonOverlappingText - generates text labels that never overlap. This leverages the "generation during composing" feature, to figure out correct placement after all the labels had been created.
+- Filters - apply effects to the layer
+  - Filters\PHPFilters - a collection of effects provided by GD2 library
+  - Filters\ScrambleFilter - simulates line-scrambling of old
+    analog TV encryption, Nagravision-Syster 
+- Helpers - additional utility classes
+  - Helpers\ImageExporter - functionality for exporting images
+  - Helpers\LayerReorderCall - provides methods for changing position of a Layer in Layer Stack.
+
+
 For readability, every class under PHPLayers namespace is referred using only its short name. 
 This is equivalent to placing `namespace Naomai\PHPLayers;` in the code.
 
@@ -99,7 +127,7 @@ $layerTwo = $image->getMerged();
 ```
 
 ### getMergedGD
-`Image::getMerged() : \GdImage`
+`Image::getMergedGD() : \GdImage`
 
 Finalize image into GD2 image handle.
 
