@@ -65,8 +65,7 @@ one layer with imported image as its content.
 
 - `fileName` - path of existing image file
 - **Returns** `Image` imported from file
-
-`\RuntimeException` is thrown, if the file is not existing, or is not a valid image.
+- **Throws** `\RuntimeException`: if the file is not existing, or is not a valid image.
 
 
 ```php
