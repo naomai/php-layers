@@ -9,11 +9,21 @@ class DefaultComposer extends LayerComposerBase {
 
     public function mergeAll() : Layer {
         $layers = $this->layers->getAll();
+
+        if(count($layers)==0) {
+            $imgSize = $this->image->getSize();
+            $newLayerGD = imagecreatetruecolor($imgSize['w'], $imgSize['h']);
+            $layerResult = new Layer();
+            $layerResult->importFromGD($newLayerGD);
+            $layerResult->clear();
+            return $layerResult;
+        }
+
         foreach($layers as $layer){
             $this->preprocessLayer($layer);
         }
 
-        if(count($layers)==1){
+        if(count($layers)==1) {
             /* special case - image with one layer, no need for merging
                just make sure the resulting layer is of the same dimensions 
                as image */
