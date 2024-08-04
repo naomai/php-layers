@@ -4,6 +4,7 @@ use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 use Naomai\PHPLayers\Image;
 use Naomai\PHPLayers\Layer;
+use Naomai\PHPLayers\Test\Assert as ImageAssert;
 
 require_once 'src/Image.php';
 
@@ -26,14 +27,14 @@ final class ImageTest extends TestCase {
 
         $this->assertInstanceOf(Image::class, $imageObj);
 
-        $this->assertCallableThrows(
+        ImageAssert::assertCallableThrows(
             \RuntimeException::class, 
             function() {
                 Image::createFromFile(__DIR__ . "/../TestImages/NonExistingImage.png");
             }
         );
 
-        $this->assertCallableThrows(
+        ImageAssert::assertCallableThrows(
             \RuntimeException::class, 
             function() {
                 Image::createFromFile(__DIR__ . "/../TestImages/GarbageBytes.dat");
@@ -222,7 +223,7 @@ final class ImageTest extends TestCase {
         $this->assertStringContainsString("image/png", $dataUrl);
 
         $imageData = file_get_contents($dataUrl);
-        $this->assertValidImageData($imageData);
+        ImageAssert::assertValidImageData($imageData);
     }
 
     public function testGetDataUrlJPEG() {
@@ -233,28 +234,28 @@ final class ImageTest extends TestCase {
         $this->assertStringContainsString("image/jpeg", $dataUrl);
 
         $imageData = file_get_contents($dataUrl);
-        $this->assertValidImageData($imageData);
+        ImageAssert::assertValidImageData($imageData);
     }
 
 
     public function testConstructWithInvalidDimensions() : void {
-        $this->assertCallableThrows(
+        ImageAssert::assertCallableThrows(
             \InvalidArgumentException::class, function() {
                 new Image(1, 0);
             } 
         );
-        $this->assertCallableThrows(
+        ImageAssert::assertCallableThrows(
             \InvalidArgumentException::class, function() {
                 new Image(0, 1);
             } 
         );
 
-        $this->assertCallableThrows(
+        ImageAssert::assertCallableThrows(
             \InvalidArgumentException::class, function() {
                 new Image(1, -1);
             } 
         );
-        $this->assertCallableThrows(
+        ImageAssert::assertCallableThrows(
             \InvalidArgumentException::class, function() {
                 new Image(-1, 1);
             } 
@@ -273,25 +274,5 @@ final class ImageTest extends TestCase {
         return $testImg;
     }
 
-    private static function assertCallableThrows(string $className, callable $function){
-        $exceptionClass="";
-        try {
-            call_user_func($function);
-        } catch(\Exception $e){
-            $exceptionClass = get_class($e);
-        }
-        static::assertEquals(
-            $exceptionClass, $className, 
-            "Failed asserting that call throws {$className}"
-        );
-
-    }
-
-    private static function assertValidImageData(string $imgBinary){
-        self::assertTrue(
-            imagecreatefromstring($imgBinary)!==false,
-            "Failed asserting that string is a valid image data"
-        );
-    }
 
 }
