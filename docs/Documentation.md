@@ -19,9 +19,10 @@ settings on how to compose the final image.
 `Image::__construct(int $width, int $height, $createLayer = true)` 
 
 Create new image with given dimensions.
-- `width`, `height` - dimensions in pixels
+- `width`, `height` - dimensions in pixels, must be greater than 0
 - `createLayer` - if true, a background layer is automatically created. 
 This layer is fully transparent.
+- **Throws** `\InvalidArgumentException`: if image dimensions are invalid (<=0)
 
 ```php
 $image = new Image(width: 50, height: 50, createLayer: true);
