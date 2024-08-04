@@ -6,7 +6,8 @@
 	},
 	"autoload": {
         "psr-4": { 
-			"Naomai\\PHPLayers\\": "src/" 
+			"Naomai\\PHPLayers\\": "src/",
+			"Naomai\\PHPLayers\\Test\\": "tests/"
 		}
     },
 	"require-dev": {
