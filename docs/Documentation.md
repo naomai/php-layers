@@ -97,7 +97,7 @@ in [Helpers\ImageExporter](#helpers-imageexporter) class.
 $image->export()->toBrowser(format: 'jpg'); 
 
 // save on the disk
-$image->export()->asFile(fileName: 'img/cherry.png', format: 'png');   
+$image->export()->asFile(fileName: 'img/cherry.jpg');   
 
 // create `data:...` URL for embedding in HTML
 // omitting `format` exports image as PNG by default

@@ -17,7 +17,11 @@ class ImageExporter {
         echo $binary;
     }
 
-    public function asFile(string $fileName, string $format="png", int $quality=-1) : void {
+    public function asFile(string $fileName, string $format="auto", int $quality=-1) : void {
+        if($format=="auto"){
+            $format = pathinfo($fileName, PATHINFO_EXTENSION);
+        }
+
         $binary = $this->asBinaryData(
             format: $format,
             quality: $quality
