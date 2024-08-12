@@ -236,6 +236,12 @@ class Image {
      *         reordering methods. 
      */
     public function reorder(Layer $layerToMove) : Helpers\LayerReorderCall {
+        //$layerIndex = $this->layers->getIndexOf($layerToMove);
+        $layerParent = $layerToMove->getParentImg();
+        if($layerParent !== $this) {
+            throw new \RuntimeException("Layer is not attached to the target image.");
+        }
+
         $reorderCall = new Helpers\LayerReorderCall($this->layers);
         $reorderCall->setLayerToMove($layerToMove);
         return $reorderCall;

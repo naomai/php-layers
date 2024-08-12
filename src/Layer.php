@@ -300,6 +300,10 @@ class Layer {
         $this->parentImg = $parentImg;
         $this->transformPermanently();
     }
+
+    public function getParentImg() : ?Image {
+        return $this->parentImg;
+    }
     
     
     public function setGenerator(Generators\ILayerGenerator $generator) : void {

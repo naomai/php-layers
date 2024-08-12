@@ -122,7 +122,8 @@ final class ReorderTest extends TestCase {
 
     public function testReorderNotAttached() : void {
         [$imageObj, $layers] = $this->createTestImageObj();
-        $layerDetached = $imageObj->getMerged();
+        //$layerDetached = $imageObj->getMerged();
+        $layerDetached = new Naomai\PHPLayers\Layer();
 
         ImageAssert::assertCallableThrows(
             \RuntimeException::class, function() use($layerDetached) {

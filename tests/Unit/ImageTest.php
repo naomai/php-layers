@@ -60,6 +60,11 @@ final class ImageTest extends TestCase {
             ->method('setParentImg')
             ->with($testImg);
 
+        $newLayer
+            ->expects($this->once())
+            ->method('getParentImg')
+            ->will($this->returnValue($testImg));
+
         $testImg->layerPutTop($newLayer);
         $layerAtTop = $testImg->getLayerByIndex(-1);
         $this->assertSame($newLayer, $layerAtTop);
@@ -72,7 +77,12 @@ final class ImageTest extends TestCase {
         $newLayer->expects($this->once())
             ->method('setParentImg')
             ->with($testImg);
+        $newLayer
+            ->expects($this->once())
+            ->method('getParentImg')
+            ->will($this->returnValue($testImg));
 
+        
         $testImg->layerPutBottom($newLayer);
         $layerAtBottom = $testImg->getLayerByIndex(0);
         $this->assertSame($newLayer, $layerAtBottom);
