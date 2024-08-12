@@ -3,6 +3,7 @@
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 use Naomai\PHPLayers;
+use Naomai\PHPLayers\Test\Assert as ImageAssert;
 
 
 /**
@@ -118,6 +119,24 @@ final class ReorderTest extends TestCase {
         $layers[1]->reorder()->putAt(-4);
 
     }
+
+    public function testReorderNotAttached() : void {
+        [$imageObj, $layers] = $this->createTestImageObj();
+        $layerDetached = $imageObj->getMerged();
+
+        ImageAssert::assertCallableThrows(
+            \RuntimeException::class, function() use($layerDetached) {
+                $layerDetached->reorder();
+            }
+        );
+
+        ImageAssert::assertCallableThrows(
+            \RuntimeException::class, function() use($imageObj, $layerDetached) {
+                $imageObj->reorder($layerDetached);
+            }
+        );
+    }
+
 
 
     static public function assertLayerOrder(PHPLayers\Image  $imageObj, array $layerOrder) {

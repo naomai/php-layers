@@ -196,6 +196,7 @@ Access helper object for changing layer order on stack.
 - **Returns** helper object providing reordering methods. The available methods
 of such object can be found in 
 [Helpers\LayerReorderCall](#helpers-layerreordercall) class.
+- **Throws** `\RuntimeException`: when layer is not attached to the image
 
 ```php
 $image->reorder($layerBottom)->putOver($layerTop);
