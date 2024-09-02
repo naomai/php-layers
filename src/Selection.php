@@ -232,23 +232,18 @@ class Selection{
     /**
      * Return Painter object attached to the selection
      *
-     * @return \Painter
+     * @return Painter
      */
-    public function paint(bool $oneShot=false, ...$options) : Painter {
+    public function paint(...$options) : Painter {
         $this->transformationStart();
         $painter = $this->painter;
-        if($oneShot) {
-            $painter = new Painter();
-            
-        }
-
+        
         if(count($options)) {
             $painter->setOptions(...$options);
         }
 
         $painter->attachToGD($this->subImage);
         return $painter;
-        
     }
     
     public function apply() : void {
