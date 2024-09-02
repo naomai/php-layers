@@ -261,3 +261,55 @@ Access the `LayerStack` of the image.
 
 - **Returns** `LayerStack` object containing all the layers of image
 
+
+
+# Layer
+## Drawing
+### paint
+
+`Layer::paint(...$options) : Painter`
+
+Access `Painter` object, that provides functions for drawing on the layer. The object is
+associated with the layer, and its settings are preserved between consecutive calls. 
+
+- `options`: apply additional settings for this, and consecutive paint() calls. 
+  See [Painter properties](#painter-properties) for possible arguments
+- **Returns** `Painter` object associated with the layer
+
+```php
+// Draw square at position (30, 25)
+$layer->paint()->rectangle(30, 25, 40, 35);
+// Set color to red and thicker line size, draw again
+$layer->paint(color: 0xFF0000, lineSize: 3)->rectangle(25, 20, 35, 30);
+// Draw a line, this should also be thicker red
+$layer->paint()->line(25, 20, 35, 30);
+
+```
+### fill
+`Layer::fill(int $color) : void`
+
+Replace entire layer content with given color. This function does not alpha-blend,
+meaning it erases the previous layer content.
+
+- `color`: an integer value of color in 0xAARRGGBB format
+
+```php
+// sunglasses effect
+$layer = $image->newLayer("Shade");
+$layer->fill(0x1A000000);
+```
+
+### clear
+`Layer::clear() : void`
+
+Clears layer buffer. The layer content is fully wiped, resulting in 
+fully transparent surface. 
+
+Effectively, it is equivalent to calling `fill()` with a transparent color.
+
+```php
+// if for some reason we want to discard entire layer content:
+$layer->clear();
+```
+
+
