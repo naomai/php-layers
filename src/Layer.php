@@ -180,7 +180,7 @@ class Layer {
     /**
      * Return Painter object attached to the layer
      *
-     * @return \Painter
+     * @return Painter
      */
     public function paint(...$options) : Painter {
         $painter = $this->painter;
