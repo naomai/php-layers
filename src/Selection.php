@@ -25,7 +25,7 @@ class Selection{
         $this->copyOriginalSelectionDimensions();
 
         $this->filterX = new Filters\PHPFilters();
-        $this->painter = new Painter();
+        $this->painter = $layer->paint();
     }
     
     public function __destruct() {
