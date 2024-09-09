@@ -4,7 +4,7 @@ The functionality of PHPLayers is split between various classes. Here is a brief
 
 - [Image](#image) - represents canvas of given dimensions, contains a stack of layers
   and recipe for preparing the result.
-- Layer - like a transparent sheet, can be painted and 
+- [Layer](#layer) - like a transparent sheet, can be painted and 
   overlaid on top of other sheets. 
 - LayerStack - a collection of layers that can be freely reordered
 - Selection - fragment of a layer, limited by given dimensions, that
@@ -264,7 +264,7 @@ Access the `LayerStack` of the image.
 
 
 # Layer
-## Drawing
+## Draw
 ### paint
 
 `Layer::paint(...$options) : Painter`
@@ -311,5 +311,163 @@ Effectively, it is equivalent to calling `fill()` with a transparent color.
 // if for some reason we want to discard entire layer content:
 $layer->clear();
 ```
+## Import into layer
+### importFromFile
+`Layer::importFromFile(string $fileName) : Layer`
+
+Imports an image file into the layer. 
+The imported image becomes new surface of layer, previous content 
+is discarded.
+
+- `fileName`: the path to the file to be imported
+- **Returns**: current instance of the `Layer`. See [Method chaining](#method-chaining).
+- **Throws**: `\RuntimeException` if either:
+  - file does not exist
+  - the format is not recognized, image is corrupted or inaccessible
+
+### importFromGD
+`Layer::importFromGD(\GdImage $gdSource) : Layer`
+
+Imports a GD image resource into the layer. 
+The imported image becomes new surface of layer, previous content 
+is discarded.
+
+- `gdSource`: the GD image to be imported
+- **Returns**: current instance of the `Layer`. See [Method chaining](#method-chaining).
+
+## Create selection
+This functionality allows moving or modifying a limited fragment of layer surface.
+The selection area can be set using three different methods. 
+Further manipulation can be achieved using [Selection](#selection) helper object.
+
+### select
+`Layer::select(int $x, int $y, int $w, int $h) : Selection`
+
+Create selection within provided dimensions
+
+- `x`: Horizontal position of selection, relative to image
+- `y`: Vertical position of selection, relative to image
+- `w`: Width of selection
+- `h`: Height of selection
+- **Returns**: `Selection` Helper object for transforming selection
+
+```php
+// "pop" a small square by moving it a few pixels
+$layer
+  ->select(50, 60, 10, 10)
+  ->moveOffset(-2, -2)
+  ->apply();
+```
+
+### selectWhole
+`Layer::selectWhole() : Selection`
+
+Select entire area of layer buffer (image size). 
+See [Buffer dimensions](#buffer-dimensions).
+
+- **Returns**: `Selection` Helper object for transforming selection
+
+```php
+// shrink the image and move it to the center
+$layer
+  ->selectWhole()
+  ->resize(50, 20)
+  ->move(anchor: "center middle")
+  ->apply();
+```
+
+### selectSurface
+`Layer::selectSurface() : Selection`
+
+Select Layer Surface area (imported content). 
+See [Surface dimensions](#surface-dimensions).
+
+- **Returns**: `Selection` Helper object for transforming selection
+
+```php
+// move watermark to the bottom right corner
+$watermarkLayer
+  ->selectSurface()
+  ->move(anchor: "bottom right")
+  ->apply();
+```
+
+## Change order
+`Layer::reorder() : Helpers\LayerReorderCall`
+
+Access helper object for changing this layer's position on stack. The layer 
+**must be attached** to an image.
+
+- **Returns** helper object providing reordering methods. The available methods
+of such object can be found in 
+[Helpers\LayerReorderCall](#helpers-layerreordercall) class.
+- **Throws** `\RuntimeException`: when layer is not attached to the image
+
+```php
+$layer->reorder()->putOver($layerTop);
+```
+
+## Layer properties
+### Opacity
+Opacity is a level of coverage of the layer in percent, where 0% is completely transparent, and 100% is full coverage.  
+
+`Layer::setOpacity(float $opacity) : void`
+
+Set opacity of layer.
+
+- `opacity`: opacity in percent
+
+----
+
+`Layer::getOpacity() : float`
+
+Get opacity of layer in percent
+
+- **Returns** opacity in percent
+
+### Dimensions
+Dimensions are defining position, and size of a box, expressed in a form of array:
+
+```php
+[
+  'x'=>..., 'y'=>...,
+  'w'=>..., 'h'=>...
+]
+```
+
+#### Buffer dimensions
+Size of the internal layer buffer. When the layer is attached to image, 
+its dimensions become the same as of the images.
+
+`Layer::getDimensions() : array`
+
+Get dimensions and position of internal layer buffer.
+- **Returns** array with dimensions of layer buffer.
+
+#### Surface dimensions
+When importing image from file into a new layer, its size is preserved as
+*surface dimensions*. PHP-Layers uses it to calculate relative positioning,
+allowing anchoring the content to the edges without much effort:
+```php
+$watermarkLayer
+    ->selectSurface() // <- selection is made only within surface dimensions
+    ->move(anchor: "bottom right")
+    ->apply();
+```
+
+`Layer::getSurfaceDimensions() : array`
+
+Get dimensions and position of layer surface.
+- **Returns** array with dimensions of layer surface.
+
+### Generator
+Generator object makes it possible to modify layer content at the moment
+of composing the final image. See [Generators](#generators).
+
+`Layer::setGenerator(Generators\ILayerGenerator $generator) : void`
+
+Attach a layer generator
+
+- `generator`: object implementing `Generators\ILayerGenerator`
 
 

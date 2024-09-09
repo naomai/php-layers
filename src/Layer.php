@@ -220,7 +220,7 @@ class Layer {
     
     /* SELECT */    
     /**
-     * Select entire area of layer buffer
+     * Select entire area of layer buffer (image size)
      *
      * @return Selection Helper object for transforming selection
      */
@@ -248,7 +248,7 @@ class Layer {
         return $this->select($x, $y, $w, $h);
     }
     /**
-     * Create selection 
+     * Create selection within provided dimensions
      * 
      * @param  int $x Horizontal position of selection, relative to image
      * @param  int $y Vertical position of selection, relative to image
@@ -306,6 +306,11 @@ class Layer {
     }
     
     
+    /**
+     * Attach a layer generator
+     * 
+     * @param Generators\ILayerGenerator generator 
+     */
     public function setGenerator(Generators\ILayerGenerator $generator) : void {
         $generator->attachLayer($this);
         $this->generator = $generator;
@@ -317,6 +322,15 @@ class Layer {
         }
     }
 
+    /**
+     * Imports a GD image resource into the layer.
+     * The imported image becomes new surface of layer, 
+     * previous content is discarded.
+     * 
+     * @param \GdImage gdSource the GD image to be imported
+     * 
+     * @return Layer current instance of the `Layer`
+     */
     public function importFromGD(\GdImage $gdSource) : Layer {
         $this->gdImage = $gdSource;
         $this->sizeX = imagesx($this->gdImage);
@@ -326,6 +340,15 @@ class Layer {
         return $this;
     }
 
+    /**
+     * Imports an image file into the layer. 
+     * The imported image becomes new surface of layer, 
+     * previous content is discarded.
+     * 
+     * @param string fileName the path to the file to be imported
+     * 
+     * @return Layer current instance of the `Layer`
+     */
     public function importFromFile(string $fileName) : Layer {
         if(!file_exists($fileName)) {
             throw new \RuntimeException("File not found: ".$fileName);
