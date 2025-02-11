@@ -31,7 +31,7 @@
         protected $wwwFonts;
         protected $defaultFont;
 
-        protected FontSizer $sizer;
+        protected RichTextFontSizer $sizer;
         
         
         const GDWRT_ALIGN_LEFT   = 0;
@@ -50,7 +50,7 @@
             }
             $this->defaultFont = $this->wwwFonts->getFontFamily("Lato");
 
-            $this->sizer = new FontSizer;
+            $this->sizer = new RichTextFontSizer;
         }
         
         public function getSize() {
@@ -95,7 +95,7 @@
             if($this->currentParagraph == null) {
                 $this->newParagraph();
             }
-            $newNode = new TextNode($this->currentParagraph);
+            $newNode = new RichTextTextNode($this->currentParagraph);
             $newNode->textContent    = $string;
             $newNode->textColor      = $this->textColor;
             $newNode->highlightColor = $this->highlightColor;
@@ -113,7 +113,7 @@
             return $newNode;
         }
         public function insertNodeOfType($type) {
-            if(is_subclass_of($type, '\Naomai\PHPLayers\Renderers\Node')) {
+            if(is_subclass_of($type, '\Naomai\PHPLayers\Generators\RichTextNode')) {
                 if($this->currentParagraph == null) {
                     $this->newParagraph();
                 }
@@ -129,7 +129,7 @@
                 $this->document[] = $this->currentParagraph;
             }
 
-            $newPar = new Paragraph($this);
+            $newPar = new RichTextParagraph($this);
             $this->currentParagraph = $newPar;
             return $newPar;
         }
@@ -217,7 +217,7 @@
         }
     }
 
-    class FontSizer {
+    class RichTextFontSizer {
         protected $cachedMetrics = [];
 
         public function getCharacterMetrics(string $chr, string $fontFile, int $size) {
@@ -249,22 +249,22 @@
         }
     }
 
-    abstract class Node{
-        protected RichText|Node $parentNode;
+    abstract class RichTextNode{
+        protected RichText|RichTextNode $parentNode;
         protected $document;
         /* render() returns an array with following structure:
         ( 
             'gd'=>GD handle with rendered element,
             'rect'=>array of rects around each symbol
         )*/
-        public function __construct(RichText|Node $parent) {
+        public function __construct(RichText|RichTextNode $parent) {
             $this->parentNode = $parent;
             $this->document = $this->getDocument();
         }
         protected function getDocument() {
             if($this->parentNode instanceof RichText) {
                 return $this->parentNode;
-            }else if($this->parentNode instanceof Node) {
+            }else if($this->parentNode instanceof RichTextNode) {
                 return $this->parentNode->getDocument();
             }else{
                 die("WHA?");
@@ -278,7 +278,7 @@
         
     }
 
-    class TextNode extends Node {
+    class RichTextTextNode extends RichTextNode {
         public $textContent = "";
         public $textColor;
         public $highlightColor;
@@ -288,7 +288,7 @@
         public $fontItalic;
         public $textUnderline;
         public $textStrike;
-        protected FontSizer $sizer;
+        protected RichTextFontSizer $sizer;
         
         public function render() {
             $fontFile = $this->document->getFontFile($this->font, $this->getFontType());
@@ -384,19 +384,19 @@
             return $type;
         }
 
-        public function setSizer(FontSizer $sizer) {
+        public function setSizer(RichTextFontSizer $sizer) {
             $this->sizer = $sizer;
         }
     }
 
-    class Paragraph extends Node {
+    class RichTextParagraph extends RichTextNode {
         public $align = RichText::GDWRT_ALIGN_LEFT;
         public $lineHeight = 16;
         public $documentPosY = 0;
         protected $nodes = [];
         protected $resultRects = [];
         
-        public function addNode(Node $node) {
+        public function addNode(RichTextNode $node) {
             if($node instanceof Paragraph) {
                 return;
             }
@@ -562,7 +562,7 @@
         }
     }
 
-    class ImageNode extends Node{
+    class RichTextImageNode extends RichTextNode{
         public ?\GdImage $gdContainer;
         public function render() {
             if($this->gdContainer!==false) {
