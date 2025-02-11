@@ -287,6 +287,7 @@ class Layer {
             0, 0, 
             imagesx($this->gdImage), imagesy($this->gdImage)
         ); 
+        imagealphablending($newLayerGD, true);
         imagedestroy($this->gdImage);
         $this->gdImage = $newLayerGD;
         //$this->offsetX = $this->offsetY = 0;
