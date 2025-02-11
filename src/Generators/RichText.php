@@ -27,7 +27,6 @@
         public $textStrike    = false;
         
         //font sources
-        protected $systemFonts;
         protected $wwwFonts;
         protected $defaultFont;
 
@@ -136,9 +135,6 @@
         
         public function getFontFile($fontFamily, $type) {
             $ff = $this->wwwFonts->getFontFamily($fontFamily);
-            if(count($ff) == 0 && $this->systemFonts) {
-                $ff = $this->systemFonts->getFontFamily($fontFamily);
-            }
             if(count($ff) == 0) {
                 $ff = $this->defaultFont;
             }
