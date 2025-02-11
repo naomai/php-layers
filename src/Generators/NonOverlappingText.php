@@ -33,7 +33,6 @@ class NonOverlappingText implements ILayerGenerator {
         }
         
         $this->spaceOutLabels();
-        $layerPainter->borderColor = 0x808080;
         
         foreach($this->labelsList as $labelId=>$label) {
             $params = self::filterParamsForMethod(PHPLayers\Painter::class, 'text', $label['params']);
@@ -41,11 +40,6 @@ class NonOverlappingText implements ILayerGenerator {
                 $label['x'], $label['y'],
                 $label['text'], ...$params
             );
-            /*$layerPainter->rectangle(
-                $label['x'], $label['y'],
-                $label['x'] + $label['w'],
-                $label['y'] + $label['h']
-            );*/
         }
     }
     
