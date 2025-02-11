@@ -1,5 +1,5 @@
 composer.phar
 /vendor/
 composer.lock
-src/Renderers/WWWFonts.dat
+src/Generators/WWWFonts.dat
 .phpunit.*
