@@ -11,7 +11,7 @@ class NonOverlappingText implements ILayerGenerator {
     protected Layer $layer;
     protected array $labelsList = [];
     
-    public function write($x,$y,$text,...$params) {
+    public function write(int $x, int $y, string $text, ...$params) {
         $newLabel = ['x'=>$x, 'y'=>$y, 'text'=>$text, 'params'=>$params];
         $this->labelsList[]=$newLabel;
     }
@@ -24,7 +24,7 @@ class NonOverlappingText implements ILayerGenerator {
         foreach($this->labelsList as $labelId=>$label){
             $params = self::filterParamsForMethod(PHPLayers\Painter::class, 'textGetBox', $label['params']);
             $rect = $layerPainter->textGetBox(
-                $label['x'], $label['y'],
+                round($label['x']), round($label['y']),
                 $label['text'], ...$params
             );
             $this->labelsList[$labelId]['w'] = $rect['w']+$this->spacing;
@@ -37,7 +37,7 @@ class NonOverlappingText implements ILayerGenerator {
         foreach($this->labelsList as $labelId=>$label) {
             $params = self::filterParamsForMethod(PHPLayers\Painter::class, 'text', $label['params']);
             $layerPainter->text(
-                $label['x'], $label['y'],
+                round($label['x']), round($label['y']),
                 $label['text'], ...$params
             );
         }
@@ -108,8 +108,6 @@ class NonOverlappingText implements ILayerGenerator {
             }
             $label['x']-=$grpOffsetX;
             $label['y']-=$grpOffsetY;
-
-            
 
             array_push($this->labelsList, $label);
             
