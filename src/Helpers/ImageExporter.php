@@ -88,6 +88,12 @@ class ImageExporter {
                     quality: $quality  
                 );
                 break;
+            case "image/bmp":
+            case "image/x-bmp":
+                imagebmp(
+                    image: $image  
+                );
+                break;
             default:
                 ob_get_clean();
                 throw new \InvalidArgumentException("Invalid image format \"{$format}\".");
@@ -115,6 +121,8 @@ class ImageExporter {
                 return "image/webp";
             case "avif":
                 return "image/avif";
+            case "bmp":
+                return "image/bmp";
             default:
                 return "application/octet-stream";
         }
